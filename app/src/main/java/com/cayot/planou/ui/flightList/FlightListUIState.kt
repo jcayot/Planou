@@ -11,5 +11,6 @@ data class FlightListUIState(
 
 data class FlightItem(
 	val flight: Flight,
-	val flightMapState: FlightMapState? = null
+	val flightMapState: FlightMapState? = null,
+	val mapLoaded: Boolean = false
 )

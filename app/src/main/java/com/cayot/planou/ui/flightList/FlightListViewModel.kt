@@ -37,7 +37,7 @@ class FlightListViewModel(
 	}
 
 	fun updateFlightMap(flightItem: FlightItem) {
-		if (flightItem.flightMapState == null) {
+		if (!flightItem.mapLoaded) {
 			viewModelScope.launch {
 				val originAirport = airportsRepository.getAirportByIataCode(flightItem.flight.originAirportCode)
 				val destinationAirport = airportsRepository.getAirportByIataCode(flightItem.flight.destinationAirportCode)
@@ -46,7 +46,10 @@ class FlightListViewModel(
 
 					val updatedFlightItemList = _uiState.value.flightItemList.map {
 						if (it.flight.id == flightItem.flight.id)
-							it.copy(flightMapState = mapState)
+							it.copy(
+								flightMapState = mapState,
+								mapLoaded = true
+							)
 						else
 							it
 					}

@@ -21,10 +21,12 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Badge
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -35,6 +37,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
@@ -191,6 +194,7 @@ fun FlightListItem(
 		) {
 			FlightItemMap(
 				flightMapState = flightItem.flightMapState,
+				mapLoaded = flightItem.mapLoaded,
 				modifier = Modifier.size(dimensionResource(R.dimen.flight_item_height))
 			)
 			Column (
@@ -242,21 +246,25 @@ fun FlightListItem(
 @Composable
 fun FlightItemMap(
 	flightMapState: FlightMapState?,
+	mapLoaded: Boolean,
 	modifier: Modifier = Modifier
 ) {
-	Box(modifier = modifier) {
+	Box(
+		contentAlignment = Alignment.Center,
+		modifier = modifier.fillMaxSize()
+			.clip(RoundedCornerShape(8.dp))
+	) {
 		if (flightMapState != null) {
 			FlightMap(
 				flightMapState = flightMapState,
 			)
+		} else if (!mapLoaded) {
+			CircularProgressIndicator(
+				modifier = Modifier.size(40.dp)
+			)
 		} else {
-			Image(
-				painter = painterResource(R.drawable.ic_map_placeholder),
-				contentDescription = stringResource(R.string.list_item_map_image),
-				alignment = Alignment.Center,
-				contentScale = ContentScale.FillWidth,
-				modifier = Modifier
-					.fillMaxSize()
+			Text(
+				text = stringResource(R.string.error_retriving_airport)
 			)
 		}
 	}

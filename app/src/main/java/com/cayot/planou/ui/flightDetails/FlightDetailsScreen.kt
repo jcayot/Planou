@@ -14,11 +14,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +29,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
@@ -36,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cayot.planou.R
 import com.cayot.planou.data.FlightMapState
@@ -70,6 +75,7 @@ fun FlightDetailsScreen(
 	) { innerPadding ->
 		FlightDetailsScreenContent(
 			uiState = uiState,
+			onBackPressed = navigateBack,
 			modifier = modifier
 				.padding(
 					start = innerPadding.calculateStartPadding(LocalLayoutDirection.current),
@@ -84,6 +90,7 @@ fun FlightDetailsScreen(
 @Composable
 fun FlightDetailsScreenContent(
 	uiState: FlightDetailsUIState,
+	onBackPressed: () -> Unit,
 	modifier: Modifier = Modifier
 ) {
 	if (uiState.flight != null) {
@@ -92,6 +99,7 @@ fun FlightDetailsScreenContent(
 			originAirport = uiState.retrievedOriginAirport,
 			destinationAirport = uiState.retrievedDestinationAirport,
 			flightMapState = uiState.flightMapState,
+			onBackPressed = onBackPressed,
 			modifier = modifier
 		)
 	} else if (uiState.isRetrievingFlight) {
@@ -138,139 +146,165 @@ fun FlightDetails(
 	originAirport: Airport?,
 	destinationAirport: Airport?,
 	flightMapState: FlightMapState?,
+	onBackPressed: () -> Unit,
 	modifier: Modifier = Modifier
 ) {
-	Card(
-		elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
-		modifier = modifier.padding(dimensionResource(R.dimen.padding_smadium))
+	Column(
+		modifier = modifier
+			.fillMaxWidth()
+			.padding(horizontal = dimensionResource(id = R.dimen.padding_smadium)),
+		verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_smadium)),
+		horizontalAlignment = Alignment.CenterHorizontally
 	) {
-		Column (
-			modifier = Modifier.padding(dimensionResource(R.dimen.padding_smadium)),
-			verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_smadium))
-		){
-			Box(
-				contentAlignment = Alignment.Center,
-				modifier = Modifier.height(200.dp)
-			) {
-				if (flightMapState != null) {
-					FlightMap(
-						flightMapState = flightMapState,
-					)
-				} else {
-					Text(
-						text = stringResource(R.string.error_retriving_airport),
-						style = typography.titleLarge
-					)
-				}
-			}
-			Text(
-				text = stringResource(R.string.flight_informations),
-				style = typography.titleMedium
-			)
-			Row (
-				modifier = Modifier.fillMaxWidth()
-					.height(64.dp)
+		Card(
+			elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
+		) {
+			Column (
+				modifier = Modifier.padding(dimensionResource(R.dimen.padding_smadium)),
+				verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_smadium))
 			){
-				LabelledData(
-					horizontalAlignment = Alignment.Start,
-					labelText = originAirport?.municipality ?: stringResource(R.string.error_retriving_airport),
-					dataText = originAirport?.iataCode ?: flight.originAirportCode,
-					dataStyle = typography.displayMedium,
-					modifier = Modifier.weight(1f)
-						.fillMaxHeight())
-				Column (
-					horizontalAlignment = Alignment.CenterHorizontally,
-					modifier = Modifier.weight(1f)
-						.fillMaxHeight()
+				Box(
+					contentAlignment = Alignment.Center,
+					modifier = Modifier.height(200.dp).fillMaxWidth().clip(RoundedCornerShape(8.dp))
+				) {
+					if (flightMapState != null) {
+						FlightMap(
+							flightMapState = flightMapState,
+						)
+					} else {
+						Text(
+							text = stringResource(R.string.error_retriving_airport),
+							style = typography.titleLarge
+						)
+					}
+				}
+				Text(
+					text = stringResource(R.string.flight_informations),
+					style = typography.titleMedium
+				)
+				Row (
+					modifier = Modifier.fillMaxWidth()
+						.height(64.dp)
 				){
-					Text(
-						text = flight.flightNumber,
-						style = typography.labelMedium,
-						maxLines = 1,
+					LabelledData(
+						horizontalAlignment = Alignment.Start,
+						labelText = originAirport?.municipality ?: stringResource(R.string.error_retriving_airport),
+						dataText = originAirport?.iataCode ?: flight.originAirportCode,
+						dataStyle = typography.displayMedium,
 						modifier = Modifier.weight(1f)
-							.padding(2.dp)
+							.fillMaxHeight())
+					Column (
+						horizontalAlignment = Alignment.CenterHorizontally,
+						modifier = Modifier.weight(1f)
+							.fillMaxHeight()
+					){
+						Text(
+							text = flight.flightNumber,
+							style = typography.labelMedium,
+							maxLines = 1,
+							modifier = Modifier.weight(1f)
+								.padding(2.dp)
+						)
+						Image(
+							painter = painterResource(R.drawable.flight_24px),
+							contentDescription = stringResource(R.string.plane_right_icon),
+							alignment = Alignment.Center,
+							contentScale = ContentScale.FillHeight,
+							modifier = Modifier
+								.weight(2f)
+						)
+					}
+					LabelledData(
+						horizontalAlignment = Alignment.End,
+						labelText = destinationAirport?.municipality ?: stringResource(R.string.error_retriving_airport),
+						dataText = destinationAirport?.iataCode ?: flight.destinationAirportCode,
+						dataStyle = typography.displayMedium,
+						modifier = Modifier.weight(1f)
+							.fillMaxHeight())
+				}
+				Row (
+					modifier = Modifier.fillMaxWidth()
+						.height(54.dp)
+				) {
+					LabelledData (
+						horizontalAlignment = Alignment.Start,
+						labelText = stringResource(R.string.flight_airline) + " :",
+						dataText = flight.airline,
+						dataStyle = typography.headlineMedium,
+						dataWeight = FontWeight.SemiBold,
+						dataOverflow = TextOverflow.Ellipsis,
+						modifier = Modifier.weight(4f)
 					)
-					Image(
-						painter = painterResource(R.drawable.flight_24px),
-						contentDescription = stringResource(R.string.plane_right_icon),
-						alignment = Alignment.Center,
-						contentScale = ContentScale.FillHeight,
-						modifier = Modifier
-							.weight(2f)
+					Spacer(modifier.weight(1f))
+					LabelledData (
+						horizontalAlignment = Alignment.End,
+						labelText = stringResource(R.string.plane_model) + " :",
+						dataText = flight.planeModel,
+						dataStyle = typography.headlineMedium,
+						dataWeight = FontWeight.SemiBold,
+						dataOverflow = TextOverflow.Ellipsis,
+						modifier = Modifier.weight(4f)
 					)
 				}
-				LabelledData(
-					horizontalAlignment = Alignment.End,
-					labelText = destinationAirport?.municipality ?: stringResource(R.string.error_retriving_airport),
-					dataText = destinationAirport?.iataCode ?: flight.destinationAirportCode,
-					dataStyle = typography.displayMedium,
-					modifier = Modifier.weight(1f)
-						.fillMaxHeight())
+				Row (
+					modifier = Modifier.fillMaxWidth()
+				) {
+					LabelledData(
+						horizontalAlignment = Alignment.CenterHorizontally,
+						labelText = stringResource(R.string.departure_day),
+						labelStyle = typography.labelSmall,
+						dataText = flight.getDepartureDateString(),
+						dataStyle = typography.bodyMedium,
+						dataWeight = FontWeight.SemiBold,
+						modifier = Modifier.weight(1f)
+					)
+					LabelledData(
+						horizontalAlignment = Alignment.CenterHorizontally,
+						labelText = stringResource(R.string.departure_time),
+						labelStyle = typography.labelSmall,
+						dataText = flight.getDepartureTimeString(),
+						dataStyle = typography.bodyMedium,
+						dataWeight = FontWeight.SemiBold,
+						modifier = Modifier.weight(1f)
+					)
+					LabelledData(
+						horizontalAlignment = Alignment.CenterHorizontally,
+						labelText = stringResource(R.string.distance),
+						labelStyle = typography.labelSmall,
+						dataText = flight.getDistanceString(),
+						dataStyle = typography.bodyMedium,
+						dataWeight = FontWeight.SemiBold,
+						modifier = Modifier.weight(1f)
+					)
+					LabelledData(
+						horizontalAlignment = Alignment.CenterHorizontally,
+						labelText = stringResource(R.string.travel_class),
+						labelStyle = typography.labelSmall,
+						dataText = flight.travelClass.name,
+						dataStyle = typography.bodyMedium,
+						dataWeight = FontWeight.SemiBold,
+						modifier = Modifier.weight(1f)
+					)
+				}
 			}
-			Row (
-				modifier = Modifier.fillMaxWidth()
-					.height(54.dp)
-			) {
-				LabelledData (
-					horizontalAlignment = Alignment.Start,
-					labelText = stringResource(R.string.flight_airline) + " :",
-					dataText = flight.airline,
-					dataStyle = typography.headlineMedium,
-					dataWeight = FontWeight.SemiBold,
-					dataOverflow = TextOverflow.Ellipsis,
-					modifier = Modifier.weight(4f)
-				)
-				Spacer(modifier.weight(1f))
-				LabelledData (
-					horizontalAlignment = Alignment.End,
-					labelText = stringResource(R.string.plane_model) + " :",
-					dataText = flight.planeModel,
-					dataStyle = typography.headlineMedium,
-					dataWeight = FontWeight.SemiBold,
-					dataOverflow = TextOverflow.Ellipsis,
-					modifier = Modifier.weight(4f)
-				)
-			}
-			Row (
-				modifier = Modifier.fillMaxWidth()
-			) {
-				LabelledData(
-					horizontalAlignment = Alignment.CenterHorizontally,
-					labelText = stringResource(R.string.departure_day),
-					labelStyle = typography.labelSmall,
-					dataText = flight.getDepartureDateString(),
-					dataStyle = typography.bodyMedium,
-					dataWeight = FontWeight.SemiBold,
-					modifier = Modifier.weight(1f)
-				)
-				LabelledData(
-					horizontalAlignment = Alignment.CenterHorizontally,
-					labelText = stringResource(R.string.departure_time),
-					labelStyle = typography.labelSmall,
-					dataText = flight.getDepartureTimeString(),
-					dataStyle = typography.bodyMedium,
-					dataWeight = FontWeight.SemiBold,
-					modifier = Modifier.weight(1f)
-				)
-				LabelledData(
-					horizontalAlignment = Alignment.CenterHorizontally,
-					labelText = stringResource(R.string.distance),
-					labelStyle = typography.labelSmall,
-					dataText = flight.getDistanceString(),
-					dataStyle = typography.bodyMedium,
-					dataWeight = FontWeight.SemiBold,
-					modifier = Modifier.weight(1f)
-				)
-				LabelledData(
-					horizontalAlignment = Alignment.CenterHorizontally,
-					labelText = stringResource(R.string.travel_class),
-					labelStyle = typography.labelSmall,
-					dataText = flight.travelClass.name,
-					dataStyle = typography.bodyMedium,
-					dataWeight = FontWeight.SemiBold,
-					modifier = Modifier.weight(1f)
-				)
-			}
+		}
+		Button(
+			onClick = {  },
+			modifier = Modifier.fillMaxWidth()
+		) {
+			Text(
+				text = stringResource(R.string.share_flight),
+				fontSize = 16.sp
+			)
+		}
+		OutlinedButton(
+			onClick = onBackPressed,
+			modifier = Modifier.fillMaxWidth()
+		) {
+			Text(
+				text = stringResource(R.string.back),
+				fontSize = 16.sp
+			)
 		}
 	}
 }
@@ -312,7 +346,8 @@ fun FlightDetailsPreview() {
 		flight = Flight.getPlaceholderFlight(),
 		originAirport = Airport.getCDG(),
 		destinationAirport = Airport.getHEL(),
-		flightMapState = null
+		flightMapState = null,
+		onBackPressed = {}
 	)
 
 }
