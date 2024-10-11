@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Planou</string>
+    <string name="flight_list">Flight List</string>
+    <string name="add_flight">Add Flight</string>
+    <string name="flight_details">Flight Details</string>
+
+    <string name="list_item_map_image">Map Image</string>
+    <string name="list_empty_sad_plane">Sad plane image</string>
+
+    <string name="flight_informations">Flight informations :</string>
+    <string name="flight_number">Flight number</string>
+    <string name="travel_class">Travel class</string>
+
+    <string name="back">Back</string>
+    <string name="date">Date</string>
+    <string name="save_flight">Save Flight</string>
+    <string name="flight_list_empty">No flight added yet. Add one !</string>
+    <string name="flight_origin">Origin</string>
+    <string name="flight_destination">Destination</string>
+    <string name="flight_airline">Airline</string>
+    <string name="plane_right_icon">Plane heading right icon</string>
+    <string name="error_retriving_flight">Couldn\'t retrieve flight data</string>
+    <string name="error_retriving_airport">Couldn\'t retrieve airport</string>
+    <string name="plane_model">Plane model</string>
+    <string name="departure_day">Departure day</string>
+    <string name="departure_time">Departure time</string>
+    <string name="distance">Distance</string>
+    <string name="loading_flight_data">Loading flight data</string>
+</resources>
