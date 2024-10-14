@@ -1,28 +1,16 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.cayot.planou.ui.flightAdd
 
-import androidx.compose.material3.DatePickerState
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SelectableDates
-import com.cayot.planou.data.flight.Flight
 import com.cayot.planou.data.TravelClass
 import com.cayot.planou.data.airport.Airport
 import com.cayot.planou.data.airport.distanceToAirport
-import java.time.LocalDate
-import java.util.Date
-import java.util.Locale
+import com.cayot.planou.data.flight.Flight
+import java.time.Instant
 
 data class FlightAddUIState(
 	val flightForm: FlightForm = FlightForm(),
 	val formEnabled: Boolean = true,
 	val	isEntryValid: Boolean = false,
-	val travelClassDropdownExpanded: Boolean = false,
-	val departureDayModalVisible: Boolean = false,
-	val	departureDayPickerState: DatePickerState =
-		DatePickerState(locale = Locale.getDefault(),
-			selectableDates = SelectableDatesRange,
-			initialSelectedDateMillis = Date().time)
+	val formElementVisibility: FormElementVisibility = FormElementVisibility()
 	)
 
 data class FlightForm (
@@ -30,9 +18,19 @@ data class FlightForm (
 	val destinationAirportString: String = "",
 	val airline: String = "",
 	val	flightNumber: String = "",
+	val planeModel: String = "",
 	val travelClass: TravelClass = TravelClass.ECONOMY,
-	val departureDay: Date = Date(),
+	val departureTime: Instant = Instant.now(),
+	val arrivalTime: Instant = Instant.now()
 	)
+
+data class FormElementVisibility(
+	val travelClassDropdownExpanded: Boolean = false,
+	val departureDayModalVisible: Boolean = false,
+	val departureTimeModalVisible: Boolean = false,
+	val arrivalDayModalVisible: Boolean = false,
+	val arrivalTimeModalVisible: Boolean = false
+)
 
 fun FlightForm.isFlightNumberValid() : Boolean {
 	if (flightNumber.length < 3 || flightNumber.length > 6)
@@ -52,33 +50,25 @@ fun FlightForm.isAirlineValid() : Boolean {
 	return (airline.isNotBlank())
 }
 
-fun FlightForm.isDepartureDayValid() : Boolean {
-	if (departureDay.after(Date()))
-		return (false)
-	return (true)
+fun FlightForm.isPlaneModelValid() : Boolean {
+	return (planeModel.isNotBlank())
+}
+
+fun FlightForm.areDateValid() : Boolean {
+	return (departureTime.isBefore(arrivalTime) && departureTime.isBefore(Instant.now()))
 }
 
 fun FlightForm.toFlight(originAirport: Airport, destinationAirport: Airport) : Flight {
 	return (Flight(
 		flightNumber = flightNumber,
 		airline = airline,
-		departureTime = departureDay.time,
+		departureTime = departureTime.toEpochMilli(),
 		travelClass = travelClass,
 		originAirportCode = originAirport.iataCode,
 		originAirportId = originAirport.id,
 		destinationAirportCode = destinationAirport.iataCode,
 		destinationAirportId = destinationAirport.id,
 		distance = originAirport.distanceToAirport(destinationAirport),
-		planeModel = "Airbus A220"
+		planeModel = planeModel
 	))
-}
-
-object SelectableDatesRange: SelectableDates {
-	override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-		return (utcTimeMillis <= System.currentTimeMillis())
-	}
-
-	override fun isSelectableYear(year: Int): Boolean {
-		return (year <= LocalDate.now().year)
-	}
 }

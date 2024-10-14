@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,26 +20,21 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Badge
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -85,13 +79,13 @@ fun FlightListScreen(
 							contentDescription = Icons.Filled.Add.name
 						)
 					}
-				}
+				},
+				scrollBehavior = scrollBehavior
 			)
 		}
 	) { innerPadding ->
 		FlightListScreenContent(
-			flightItemList = uiState.flightItemList,
-			listState = uiState.listState,
+			uiState = uiState,
 			onFlightPressed = onFlightPressed,
 			onItemVisible = viewModel::updateFlightMap,
 			modifier = modifier.fillMaxSize(),
@@ -102,14 +96,13 @@ fun FlightListScreen(
 
 @Composable
 fun FlightListScreenContent(
-	flightItemList: List<FlightItem>,
-	listState: LazyListState?,
+	uiState: FlightListUIState,
 	onFlightPressed: (Int) -> Unit,
-	onItemVisible: (FlightItem) -> Unit,
+	onItemVisible: (Flight) -> Unit,
 	modifier: Modifier = Modifier,
 	contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
-	if (flightItemList.isEmpty() || listState == null) {
+	if (uiState.flightList.isEmpty()) {
 		EmptyFlightListPlaceholder(
 			modifier = Modifier
 				.padding(contentPadding)
@@ -117,8 +110,8 @@ fun FlightListScreenContent(
 		)
 	} else {
 		FlightListList(
-			flightItemList = flightItemList,
-			listState = listState,
+			flightList = uiState.flightList,
+			flightMapStateMap = uiState.flightMapStateMap,
 			onFlightPressed = onFlightPressed,
 			onItemVisible = onItemVisible,
 			modifier = modifier,
@@ -153,23 +146,23 @@ fun EmptyFlightListPlaceholder(
 
 @Composable
 fun FlightListList(
-	flightItemList: List<FlightItem>,
-	listState: LazyListState,
+	flightList: List<Flight>,
+	flightMapStateMap: Map<Int, FlightMapState?>,
 	onFlightPressed: (Int) -> Unit,
-	onItemVisible: (FlightItem) -> Unit,
+	onItemVisible: (Flight) -> Unit,
 	modifier: Modifier = Modifier,
 	contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
 	LazyColumn (
-		state = listState,
 		contentPadding = contentPadding,
 		verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_smadium)),
 		modifier = modifier.padding(dimensionResource(id = R.dimen.padding_smadium)),
 	) {
-		items(flightItemList) { flightItem: FlightItem ->
-			onItemVisible(flightItem)
+		items(flightList) { flight: Flight ->
+			onItemVisible(flight)
 			FlightListItem(
-				flightItem = flightItem,
+				flight = flight,
+				flightMapState = flightMapStateMap[flight.id],
 				onFlightPressed = onFlightPressed
 			)
 		}
@@ -178,13 +171,14 @@ fun FlightListList(
 
 @Composable
 fun FlightListItem(
-	flightItem : FlightItem,
+	flight : Flight,
+	flightMapState: FlightMapState?,
 	onFlightPressed: (Int) -> Unit,
 	modifier: Modifier = Modifier
 ) {
 	Card(elevation = CardDefaults.cardElevation(),
 		shape = RoundedCornerShape(dimensionResource(R.dimen.card_corner_radius)),
-		onClick = { onFlightPressed(flightItem.flight.id) },
+		onClick = { onFlightPressed(flight.id) },
 		modifier = modifier
 	) {
 		Row (modifier = Modifier
@@ -193,8 +187,7 @@ fun FlightListItem(
 			.padding(dimensionResource(R.dimen.padding_small))
 		) {
 			FlightItemMap(
-				flightMapState = flightItem.flightMapState,
-				mapLoaded = flightItem.mapLoaded,
+				flightMapState = flightMapState,
 				modifier = Modifier.size(dimensionResource(R.dimen.flight_item_height))
 			)
 			Column (
@@ -207,19 +200,19 @@ fun FlightListItem(
 					Badge(containerColor = colorResource(R.color.flight_distance_green),
 						contentColor = Color.White) {
 						Text(
-							text = "+ " + flightItem.flight.getDistanceString(),
-							style = MaterialTheme.typography.titleMedium,
+							text = "+ " + flight.getDistanceString(),
+							style = MaterialTheme.typography.titleSmall,
 						)
 					}
 					Spacer(
 						Modifier.weight(1f)
 					)
 					Text(
-						text = flightItem.flight.getDepartureDateString()
+						text = flight.getDepartureDateString()
 					)
 				}
 				Text(
-					text = flightItem.flight.originAirportCode + " - " + flightItem.flight.destinationAirportCode,
+					text = flight.originAirportCode + " - " + flight.destinationAirportCode,
 					style = MaterialTheme.typography.titleLarge,
 				)
 				Spacer(
@@ -227,14 +220,14 @@ fun FlightListItem(
 				)
 				Row {
 					Text(
-						text = flightItem.flight.airline,
+						text = flight.airline,
 						style = MaterialTheme.typography.labelLarge
 					)
 					Spacer(
 						Modifier.weight(1f)
 					)
 					Text(
-						text = flightItem.flight.flightNumber,
+						text = flight.flightNumber,
 						style = MaterialTheme.typography.labelLarge
 					)
 				}
@@ -246,25 +239,17 @@ fun FlightListItem(
 @Composable
 fun FlightItemMap(
 	flightMapState: FlightMapState?,
-	mapLoaded: Boolean,
 	modifier: Modifier = Modifier
 ) {
 	Box(
 		contentAlignment = Alignment.Center,
-		modifier = modifier.fillMaxSize()
+		modifier = modifier
+			.fillMaxSize()
 			.clip(RoundedCornerShape(8.dp))
 	) {
 		if (flightMapState != null) {
 			FlightMap(
 				flightMapState = flightMapState,
-			)
-		} else if (!mapLoaded) {
-			CircularProgressIndicator(
-				modifier = Modifier.size(40.dp)
-			)
-		} else {
-			Text(
-				text = stringResource(R.string.error_retriving_airport)
 			)
 		}
 	}
@@ -273,14 +258,14 @@ fun FlightItemMap(
 @Preview (showBackground = true)
 @Composable
 fun	FlightListScreenContentPreview() {
-	FlightListScreenContent(
-		flightItemList = listOf(
-			FlightItem(Flight.getPlaceholderFlight())
-		),
-		listState = rememberLazyListState(),
-		onFlightPressed = {},
-		onItemVisible = {}
-	)
+	FlightListList(
+        flightList = listOf(
+            Flight.getPlaceholderFlight()
+        ),
+        onFlightPressed = {},
+        flightMapStateMap = emptyMap(),
+        onItemVisible = {},
+    )
 }
 
 @Preview (showBackground = true)
@@ -293,7 +278,8 @@ fun EmptyFlightListPreview() {
 @Composable
 fun FlightListItemPreview() {
 	FlightListItem(
-		flightItem = FlightItem(Flight.getPlaceholderFlight()),
+		flight = Flight.getPlaceholderFlight(),
+		flightMapState = null,
 		onFlightPressed = {},
 	)
 }

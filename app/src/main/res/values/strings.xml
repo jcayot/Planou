@@ -27,4 +27,6 @@
     <string name="distance">Distance</string>
     <string name="loading_flight_data">Loading flight data</string>
     <string name="share_flight">Share flight</string>
+    <string name="arrival_day">Arrival day</string>
+    <string name="arrival_time">Arrival time</string>
 </resources>

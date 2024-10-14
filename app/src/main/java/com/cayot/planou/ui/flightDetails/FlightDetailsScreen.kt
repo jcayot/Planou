@@ -46,6 +46,7 @@ import com.cayot.planou.R
 import com.cayot.planou.data.FlightMapState
 import com.cayot.planou.data.airport.Airport
 import com.cayot.planou.data.flight.Flight
+import com.cayot.planou.data.flight.getArrivalTimeString
 import com.cayot.planou.data.flight.getDepartureDateString
 import com.cayot.planou.data.flight.getDepartureTimeString
 import com.cayot.planou.data.flight.getDistanceString
@@ -178,10 +179,23 @@ fun FlightDetails(
 						)
 					}
 				}
-				Text(
-					text = stringResource(R.string.flight_informations),
-					style = typography.titleMedium
-				)
+				Row (
+					modifier = Modifier.fillMaxWidth()
+				){
+					Text(
+						text = stringResource(R.string.flight_informations),
+						style = typography.titleMedium
+					)
+					Spacer(modifier = modifier.weight(1f))
+					LabelledData(
+						horizontalAlignment = Alignment.CenterHorizontally,
+						labelText = stringResource(R.string.date),
+						labelStyle = typography.labelSmall,
+						dataText = flight.getDepartureDateString(),
+						dataStyle = typography.bodyMedium,
+						dataWeight = FontWeight.SemiBold,
+					)
+				}
 				Row (
 					modifier = Modifier.fillMaxWidth()
 						.height(64.dp)
@@ -251,18 +265,18 @@ fun FlightDetails(
 				) {
 					LabelledData(
 						horizontalAlignment = Alignment.CenterHorizontally,
-						labelText = stringResource(R.string.departure_day),
+						labelText = stringResource(R.string.departure_time),
 						labelStyle = typography.labelSmall,
-						dataText = flight.getDepartureDateString(),
+						dataText = flight.getDepartureTimeString(),
 						dataStyle = typography.bodyMedium,
 						dataWeight = FontWeight.SemiBold,
 						modifier = Modifier.weight(1f)
 					)
 					LabelledData(
 						horizontalAlignment = Alignment.CenterHorizontally,
-						labelText = stringResource(R.string.departure_time),
+						labelText = stringResource(R.string.arrival_time),
 						labelStyle = typography.labelSmall,
-						dataText = flight.getDepartureTimeString(),
+						dataText = flight.getArrivalTimeString(),
 						dataStyle = typography.bodyMedium,
 						dataWeight = FontWeight.SemiBold,
 						modifier = Modifier.weight(1f)
