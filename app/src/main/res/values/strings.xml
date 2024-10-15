@@ -29,4 +29,6 @@
     <string name="share_flight">Share flight</string>
     <string name="arrival_day">Arrival day</string>
     <string name="arrival_time">Arrival time</string>
+    <string name="seat">Seat</string>
+    <string name="notes">Notes</string>
 </resources>

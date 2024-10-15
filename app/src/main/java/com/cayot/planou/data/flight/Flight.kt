@@ -22,7 +22,7 @@ data class Flight(
 	val	destinationAirportId: Int,
 	val distance: Float,
 	val departureTime: Long,
-	val	arrivalTime: Long,
+	val	arrivalTime: Long? = null,
 	val travelClass: TravelClass,
 	val planeModel: String
 ) {
@@ -58,6 +58,8 @@ fun Flight.getDepartureTimeString() : String {
 }
 
 fun Flight.getArrivalTimeString() : String {
+	if (arrivalTime == null)
+		return ("-")
 	val dayDifference = ChronoUnit.DAYS.between(Instant.ofEpochMilli(departureTime), Instant.ofEpochMilli(arrivalTime))
 	val dayDiffSuffix = if (dayDifference < 1)
 		""

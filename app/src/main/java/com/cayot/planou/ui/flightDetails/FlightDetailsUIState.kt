@@ -9,5 +9,6 @@ data class FlightDetailsUIState(
 	val retrievedOriginAirport: Airport? = null,
 	val retrievedDestinationAirport: Airport? = null,
 	val flightMapState: FlightMapState? = null,
-	val isRetrievingFlight: Boolean = true
+	val isRetrievingFlight: Boolean = true,
+	val notesVisible: Boolean = false
 )

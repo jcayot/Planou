@@ -9,6 +9,7 @@ import com.cayot.planou.data.flight.OfflineFlightsRepository
 interface AppContainer {
 	val flightsRepository: FlightsRepository
 	val airportsRepository: AirportsRepository
+	val imageRepository: ImageRepository
 }
 
 class AppDataContainer(private val context: Context) : AppContainer {
@@ -17,5 +18,8 @@ class AppDataContainer(private val context: Context) : AppContainer {
 	}
 	override val airportsRepository: AirportsRepository by lazy {
 		OfflineAirportsRepository(PlanouDatabase.getDatabase(context).airportDao())
+	}
+	override val imageRepository: ImageRepository by lazy {
+		ImageRepository(context)
 	}
 }
