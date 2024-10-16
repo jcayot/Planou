@@ -30,6 +30,7 @@ object AppViewModelProvider {
 				savedStateHandle = this.createSavedStateHandle(),
 				flightsRepository = planouApplication().container.flightsRepository,
 				airportsRepository = planouApplication().container.airportsRepository,
+				flightNotesRepository = planouApplication().container.flightNotesRepository,
 				imageRepository = planouApplication().container.imageRepository
 			)
 		}

@@ -11,7 +11,10 @@ import com.cayot.planou.data.airport.Airport
 import com.cayot.planou.data.airport.AirportsRepository
 import com.cayot.planou.data.flight.Flight
 import com.cayot.planou.data.flight.FlightsRepository
+import com.cayot.planou.data.flightNotes.FlightNotes
+import com.cayot.planou.data.flightNotes.FlightNotesRepository
 import com.cayot.planou.ui.navigation.PlanouScreen
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -22,6 +25,7 @@ import kotlinx.coroutines.launch
 class FlightDetailsViewModel(
 	private val flightsRepository: FlightsRepository,
 	private val airportsRepository: AirportsRepository,
+	private val flightNotesRepository: FlightNotesRepository,
 	private val imageRepository: ImageRepository,
 	savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -34,11 +38,14 @@ class FlightDetailsViewModel(
 	private val _shareCard = MutableSharedFlow<Uri>()
 	val shareCard: SharedFlow<Uri> = _shareCard
 
+	private lateinit var flightNotesAccessJob: Job
+
 	init {
 		viewModelScope.launch {
 			val flight : Flight? = flightsRepository.getFlightStream(flightId)
 
 			if (flight != null) {
+				flightNotesAccessJob = getNotes(flightId)
 				val originAirport = airportsRepository.getAirportByIataCode(flight.originAirportCode)
 				val destinationAirport = airportsRepository.getAirportByIataCode(flight.destinationAirportCode)
 
@@ -53,9 +60,57 @@ class FlightDetailsViewModel(
 		}
 	}
 
+	fun updateTopBarDropdownVisibility() {
+		_uiState.update {
+			it.copy(topBarDropdownExpanded = !_uiState.value.topBarDropdownExpanded)
+		}
+	}
+
 	fun updateNotesVisibility() {
 		_uiState.update {
 			it.copy(notesVisible = !_uiState.value.notesVisible)
+		}
+	}
+
+	fun onFlightNotesChange(flightNotes: FlightNotes) {
+		_uiState.update {
+			it.copy(flightNotes = flightNotes)
+		}
+	}
+
+	fun editNotes() {
+		if (!flightNotesAccessJob.isActive) {
+			if (_uiState.value.flightNotes == null)
+				flightNotesAccessJob = createFlightNotes()
+			else
+				_uiState.update { it.copy(notesEdition = true) }
+		}
+	}
+
+	fun discardFlightNotesChanges() {
+		if (!flightNotesAccessJob.isActive) {
+			flightNotesAccessJob = getNotes(flightId)
+			_uiState.update {
+				it.copy(notesEdition = false)
+			}
+		}
+	}
+
+	fun saveFlightNotes() {
+		if (!flightNotesAccessJob.isActive) {
+			flightNotesAccessJob = updateFlightNotes(_uiState.value.flightNotes!!)
+			_uiState.update {
+				it.copy(notesEdition = false)
+			}
+		}
+	}
+
+	fun deleteFlightNotes() {
+		if (!flightNotesAccessJob.isActive) {
+			flightNotesAccessJob = deleteFlightNotes(_uiState.value.flightNotes!!)
+			_uiState.update {
+				it.copy(flightNotes = null)
+			}
 		}
 	}
 
@@ -83,6 +138,30 @@ class FlightDetailsViewModel(
 				retrievedDestinationAirport = destinationAirport,
 				flightMapState = flightMapState,
 				isRetrievingFlight = false)
+		}
+	}
+
+	private fun createFlightNotes()  = viewModelScope.launch {
+		val newFlightNotes = FlightNotes(flightId, "")
+		flightNotesRepository.insertFlightNotes(newFlightNotes)
+		_uiState.update {
+			it.copy(flightNotes = newFlightNotes,
+				notesEdition = true)
+		}
+	}
+
+	private fun updateFlightNotes(flightNotes: FlightNotes) = viewModelScope.launch {
+		flightNotesRepository.updateFlightNotes(flightNotes)
+	}
+
+	private fun deleteFlightNotes(flightNotes: FlightNotes) = viewModelScope.launch {
+		flightNotesRepository.removeFlightNotes(flightNotes)
+	}
+
+	private fun getNotes(flightId: Int) = viewModelScope.launch {
+		val flightNotes = flightNotesRepository.getFromFlight(flightId)
+		_uiState.update {
+			it.copy(flightNotes = flightNotes)
 		}
 	}
 }

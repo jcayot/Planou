@@ -8,12 +8,15 @@ import com.cayot.planou.data.airport.Airport
 import com.cayot.planou.data.airport.AirportDao
 import com.cayot.planou.data.flight.Flight
 import com.cayot.planou.data.flight.FlightDao
+import com.cayot.planou.data.flightNotes.FlightNotes
+import com.cayot.planou.data.flightNotes.FlightNotesDao
 
-@Database(entities = [Flight::class, Airport::class], version = 1, exportSchema = false)
+@Database(entities = [Flight::class, Airport::class, FlightNotes::class], version = 1, exportSchema = false)
 abstract class PlanouDatabase : RoomDatabase() {
 
 	abstract fun flightDao() : FlightDao
 	abstract fun airportDao() : AirportDao
+	abstract fun flightNotesDao() : FlightNotesDao
 
 	companion object {
 		@Volatile

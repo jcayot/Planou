@@ -31,4 +31,10 @@
     <string name="arrival_time">Arrival time</string>
     <string name="seat">Seat</string>
     <string name="notes">Notes</string>
+    <string name="edit_notes">Edit notes</string>
+    <string name="create_notes">Create notes</string>
+    <string name="delete_notes">Delete notes</string>
+    <string name="save_notes">Save notes</string>
+    <string name="edit_flight">Edit flight</string>
+    <string name="delete_flight">Delete flight</string>
 </resources>

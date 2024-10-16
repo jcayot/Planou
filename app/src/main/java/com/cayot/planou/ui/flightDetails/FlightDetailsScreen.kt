@@ -23,17 +23,22 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardElevation
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -63,13 +68,13 @@ import com.cayot.planou.data.flight.getArrivalTimeString
 import com.cayot.planou.data.flight.getDepartureDateString
 import com.cayot.planou.data.flight.getDepartureTimeString
 import com.cayot.planou.data.flight.getDistanceString
+import com.cayot.planou.data.flightNotes.FlightNotes
 import com.cayot.planou.ui.AppViewModelProvider
 import com.cayot.planou.ui.PlanouTopBar
 import com.cayot.planou.ui.composable.FlightMap
 import com.cayot.planou.ui.composable.LabelledData
 import com.cayot.planou.ui.composable.composableBitmap
 import com.cayot.planou.ui.navigation.PlanouScreen
-import kotlin.reflect.KFunction1
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -95,15 +100,66 @@ fun FlightDetailsScreen(
 			PlanouTopBar(
 				title = stringResource(PlanouScreen.Details.title),
 				canNavigateBack = true,
-				navigateUp = onNavigateUp
+				navigateUp = onNavigateUp,
+				actions = {
+					if (uiState.flight != null) {
+						Box {
+							IconButton(onClick = viewModel::updateTopBarDropdownVisibility) {
+								Icon(Icons.Default.MoreVert, contentDescription = "Options")
+							}
+
+							DropdownMenu(
+								expanded = uiState.topBarDropdownExpanded,
+								onDismissRequest = viewModel::updateTopBarDropdownVisibility
+							) {
+								DropdownMenuItem(
+									onClick = { },
+									text = {
+										Text(
+											text = stringResource(R.string.edit_flight),
+											style = typography.titleMedium
+										)
+									}
+								)
+								DropdownMenuItem(
+									onClick = { },
+									text = {
+										Text(
+											text = stringResource(R.string.delete_flight),
+											style = typography.titleMedium
+
+										)
+									}
+								)
+								if (uiState.flightNotes != null) {
+									DropdownMenuItem(
+										onClick = viewModel::deleteFlightNotes,
+										text = {
+											Text(
+												text = stringResource(R.string.delete_notes),
+												style = typography.titleMedium
+											)
+										}
+									)
+								}
+							}
+						}
+					}
+				}
 			)
 		}
 	) { innerPadding ->
 		FlightDetailsScreenContent(
 			uiState = uiState,
 			onBackPressed = navigateBack,
-			updateNotesVisibility = viewModel::updateNotesVisibility,
 			onSharePressed = viewModel::shareFlightCard,
+			updateNotesVisibility = viewModel::updateNotesVisibility,
+			onFlightNotesChange = {
+				viewModel.onFlightNotesChange(uiState.flightNotes!!.copy(text = it))
+			},
+			editNotes = viewModel::editNotes,
+			discardNotesChanges = viewModel::discardFlightNotesChanges,
+			saveNotes = viewModel::saveFlightNotes,
 			modifier = modifier
 				.padding(
 					start = innerPadding.calculateStartPadding(LocalLayoutDirection.current),
@@ -118,21 +174,25 @@ fun FlightDetailsScreen(
 @Composable
 fun FlightDetailsScreenContent(
 	uiState: FlightDetailsUIState,
-	updateNotesVisibility: () -> Unit,
 	onBackPressed: () -> Unit,
 	onSharePressed: (Bitmap) -> Unit,
+	updateNotesVisibility: () -> Unit,
+	onFlightNotesChange: (String) -> Unit,
+	editNotes: () -> Unit,
+	discardNotesChanges: () -> Unit,
+	saveNotes: () -> Unit,
 	modifier: Modifier = Modifier
 ) {
 	if (uiState.flight != null) {
 		FlightDetails(
-			flight = uiState.flight,
-			originAirport = uiState.retrievedOriginAirport,
-			destinationAirport = uiState.retrievedDestinationAirport,
-			flightMapState = uiState.flightMapState,
-			notesVisible = uiState.notesVisible,
+			uiState = uiState,
 			onBackPressed = onBackPressed,
 			onSharePressed = onSharePressed,
 			updateNotesVisibility = updateNotesVisibility,
+			onFlightNotesChange = onFlightNotesChange,
+			editNotes = editNotes,
+			discardNotesChanges = discardNotesChanges,
+			saveNotes = saveNotes,
 			modifier = modifier
 		)
 	} else if (uiState.isRetrievingFlight) {
@@ -175,14 +235,14 @@ fun FlightDetailsScreenContent(
 
 @Composable
 fun FlightDetails(
-	flight: Flight,
-	originAirport: Airport?,
-	destinationAirport: Airport?,
-	flightMapState: FlightMapState?,
-	notesVisible: Boolean,
-	updateNotesVisibility: () -> Unit,
-	onBackPressed: () -> Unit,
-	onSharePressed: (Bitmap) -> Unit,
+	uiState: FlightDetailsUIState,
+	onBackPressed: () -> Unit = {},
+	onSharePressed: (Bitmap) -> Unit = {},
+	updateNotesVisibility: () -> Unit = {},
+	onFlightNotesChange: (String) -> Unit = {},
+	editNotes: () -> Unit = {},
+	discardNotesChanges: () -> Unit = {},
+	saveNotes: () -> Unit = {},
 	modifier: Modifier = Modifier
 ) {
 	Column(
@@ -193,36 +253,28 @@ fun FlightDetails(
 		horizontalAlignment = Alignment.CenterHorizontally
 	) {
 		val flightCard = composableBitmap { FlightCard(
-			flight = flight,
-			originAirport = originAirport,
-			destinationAirport = destinationAirport,
-			flightMapState = flightMapState,
+			flight = uiState.flight!!,
+			originAirport = uiState.retrievedOriginAirport,
+			destinationAirport = uiState.retrievedDestinationAirport,
+			flightMapState = uiState.flightMapState,
 		) }
-		FlightNotes(
-			notesVisible = notesVisible,
+		FlightNotesComposable(
+			flightNotes = uiState.flightNotes,
+			notesVisible = uiState.notesVisible,
+			notesEdition = uiState.notesEdition,
 			updateNotesVisibility = updateNotesVisibility,
+			onFlightNotesChange = onFlightNotesChange,
+			discardNotesChanges = discardNotesChanges,
+			editNotes = editNotes,
+			saveNotes = saveNotes,
 			modifier = Modifier.fillMaxWidth()
 		)
-		Button(
-			onClick = {
-				onSharePressed(flightCard.invoke())
-			},
+		ActionButtons(
+			flightCard = flightCard,
+			onSharePressed = onSharePressed,
+			onBackPressed = onBackPressed,
 			modifier = Modifier.fillMaxWidth()
-		) {
-			Text(
-				text = stringResource(R.string.share_flight),
-				fontSize = 16.sp
-			)
-		}
-		OutlinedButton(
-			onClick = onBackPressed,
-			modifier = Modifier.fillMaxWidth()
-		) {
-			Text(
-				text = stringResource(R.string.back),
-				fontSize = 16.sp
-			)
-		}
+		)
 	}
 }
 
@@ -381,9 +433,15 @@ fun FlightCard(
 }
 
 @Composable
-fun FlightNotes(
+fun FlightNotesComposable(
+	flightNotes: FlightNotes?,
 	notesVisible: Boolean,
-	updateNotesVisibility: () -> Unit,
+	notesEdition: Boolean,
+	updateNotesVisibility: () -> Unit = {},
+	onFlightNotesChange: (String) -> Unit = {},
+	editNotes: () -> Unit = {},
+	discardNotesChanges: () -> Unit = {},
+	saveNotes: () -> Unit = {},
 	modifier: Modifier = Modifier
 ) {
 	Row (
@@ -409,10 +467,105 @@ fun FlightNotes(
 		)
 	}
 	AnimatedVisibility(notesVisible) {
-		Text(
-			text = "Notes",
-			modifier = modifier.fillMaxWidth()
-		)
+		Card(
+			modifier = modifier
+		) {
+			Column (
+				horizontalAlignment = Alignment.CenterHorizontally,
+				verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_smadium)),
+				modifier = Modifier.fillMaxWidth()
+					.padding(dimensionResource(R.dimen.padding_small))
+			) {
+				if (!notesEdition) {
+					if (flightNotes != null) {
+						Text(
+							text = flightNotes.text,
+							modifier = Modifier.fillMaxWidth()
+						)
+					}
+					Button (
+						onClick = editNotes
+					) {
+						Text(
+							text =  if (flightNotes != null)
+								stringResource(R.string.edit_notes)
+							else
+								stringResource(R.string.create_notes),
+							fontSize = 14.sp
+						)
+					}
+				} else {
+					if (flightNotes != null) {
+						TextField(
+							value = flightNotes.text,
+							onValueChange = onFlightNotesChange,
+							modifier = Modifier.fillMaxWidth()
+						)
+						Row (
+							horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
+							modifier = modifier.padding(horizontal = dimensionResource(R.dimen.padding_medium))
+						){
+							OutlinedButton(
+								onClick = discardNotesChanges,
+								modifier = Modifier.weight(1f)
+							) {
+								Text(
+									text = stringResource(R.string.back),
+									fontSize = 14.sp
+								)
+							}
+							Button(
+								onClick = saveNotes,
+								modifier = Modifier.weight(1f)
+							) {
+								Text(
+									text = stringResource(R.string.save_notes),
+									fontSize = 14.sp
+								)
+							}
+						}
+					} else
+						CircularProgressIndicator(
+							modifier = Modifier.size(30.dp)
+						)
+				}
+			}
+		}
+
+	}
+}
+
+@Composable
+fun ActionButtons(
+	flightCard: () -> Bitmap,
+	onBackPressed: () -> Unit,
+	onSharePressed: (Bitmap) -> Unit,
+	modifier: Modifier = Modifier
+) {
+	Row (
+		horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small)),
+		modifier = modifier
+	){
+		OutlinedButton(
+			onClick = onBackPressed,
+			modifier = Modifier.weight(1f)
+		) {
+			Text(
+				text = stringResource(R.string.back),
+				fontSize = 16.sp
+			)
+		}
+		Button(
+			onClick = {
+				onSharePressed(flightCard.invoke())
+			},
+			modifier = Modifier.weight(1f)
+		) {
+			Text(
+				text = stringResource(R.string.share_flight),
+				fontSize = 16.sp
+			)
+		}
 	}
 }
 
@@ -422,20 +575,40 @@ private fun shareFlight(context: Context, flightCardUri: Uri, departureCode: Str
 		putExtra(Intent.EXTRA_STREAM, flightCardUri)
 		type = "image/png"
 	}
-	context.startActivity(intent)
+	context.startActivity(
+		Intent.createChooser(
+			intent,
+			context.getString(R.string.share_flight)
+		)
+	)
 }
 
 @Preview
 @Composable
 fun FlightDetailsPreview() {
 	FlightDetails(
-		flight = Flight.getPlaceholderFlight(),
-		originAirport = Airport.getCDG(),
-		destinationAirport = Airport.getHEL(),
-		flightMapState = null,
-		onBackPressed = {},
-		updateNotesVisibility = {},
-		onSharePressed = {},
-		notesVisible = false
+		uiState = FlightDetailsUIState(
+			flight = Flight.getPlaceholderFlight1()
+		)
+	)
+}
+
+@Preview
+@Composable
+fun FlightNotesReadPreview() {
+	FlightNotesComposable(
+		flightNotes = FlightNotes(0, "My flight from Amsterdam to Malaga was a seamless journey that took just over three hours. The plane departed Schiphol Airport on time and landed smoothly at Malaga Airport under the warm Spanish sun. Throughout the flight, the cabin crew was attentive and friendly, ensuring a comfortable experience. The view from above as we approached the Mediterranean coast was breathtaking, with the clear blue sea and sprawling beaches serving as a perfect welcome to Malaga."),
+		notesVisible = true,
+		notesEdition = false
+	)
+}
+
+@Preview
+@Composable
+fun FlightNotesEditPreview() {
+	FlightNotesComposable(
+		flightNotes = FlightNotes(0, "My flight from Amsterdam to Malaga was a seamless journey that took just over three hours. The plane departed Schiphol Airport on time and landed smoothly at Malaga Airport under the warm Spanish sun. Throughout the flight, the cabin crew was attentive and friendly, ensuring a comfortable experience. The view from above as we approached the Mediterranean coast was breathtaking, with the clear blue sea and sprawling beaches serving as a perfect welcome to Malaga."),
+		notesVisible = true,
+		notesEdition = true
 	)
 }

@@ -22,7 +22,7 @@ class FlightListViewModel(
 		viewModelScope.launch {
 			flightsRepository.getAllFlightsStream().collect { flights ->
 				_uiState.update {
-					it.copy(flightList = flights)
+					it.copy(flightList = makeFlightItemsList(flights))
 				}
 			}
 		}

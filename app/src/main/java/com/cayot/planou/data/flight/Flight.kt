@@ -27,7 +27,7 @@ data class Flight(
 	val planeModel: String
 ) {
 	companion object {
-		fun getPlaceholderFlight() : Flight {
+		fun getPlaceholderFlight1() : Flight {
 			return (Flight(
 				flightNumber = "AF1176",
 				airline = "Air France",
@@ -39,6 +39,20 @@ data class Flight(
 				departureTime = Date.from(Instant.now()).time,
 				arrivalTime = Date.from(Instant.now()).time,
 				travelClass = TravelClass.BUSINESS,
+				planeModel = "Airbus A220"
+			))
+		}
+		fun getPlaceholderFlight2() : Flight {
+			return (Flight(
+				flightNumber = "AF1176",
+				airline = "Air France",
+				originAirportCode = "CDG",
+				originAirportId = 0,
+				destinationAirportCode = "HEL",
+				destinationAirportId = 0,
+				distance = 1910000.0f,
+				departureTime = Date.from(Instant.now()).time,
+				travelClass = TravelClass.ECONOMY,
 				planeModel = "Airbus A220"
 			))
 		}
