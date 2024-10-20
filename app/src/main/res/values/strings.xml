@@ -35,4 +35,6 @@
     <string name="save_notes">Save notes</string>
     <string name="edit_flight">Edit flight</string>
     <string name="delete_flight">Delete flight</string>
+    <string name="type_airport_code">Type airport code</string>
+    <string name="no_airport_matching">No known airport matching</string>
 </resources>

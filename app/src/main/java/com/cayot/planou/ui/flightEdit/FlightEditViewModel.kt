@@ -79,6 +79,7 @@ class FlightEditViewModel(
 
 	fun departureAirportDismissed(arrivalInput: String, foundAirport: List<Airport>) {
 		originAirport = onAirportDropdownCollapse(arrivalInput, foundAirport)
+		_uiState.update { it.copy(isEntryValid = flightDetailsValid()) }
 	}
 
 	fun searchArrivalAirport(airportString: String) {
@@ -103,6 +104,7 @@ class FlightEditViewModel(
 
 	fun arrivalAirportDismissed(arrivalInput: String, foundAirport: List<Airport>) {
 		destinationAirport = onAirportDropdownCollapse(arrivalInput, foundAirport)
+		_uiState.update { it.copy(isEntryValid = flightDetailsValid()) }
 	}
 
 	fun updateFormElementVisibility(formElementVisibility: FormElementVisibility) {

@@ -7,11 +7,18 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme.shapes
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
+import com.cayot.planou.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,7 +36,10 @@ fun <T> SearchTextField(
 ) {
     ExposedDropdownMenuBox(
         expanded = expanded && enabled,
-        onExpandedChange = updateVisibility,
+        onExpandedChange = {
+            if (it)
+                onValueChange(value)
+            updateVisibility(it) },
         modifier = modifier.wrapContentSize(Alignment.TopStart)
     ) {
         OutlinedTextField(
@@ -39,8 +49,9 @@ fun <T> SearchTextField(
             singleLine = true,
             enabled = enabled,
             shape = shapes.large,
+            colors = ExposedDropdownMenuDefaults.textFieldColors(),
             modifier = Modifier
-                .menuAnchor()
+                .menuAnchor(MenuAnchorType.PrimaryEditable, enabled)
                 .fillMaxWidth(),
         )
         ExposedDropdownMenu(
@@ -48,16 +59,31 @@ fun <T> SearchTextField(
             onDismissRequest = {
                 onDismissed(value, items)
                 updateVisibility(false) },
+            modifier = Modifier.exposedDropdownSize()
         ) {
             if (value.isBlank()) {
-
+                Text(
+                    text = stringResource(R.string.type_airport_code),
+                    maxLines = 1,
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
             } else if (items.isEmpty()) {
-
+                Text(
+                    text = stringResource(R.string.no_airport_matching),
+                    maxLines = 1,
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
             } else {
                 items.forEach { item ->
                     DropdownMenuItem(
                         text = { Text(
                             text = item.toString(),
+                            overflow = TextOverflow.Ellipsis,
+                            fontSize = 16.sp,
                             maxLines = 1) },
                         onClick = {
                             onItemClicked(item)

@@ -21,6 +21,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -184,8 +185,7 @@ fun FlightEditForm(
 				style = typography.titleMedium
 			)
 			Row (
-				modifier = Modifier.fillMaxWidth()
-					.height(56.dp),
+				modifier = Modifier.fillMaxWidth(),
 				horizontalArrangement = Arrangement.SpaceBetween
 			) {
 				SearchTextField(
@@ -369,7 +369,7 @@ fun	TravelClassDropdown(
 			value = currentTravelClass.name,
 			onValueChange = {  },
 			modifier = modifier
-				.menuAnchor()
+				.menuAnchor(MenuAnchorType.PrimaryNotEditable, enabled)
 				.fillMaxWidth(),
 			singleLine = true,
 			readOnly = true,
