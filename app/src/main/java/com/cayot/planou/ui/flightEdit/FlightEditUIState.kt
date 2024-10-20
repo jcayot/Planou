@@ -1,4 +1,4 @@
-package com.cayot.planou.ui.flightAdd
+package com.cayot.planou.ui.flightEdit
 
 import com.cayot.planou.data.TravelClass
 import com.cayot.planou.data.airport.Airport
@@ -6,26 +6,31 @@ import com.cayot.planou.data.airport.distanceToAirport
 import com.cayot.planou.data.flight.Flight
 import java.time.Instant
 
-data class FlightAddUIState(
+data class FlightEditUIState(
 	val flightForm: FlightForm = FlightForm(),
-	val formEnabled: Boolean = true,
+	val formEnabled: Boolean = false,
 	val	isEntryValid: Boolean = false,
 	val formElementVisibility: FormElementVisibility = FormElementVisibility()
 	)
 
 data class FlightForm (
+	val id: Int = 0,
 	val	originAirportString: String = "",
+	val foundOriginAirportsList: List<Airport> = emptyList(),
 	val destinationAirportString: String = "",
+	val foundDestinationAirportList: List<Airport> = emptyList(),
 	val airline: String = "",
 	val	flightNumber: String = "",
 	val planeModel: String = "",
 	val travelClass: TravelClass = TravelClass.ECONOMY,
 	val departureTime: Instant = Instant.now(),
-	val arrivalTime: Instant = Instant.now()
+	val arrivalTime: Instant? = null
 	)
 
 data class FormElementVisibility(
-	val travelClassDropdownExpanded: Boolean = false,
+	val originAirportDropdownVisible: Boolean = false,
+	val destinationAirportDropdownVisible: Boolean = false,
+	val travelClassDropdownVisible: Boolean = false,
 	val departureDayModalVisible: Boolean = false,
 	val departureTimeModalVisible: Boolean = false,
 	val arrivalDayModalVisible: Boolean = false,
@@ -55,14 +60,16 @@ fun FlightForm.isPlaneModelValid() : Boolean {
 }
 
 fun FlightForm.areDateValid() : Boolean {
-	return (departureTime.isBefore(arrivalTime) && departureTime.isBefore(Instant.now()))
+	return (departureTime.isBefore(Instant.now()) && arrivalTime?.isAfter(departureTime) ?: true)
 }
 
 fun FlightForm.toFlight(originAirport: Airport, destinationAirport: Airport) : Flight {
 	return (Flight(
+		id = id,
 		flightNumber = flightNumber,
 		airline = airline,
 		departureTime = departureTime.toEpochMilli(),
+		arrivalTime = arrivalTime?.toEpochMilli(),
 		travelClass = travelClass,
 		originAirportCode = originAirport.iataCode,
 		originAirportId = originAirport.id,

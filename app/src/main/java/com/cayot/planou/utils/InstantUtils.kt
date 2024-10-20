@@ -5,7 +5,9 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
 
-fun updateInstantDate(currentInstant: Instant, dateInstant: Instant) : Instant {
+fun updateInstantDate(currentInstant: Instant?, dateInstant: Instant) : Instant {
+    if (currentInstant == null)
+        return (dateInstant)
     val currentTime: LocalTime = currentInstant.atZone(ZoneId.systemDefault()).toLocalTime()
 
     val newDate = dateInstant.atZone(ZoneId.systemDefault()).toLocalDate()
@@ -16,8 +18,12 @@ fun updateInstantDate(currentInstant: Instant, dateInstant: Instant) : Instant {
     return (updatedLocalDateTime.atZone(ZoneId.systemDefault()).toInstant())
 }
 
-fun updateInstantHourMinute(currentInstant: Instant, hour: Int, minute: Int) : Instant {
-    val currentDate = currentInstant.atZone(ZoneId.systemDefault()).toLocalDate()
+fun updateInstantHourMinute(currentInstant: Instant?, hour: Int, minute: Int) : Instant {
+    val currentDate =
+        if (currentInstant != null)
+            currentInstant.atZone(ZoneId.systemDefault()).toLocalDate()
+        else
+            Instant.now().atZone(ZoneId.systemDefault()).toLocalDate()
 
     val newLocalTime = LocalTime.of(hour, minute)
 

@@ -4,6 +4,7 @@ import androidx.compose.ui.util.fastRoundToInt
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.cayot.planou.data.TravelClass
+import com.cayot.planou.ui.flightEdit.FlightForm
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -80,4 +81,18 @@ fun Flight.getArrivalTimeString() : String {
 	else
 		"+ $dayDifference"
 	return (SimpleDateFormat("h:mm a", Locale.getDefault()).format(arrivalTime) + dayDiffSuffix)
+}
+
+fun Flight.toFlightForm() : FlightForm {
+	return (FlightForm(
+		id = id,
+		flightNumber = flightNumber,
+		airline = airline,
+		originAirportString = originAirportCode,
+		destinationAirportString = destinationAirportCode,
+		departureTime = Instant.ofEpochMilli(departureTime),
+		arrivalTime = arrivalTime?.let { Instant.ofEpochMilli(it) },
+		travelClass = travelClass,
+		planeModel = planeModel
+	))
 }

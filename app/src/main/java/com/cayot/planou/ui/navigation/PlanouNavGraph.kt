@@ -9,13 +9,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.cayot.planou.R
-import com.cayot.planou.ui.flightAdd.FlightAddScreen
+import com.cayot.planou.ui.flightEdit.FlightEditScreen
 import com.cayot.planou.ui.flightDetails.FlightDetailsScreen
 import com.cayot.planou.ui.flightList.FlightListScreen
 
 enum class PlanouScreen(@StringRes val title: Int, val argName : String) {
 	List(R.string.flight_list, ""),
-	Add(R.string.add_flight, ""),
+	Edit(R.string.add_flight, "flightId"),
 	Details(R.string.flight_details, "flightId")
 }
 
@@ -34,11 +34,16 @@ fun PlanouNavHost(
 				onFlightPressed = {
 					navController.navigate(PlanouScreen.Details.name + "/" + it)
 				},
-				onAddFlightPressed = { navController.navigate(PlanouScreen.Add.name) }
+				onAddFlightPressed = { navController.navigate(PlanouScreen.Edit.name + "/" + 0) }
 			)
 		}
-		composable(route = PlanouScreen.Add.name) {
-			FlightAddScreen(
+		composable(
+			route = "${PlanouScreen.Edit.name}/{${PlanouScreen.Edit.argName}}",
+			arguments = listOf(navArgument(PlanouScreen.Edit.argName) {
+				type = NavType.IntType
+			})
+		) {
+			FlightEditScreen(
 				onNavigateUp = { navController.navigateUp() },
 				navigateBack = { navController.popBackStack() }
 			)
@@ -50,6 +55,9 @@ fun PlanouNavHost(
 			})
 		) {
 			FlightDetailsScreen(
+				editFlight = {
+					navController.navigate(PlanouScreen.Edit.name + "/" + it)
+				},
 				onNavigateUp = { navController.navigateUp() },
 				navigateBack = { navController.popBackStack() }
 			)

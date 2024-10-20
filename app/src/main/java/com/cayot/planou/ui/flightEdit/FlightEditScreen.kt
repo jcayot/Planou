@@ -1,4 +1,4 @@
-package com.cayot.planou.ui.flightAdd
+package com.cayot.planou.ui.flightEdit
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -7,16 +7,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,15 +21,9 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TimePicker
-import androidx.compose.material3.rememberDatePickerState
-import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -48,27 +39,27 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cayot.planou.R
 import com.cayot.planou.data.TravelClass
+import com.cayot.planou.data.airport.Airport
 import com.cayot.planou.ui.AppViewModelProvider
 import com.cayot.planou.ui.PlanouTopBar
-import com.cayot.planou.ui.composable.OutlinedTextFieldButton
+import com.cayot.planou.ui.composable.OutlinedDatePicker
+import com.cayot.planou.ui.composable.SearchTextField
+import com.cayot.planou.ui.composable.OutlinedTimePicker
 import com.cayot.planou.ui.navigation.PlanouScreen
 import com.cayot.planou.utils.SelectableDateAll
 import com.cayot.planou.utils.SelectableDatesTo
 import com.cayot.planou.utils.updateInstantDate
 import com.cayot.planou.utils.updateInstantHourMinute
-import java.text.SimpleDateFormat
 import java.time.Instant
-import java.time.ZoneId
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FlightAddScreen(
+fun FlightEditScreen(
 	navigateBack: () -> Unit,
 	onNavigateUp: () -> Unit,
 	canNavigateBack: Boolean = true
 ) {
-	val	viewModel: FlightAddViewModel = viewModel(factory = AppViewModelProvider.factory)
+	val	viewModel: FlightEditViewModel = viewModel(factory = AppViewModelProvider.factory)
 	val uiState by viewModel.uiState.collectAsState()
 
 	LaunchedEffect(Unit) {
@@ -80,18 +71,21 @@ fun FlightAddScreen(
 	Scaffold (
 		topBar = {
 			PlanouTopBar(
-				title = stringResource(PlanouScreen.Add.title),
+				title = stringResource(PlanouScreen.Edit.title),
 				canNavigateBack = canNavigateBack,
 				navigateUp = onNavigateUp
 			)
 		}
 	) { innerPadding ->
-		FlightAddScreenContent(
+		FlightEditScreenContent(
 			uiState = uiState,
-			updateFlightDetails = viewModel::updateFlightDetails,
+			updateFlightDetails = viewModel::updateFlightForm,
+			searchDepartureAirport = viewModel::searchDepartureAirport,
+			departureAirportSelected = viewModel::departureAirportSelected,
+			searchArrivalAirport = viewModel::searchArrivalAirport,
+			arrivalAirportSelected = viewModel::arrivalAirportSelected,
 			updateFormElementVisibility = viewModel::updateFormElementVisibility,
 			onContinueClicked = viewModel::saveFlight,
-			onBackClicked = navigateBack,
 			modifier = Modifier
 				.padding(
 					start = innerPadding.calculateStartPadding(LocalLayoutDirection.current),
@@ -104,61 +98,54 @@ fun FlightAddScreen(
 }
 
 @Composable
-fun FlightAddScreenContent(
-	uiState: FlightAddUIState,
-	updateFlightDetails: (FlightForm) -> Unit,
-	updateFormElementVisibility: (FormElementVisibility) -> Unit,
-	onContinueClicked: () -> Unit,
-	onBackClicked: () -> Unit,
+fun FlightEditScreenContent(
+	uiState: FlightEditUIState,
+	updateFlightDetails: (FlightForm) -> Unit = {},
+	searchDepartureAirport: (String) -> Unit = {},
+	departureAirportSelected: (Airport) -> Unit = {},
+	searchArrivalAirport: (String) -> Unit = {},
+	arrivalAirportSelected: (Airport) -> Unit = {},
+	updateFormElementVisibility: (FormElementVisibility) -> Unit = {},
+	onContinueClicked: () -> Unit = {},
 	modifier: Modifier = Modifier
 ) {
 	Column (
 		verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_medium)),
+		horizontalAlignment = Alignment.CenterHorizontally,
 		modifier = modifier.padding(dimensionResource(id = R.dimen.padding_medium))
 	) {
-		FlightAddForm(
+		FlightEditForm(
 			uiState = uiState,
 			updateFlightDetails = updateFlightDetails,
+			searchDepartureAirport = searchDepartureAirport,
+			departureAirportSelected = departureAirportSelected,
+			searchArrivalAirport = searchArrivalAirport,
+			arrivalAirportSelected = arrivalAirportSelected,
 			updateFormElementVisibility = updateFormElementVisibility,
 			modifier = Modifier.fillMaxWidth()
 		)
-		Column(
-			modifier = Modifier
-				.fillMaxWidth()
-				.padding(dimensionResource(id = R.dimen.padding_medium)),
-			verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_medium)),
-			horizontalAlignment = Alignment.CenterHorizontally
+		Button(
+			onClick = { onContinueClicked() },
+			enabled = uiState.isEntryValid && uiState.formEnabled,
 		) {
-
-			Button(
-				onClick = { onContinueClicked() },
-				enabled = uiState.isEntryValid && uiState.formEnabled,
-				modifier = Modifier.fillMaxWidth()
-				) {
-				Text(
-					text = stringResource(R.string.save_flight),
-					fontSize = 16.sp
-				)
-			}
-
-			OutlinedButton(
-				onClick = { onBackClicked() },
-				modifier = Modifier.fillMaxWidth()
-			) {
-				Text(
-					text = stringResource(R.string.back),
-					fontSize = 16.sp
-				)
-			}
+			Text(
+				text = stringResource(R.string.save_flight),
+				fontSize = 16.sp,
+				modifier = Modifier.padding(dimensionResource(R.dimen.padding_mini))
+			)
 		}
 	}
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FlightAddForm(
-	uiState: FlightAddUIState,
+fun FlightEditForm(
+	uiState: FlightEditUIState,
 	updateFlightDetails: (FlightForm) -> Unit,
+	searchDepartureAirport: (String) -> Unit,
+	departureAirportSelected: (Airport) -> Unit,
+	searchArrivalAirport: (String) -> Unit,
+	arrivalAirportSelected: (Airport) -> Unit,
 	updateFormElementVisibility: (FormElementVisibility) -> Unit,
 	modifier: Modifier = Modifier
 ) {
@@ -175,26 +162,39 @@ fun FlightAddForm(
 				style = typography.titleMedium
 			)
 			Row (
-				modifier = modifier,
+				modifier = Modifier.fillMaxWidth()
+					.height(56.dp),
 				horizontalArrangement = Arrangement.SpaceBetween
 			) {
-				OutlinedTextField(
-					label = { Text(stringResource(R.string.flight_origin)) },
+				SearchTextField(
+					labelText = stringResource(R.string.flight_origin),
 					value = uiState.flightForm.originAirportString,
-					onValueChange = { updateFlightDetails(uiState.flightForm.copy(originAirportString = it)) },
-					singleLine = true,
+					items = uiState.flightForm.foundOriginAirportsList,
+					onValueChange = searchDepartureAirport,
+					onItemClicked = departureAirportSelected,
+					updateVisibility = {
+						updateFormElementVisibility(uiState.formElementVisibility.copy(
+							originAirportDropdownVisible = it
+						))
+					},
+					expanded = uiState.formElementVisibility.originAirportDropdownVisible,
 					enabled = uiState.formEnabled,
-					shape = shapes.large,
 					modifier = Modifier.weight(1f)
 				)
 				Spacer(modifier = Modifier.width(8.dp))
-				OutlinedTextField(
-					label = { Text(stringResource(R.string.flight_destination)) },
+				SearchTextField(
+					labelText = stringResource(R.string.flight_destination),
 					value = uiState.flightForm.destinationAirportString,
-					onValueChange = { updateFlightDetails(uiState.flightForm.copy(destinationAirportString = it)) },
-					singleLine = true,
+					items = uiState.flightForm.foundDestinationAirportList,
+					onValueChange = searchArrivalAirport,
+					onItemClicked = arrivalAirportSelected,
+					updateVisibility = {
+						updateFormElementVisibility(uiState.formElementVisibility.copy(
+							destinationAirportDropdownVisible = it
+						))
+					},
+					expanded = uiState.formElementVisibility.destinationAirportDropdownVisible,
 					enabled = uiState.formEnabled,
-					shape = shapes.large,
 					modifier = Modifier.weight(1f)
 				)
 			}
@@ -213,11 +213,11 @@ fun FlightAddForm(
 			) {
 				TravelClassDropdown(
 					currentTravelClass = uiState.flightForm.travelClass,
-					expanded = uiState.formElementVisibility.travelClassDropdownExpanded,
+					expanded = uiState.formElementVisibility.travelClassDropdownVisible,
 					onTravelClassSelected = { updateFlightDetails(uiState.flightForm.copy(travelClass = it)) },
 					updateVisibility = { visibility ->
 						updateFormElementVisibility(uiState.formElementVisibility.copy(
-							travelClassDropdownExpanded = visibility
+							travelClassDropdownVisible = visibility
 						))
 					},
 					enabled = uiState.formEnabled,
@@ -248,7 +248,7 @@ fun FlightAddForm(
 				horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small)),
 				modifier = modifier
 			) {
-				FlightDatePicker(
+				OutlinedDatePicker(
 					selectedInstant = uiState.flightForm.departureTime,
 					visible = uiState.formElementVisibility.departureDayModalVisible,
 					selectableDates = SelectableDatesTo(Instant.now()),
@@ -265,7 +265,7 @@ fun FlightAddForm(
 					enabled = uiState.formEnabled,
 					modifier = Modifier.weight(3f)
 				)
-				FlightTimePicker(
+				OutlinedTimePicker(
 					selectedInstant = uiState.flightForm.departureTime,
 					visible = uiState.formElementVisibility.departureTimeModalVisible,
 					labelText = stringResource(R.string.departure_time),
@@ -286,7 +286,7 @@ fun FlightAddForm(
 				horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small)),
 				modifier = modifier
 			) {
-				FlightDatePicker(
+				OutlinedDatePicker(
 					selectedInstant = uiState.flightForm.arrivalTime,
 					visible = uiState.formElementVisibility.arrivalDayModalVisible,
 					selectableDates = SelectableDateAll(),
@@ -303,7 +303,7 @@ fun FlightAddForm(
 					enabled = uiState.formEnabled,
 					modifier = Modifier.weight(3f)
 				)
-				FlightTimePicker(
+				OutlinedTimePicker(
 					selectedInstant = uiState.flightForm.arrivalTime,
 					visible = uiState.formElementVisibility.arrivalTimeModalVisible,
 					labelText = stringResource(R.string.arrival_time),
@@ -359,9 +359,7 @@ fun	TravelClassDropdown(
 		DropdownMenu(
 			expanded = expanded && enabled,
 			onDismissRequest = { updateVisibility(false) },
-			modifier = Modifier
-				.exposedDropdownSize()
-				.heightIn(250.dp)
+			modifier = Modifier.exposedDropdownSize()
 
 		) {
 			TravelClass.entries.forEach { travelClass ->
@@ -371,117 +369,17 @@ fun	TravelClassDropdown(
 						onTravelClassSelected(travelClass)
 						updateVisibility(false)
 					},
-					modifier = modifier.fillMaxWidth()
+					modifier = Modifier.fillMaxWidth()
 				)
 			}
 		}
-	}
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun FlightDatePicker(
-	selectedInstant: Instant,
-	selectableDates: SelectableDates,
-	labelText: String,
-	visible: Boolean,
-	onDateSelected: (Long) -> Unit,
-	updateVisibility: (Boolean) -> Unit,
-	enabled: Boolean,
-	modifier: Modifier = Modifier
-) {
-	val datePickerState = rememberDatePickerState(
-		initialSelectedDateMillis = selectedInstant.toEpochMilli(),
-		selectableDates = selectableDates
-	)
-	OutlinedTextFieldButton(
-		label = { Text(labelText) },
-		value = SimpleDateFormat("d MMM yyyy", Locale.getDefault()).format(selectedInstant.toEpochMilli()),
-		onClick = { updateVisibility(true) },
-		enabled = enabled,
-		modifier = modifier,
-	)
-	if (visible && enabled) {
-		DatePickerDialog(
-			onDismissRequest = { updateVisibility(false) },
-			confirmButton = {
-				TextButton(onClick = {
-					datePickerState.selectedDateMillis?.let { onDateSelected(it) }
-					updateVisibility(false)
-				}) {
-					Text("OK")
-				}
-			},
-			dismissButton = {
-				TextButton(onClick = {
-					updateVisibility(false) }
-				) {
-					Text("Cancel")
-				}
-			},
-		) {
-			DatePicker(
-				state = datePickerState,
-			)
-		}
-	}
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun FlightTimePicker(
-	selectedInstant: Instant,
-	labelText: String,
-	visible: Boolean,
-	onTimeSelected: (Int, Int) -> Unit,
-	updateVisibility: (Boolean) -> Unit,
-	enabled: Boolean,
-	modifier: Modifier = Modifier
-) {
-	val timePickerState = rememberTimePickerState(
-		initialHour = selectedInstant.atZone(ZoneId.systemDefault()).hour,
-		initialMinute = selectedInstant.atZone(ZoneId.systemDefault()).minute
-	)
-	OutlinedTextFieldButton(
-		label = { Text(labelText) },
-		value = SimpleDateFormat("h:mm a", Locale.getDefault()).format(selectedInstant.toEpochMilli()),
-		onClick = { updateVisibility(true) },
-		enabled = enabled,
-		modifier = modifier
-	)
-	if (enabled && visible) {
-		AlertDialog(
-			onDismissRequest = { updateVisibility(false) },
-			dismissButton = {
-				TextButton(onClick = { updateVisibility(false) }) {
-					Text("Dismiss")
-				}
-			},
-			confirmButton = {
-				TextButton(onClick = {
-					onTimeSelected(timePickerState.hour,timePickerState.minute)
-					updateVisibility(false)
-				}) {
-					Text("OK")
-				}
-			},
-			text = {
-				TimePicker(
-					state = timePickerState
-				)
-			}
-		)
 	}
 }
 
 @Preview(showBackground = true)
 @Composable
 fun FlightAddScreenPreview() {
-	FlightAddScreenContent(
-		uiState = FlightAddUIState(),
-		updateFlightDetails = {},
-		updateFormElementVisibility = {  },
-		onContinueClicked = {},
-		onBackClicked = {},
+	FlightEditScreenContent(
+		uiState = FlightEditUIState(),
     )
 }

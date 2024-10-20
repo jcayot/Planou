@@ -6,15 +6,19 @@ class OfflineAirportsRepository(private val airportDao: AirportDao) : AirportsRe
 		return (airportDao.insertAll(airports))
 	}
 
+	override suspend fun getAirport(id: Int): Airport? {
+		return (airportDao.getAirport(id))
+	}
+
 	override suspend fun getAirportByIataCode(iataCode: String): Airport? {
 		return (airportDao.getAirportByIataCode(iataCode))
 	}
 
-	override suspend fun searchAirportsByFullNameStream(fullName: String): List<Airport> {
-		return (airportDao.searchAirportsByFullName(fullName))
+	override suspend fun searchAirportsByFullName(fullName: String, limit: Int): List<Airport> {
+		return (airportDao.searchAirportsByFullName(fullName, limit))
 	}
 
-	override suspend fun searchAirportsByIataCodeStream(iataCode: String): List<Airport> {
-		return (airportDao.searchAirportsByIataCode(iataCode))
+	override suspend fun searchAirportsByIataCode(iataCode: String, limit: Int): List<Airport> {
+		return (airportDao.searchAirportsByIataCode(iataCode, limit))
 	}
 }

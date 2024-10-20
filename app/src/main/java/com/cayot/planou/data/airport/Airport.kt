@@ -16,6 +16,11 @@ data class Airport(
 	val latitude: Double,
 	val longitude: Double
 ) {
+
+	override fun toString(): String {
+		return (name)
+	}
+
 	companion object {
 
 		fun getJFK() : Airport {

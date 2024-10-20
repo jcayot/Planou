@@ -6,7 +6,7 @@ import java.util.Calendar
 import java.util.TimeZone
 
 data class FlightListUIState(
-	val flightList: List<FlightItem> = emptyList(),
+	val flightList: List<FlightItem>? = null,
 	val flightMapStateMap: Map<Int, FlightMapState?> = emptyMap()
 )
 

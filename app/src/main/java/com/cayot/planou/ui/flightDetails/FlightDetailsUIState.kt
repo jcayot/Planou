@@ -12,7 +12,6 @@ data class FlightDetailsUIState(
 	val retrievedDestinationAirport: Airport? = null,
 	val flightMapState: FlightMapState? = null,
 	val isRetrievingFlight: Boolean = true,
-	val topBarDropdownExpanded: Boolean = false,
 	val notesVisible: Boolean = false,
 	val notesEdition: Boolean = false
 )

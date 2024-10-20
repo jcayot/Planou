@@ -21,7 +21,7 @@ interface FlightDao {
 	suspend fun delete(flight: Flight)
 
 	@Query("SELECT * from flights WHERE id = :id")
-	suspend fun getFlight(id: Int) : Flight?
+	fun getFlight(id: Int) : Flow<Flight>
 
 	@Query("SELECT * from flights ORDER BY departureTime DESC")
 	fun getAllFlights() : Flow<List<Flight>>

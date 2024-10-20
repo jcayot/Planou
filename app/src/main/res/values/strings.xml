@@ -4,7 +4,6 @@
     <string name="add_flight">Add Flight</string>
     <string name="flight_details">Flight Details</string>
 
-    <string name="list_item_map_image">Map Image</string>
     <string name="list_empty_sad_plane">Sad plane image</string>
 
     <string name="flight_informations">Flight informations :</string>
@@ -33,8 +32,6 @@
     <string name="notes">Notes</string>
     <string name="edit_notes">Edit notes</string>
     <string name="create_notes">Create notes</string>
-    <string name="delete_notes">Delete notes</string>
     <string name="save_notes">Save notes</string>
     <string name="edit_flight">Edit flight</string>
-    <string name="delete_flight">Delete flight</string>
 </resources>

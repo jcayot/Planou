@@ -104,21 +104,23 @@ fun FlightListScreenContent(
 	modifier: Modifier = Modifier,
 	contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
-	if (uiState.flightList.isEmpty()) {
-		EmptyFlightListPlaceholder(
-			modifier = Modifier
-				.padding(contentPadding)
-				.fillMaxSize()
-		)
-	} else {
-		FlightListList(
-			flightList = uiState.flightList,
-			flightMapStateMap = uiState.flightMapStateMap,
-			onFlightPressed = onFlightPressed,
-			onItemVisible = onItemVisible,
-			modifier = modifier,
-			contentPadding = contentPadding
-		)
+	if (uiState.flightList != null) {
+		if (uiState.flightList.isEmpty()) {
+			EmptyFlightListPlaceholder(
+				modifier = Modifier
+					.padding(contentPadding)
+					.fillMaxSize()
+			)
+		} else {
+			FlightListList(
+				flightList = uiState.flightList,
+				flightMapStateMap = uiState.flightMapStateMap,
+				onFlightPressed = onFlightPressed,
+				onItemVisible = onItemVisible,
+				modifier = modifier,
+				contentPadding = contentPadding
+			)
+		}
 	}
 }
 

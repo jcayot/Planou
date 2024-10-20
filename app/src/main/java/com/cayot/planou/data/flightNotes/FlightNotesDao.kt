@@ -20,5 +20,5 @@ interface FlightNotesDao {
     suspend fun delete(flightNotes: FlightNotes)
 
     @Query("SELECT * FROM flight_notes WHERE flightId =:flightId")
-    suspend fun getFromFlight(flightId : Int) : FlightNotes
+    suspend fun getFromFlight(flightId : Int) : FlightNotes?
 }

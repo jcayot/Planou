@@ -7,7 +7,7 @@ class OfflineFlightsRepository(private val flightDao: FlightDao) : FlightsReposi
 		return (flightDao.getAllFlights())
 	}
 
-	override suspend fun getFlightStream(id: Int): Flight? {
+	override fun getFlight(id: Int): Flow<Flight> {
 		return (flightDao.getFlight(id))
 	}
 

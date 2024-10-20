@@ -38,31 +38,32 @@ class FlightDetailsViewModel(
 	private val _shareCard = MutableSharedFlow<Uri>()
 	val shareCard: SharedFlow<Uri> = _shareCard
 
+	private val _navigateBack = MutableSharedFlow<Unit>()
+	val navigateBack: SharedFlow<Unit> = _navigateBack
+
 	private lateinit var flightNotesAccessJob: Job
 
 	init {
 		viewModelScope.launch {
-			val flight : Flight? = flightsRepository.getFlightStream(flightId)
+			flightNotesAccessJob = getNotesDatabase(flightId)
 
-			if (flight != null) {
-				flightNotesAccessJob = getNotes(flightId)
+			var hasEmitted = false
+
+			flightsRepository.getFlight(flightId).collect { flight ->
+				hasEmitted = true
 				val originAirport = airportsRepository.getAirportByIataCode(flight.originAirportCode)
 				val destinationAirport = airportsRepository.getAirportByIataCode(flight.destinationAirportCode)
 
 				onFlightRetrieved(flight = flight,
 					originAirport = originAirport,
 					destinationAirport = destinationAirport)
-			} else {
+			}
+
+			if (!hasEmitted) {
 				_uiState.update {
 					it.copy(isRetrievingFlight = false)
 				}
 			}
-		}
-	}
-
-	fun updateTopBarDropdownVisibility() {
-		_uiState.update {
-			it.copy(topBarDropdownExpanded = !_uiState.value.topBarDropdownExpanded)
 		}
 	}
 
@@ -81,7 +82,7 @@ class FlightDetailsViewModel(
 	fun editNotes() {
 		if (!flightNotesAccessJob.isActive) {
 			if (_uiState.value.flightNotes == null)
-				flightNotesAccessJob = createFlightNotes()
+				flightNotesAccessJob = createFlightNotesDatabase()
 			else
 				_uiState.update { it.copy(notesEdition = true) }
 		}
@@ -89,7 +90,7 @@ class FlightDetailsViewModel(
 
 	fun discardFlightNotesChanges() {
 		if (!flightNotesAccessJob.isActive) {
-			flightNotesAccessJob = getNotes(flightId)
+			flightNotesAccessJob = getNotesDatabase(flightId)
 			_uiState.update {
 				it.copy(notesEdition = false)
 			}
@@ -98,7 +99,7 @@ class FlightDetailsViewModel(
 
 	fun saveFlightNotes() {
 		if (!flightNotesAccessJob.isActive) {
-			flightNotesAccessJob = updateFlightNotes(_uiState.value.flightNotes!!)
+			flightNotesAccessJob = updateFlightNotesDatabase(_uiState.value.flightNotes!!)
 			_uiState.update {
 				it.copy(notesEdition = false)
 			}
@@ -107,7 +108,7 @@ class FlightDetailsViewModel(
 
 	fun deleteFlightNotes() {
 		if (!flightNotesAccessJob.isActive) {
-			flightNotesAccessJob = deleteFlightNotes(_uiState.value.flightNotes!!)
+			flightNotesAccessJob = deleteFlightNotesDatabase(_uiState.value.flightNotes!!)
 			_uiState.update {
 				it.copy(flightNotes = null)
 			}
@@ -141,7 +142,7 @@ class FlightDetailsViewModel(
 		}
 	}
 
-	private fun createFlightNotes()  = viewModelScope.launch {
+	private fun createFlightNotesDatabase()  = viewModelScope.launch {
 		val newFlightNotes = FlightNotes(flightId, "")
 		flightNotesRepository.insertFlightNotes(newFlightNotes)
 		_uiState.update {
@@ -150,15 +151,15 @@ class FlightDetailsViewModel(
 		}
 	}
 
-	private fun updateFlightNotes(flightNotes: FlightNotes) = viewModelScope.launch {
+	private fun updateFlightNotesDatabase(flightNotes: FlightNotes) = viewModelScope.launch {
 		flightNotesRepository.updateFlightNotes(flightNotes)
 	}
 
-	private fun deleteFlightNotes(flightNotes: FlightNotes) = viewModelScope.launch {
+	private fun deleteFlightNotesDatabase(flightNotes: FlightNotes) = viewModelScope.launch {
 		flightNotesRepository.removeFlightNotes(flightNotes)
 	}
 
-	private fun getNotes(flightId: Int) = viewModelScope.launch {
+	private fun getNotesDatabase(flightId: Int) = viewModelScope.launch {
 		val flightNotes = flightNotesRepository.getFromFlight(flightId)
 		_uiState.update {
 			it.copy(flightNotes = flightNotes)

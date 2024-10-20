@@ -6,7 +6,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.cayot.planou.PlanouApplication
-import com.cayot.planou.ui.flightAdd.FlightAddViewModel
+import com.cayot.planou.ui.flightEdit.FlightEditViewModel
 import com.cayot.planou.ui.flightDetails.FlightDetailsViewModel
 import com.cayot.planou.ui.flightList.FlightListViewModel
 
@@ -19,9 +19,10 @@ object AppViewModelProvider {
 		}
 
 		initializer {
-			FlightAddViewModel(
+			FlightEditViewModel(
 				flightsRepository = planouApplication().container.flightsRepository,
-				airportsRepository = planouApplication().container.airportsRepository
+				airportsRepository = planouApplication().container.airportsRepository,
+				savedStateHandle = this.createSavedStateHandle()
 			)
 		}
 
