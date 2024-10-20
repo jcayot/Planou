@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -20,9 +21,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -30,11 +34,13 @@ import androidx.compose.material3.CardElevation
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -103,7 +109,7 @@ fun FlightDetailsScreen(
 			PlanouTopBar(
 				title = stringResource(PlanouScreen.Details.title),
 				canNavigateBack = true,
-				navigateUp = onNavigateUp
+				navigateUp = onNavigateUp,
 			)
 		}
 	) { innerPadding ->
@@ -118,6 +124,7 @@ fun FlightDetailsScreen(
 			editNotes = viewModel::editNotes,
 			discardNotesChanges = viewModel::discardFlightNotesChanges,
 			saveNotes = viewModel::saveFlightNotes,
+			deleteNotes = viewModel::deleteFlightNotes,
 			modifier = modifier
 				.padding(
 					start = innerPadding.calculateStartPadding(LocalLayoutDirection.current),
@@ -139,6 +146,7 @@ fun FlightDetailsScreenContent(
 	editNotes: () -> Unit,
 	discardNotesChanges: () -> Unit,
 	saveNotes: () -> Unit,
+	deleteNotes: () -> Unit,
 	modifier: Modifier = Modifier
 ) {
 	if (uiState.flight != null) {
@@ -151,9 +159,10 @@ fun FlightDetailsScreenContent(
 			editNotes = editNotes,
 			discardNotesChanges = discardNotesChanges,
 			saveNotes = saveNotes,
+			deleteNotes = deleteNotes,
 			modifier = modifier
 		)
-	} else if (uiState.isRetrievingFlight) {
+	} else {
 		Box(
 			modifier = modifier.fillMaxSize(),
 			contentAlignment = Alignment.Center
@@ -172,41 +181,30 @@ fun FlightDetailsScreenContent(
 				)
 			}
 		}
-	} else {
-		Box(
-			modifier = modifier.fillMaxSize(),
-			contentAlignment = Alignment.Center
-		) {
-			Column (
-				modifier = Modifier.padding(dimensionResource(R.dimen.padding_smadium)),
-				verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_smadium)),
-				horizontalAlignment = Alignment.CenterHorizontally
-			) {
-				Text(
-					text = stringResource(R.string.error_retriving_flight),
-					style = typography.titleLarge
-				)
-			}
-		}
 	}
 }
 
 @Composable
 fun FlightDetails(
 	uiState: FlightDetailsUIState,
-	onEditPressed: () -> Unit = {},
-	onSharePressed: (Bitmap) -> Unit = {},
-	updateNotesVisibility: () -> Unit = {},
-	onFlightNotesChange: (String) -> Unit = {},
-	editNotes: () -> Unit = {},
-	discardNotesChanges: () -> Unit = {},
-	saveNotes: () -> Unit = {},
+	onEditPressed: () -> Unit,
+	onSharePressed: (Bitmap) -> Unit,
+	updateNotesVisibility: () -> Unit,
+	onFlightNotesChange: (String) -> Unit,
+	editNotes: () -> Unit,
+	discardNotesChanges: () -> Unit,
+	saveNotes: () -> Unit,
+	deleteNotes: () -> Unit,
 	modifier: Modifier = Modifier
 ) {
+	val scrollState = rememberScrollState()
+
 	Column(
 		modifier = modifier
 			.fillMaxWidth()
-			.padding(horizontal = dimensionResource(id = R.dimen.padding_smadium)),
+			.verticalScroll(scrollState)
+			.padding(horizontal = dimensionResource(id = R.dimen.padding_smadium))
+			.padding(bottom = dimensionResource(id = R.dimen.padding_medium)),
 		verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_smadium)),
 		horizontalAlignment = Alignment.CenterHorizontally
 	) {
@@ -225,12 +223,12 @@ fun FlightDetails(
 			discardNotesChanges = discardNotesChanges,
 			editNotes = editNotes,
 			saveNotes = saveNotes,
+			deleteNotes = deleteNotes,
 			modifier = Modifier.fillMaxWidth()
 		)
 		ActionButtons(
-			flightCard = flightCard,
 			onEditPressed = onEditPressed,
-			onSharePressed = onSharePressed,
+			onSharePressed = { onSharePressed(flightCard.invoke()) },
 			modifier = Modifier.fillMaxWidth()
 		)
 	}
@@ -239,9 +237,9 @@ fun FlightDetails(
 @Composable
 fun FlightCard(
 	flight: Flight,
-	originAirport: Airport?,
-	destinationAirport: Airport?,
-	flightMapState: FlightMapState?,
+	originAirport: Airport? = null,
+	destinationAirport: Airport? = null,
+	flightMapState: FlightMapState? = null,
 	modifier: Modifier = Modifier,
 	elevation: CardElevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
 ) {
@@ -256,8 +254,8 @@ fun FlightCard(
 			Box(
 				contentAlignment = Alignment.Center,
 				modifier = Modifier
-					.height(200.dp)
 					.fillMaxWidth()
+					.aspectRatio(1f)
 					.clip(RoundedCornerShape(8.dp))
 			) {
 				if (flightMapState != null) {
@@ -409,6 +407,7 @@ fun FlightNotesComposable(
 	editNotes: () -> Unit = {},
 	discardNotesChanges: () -> Unit = {},
 	saveNotes: () -> Unit = {},
+	deleteNotes: () -> Unit = {},
 	modifier: Modifier = Modifier
 ) {
 	Row (
@@ -465,10 +464,26 @@ fun FlightNotesComposable(
 						)
 					}
 				} else if (flightNotes != null) {
-					Column (
-						horizontalAlignment = Alignment.End,
+					Column (horizontalAlignment = Alignment.CenterHorizontally,
 						modifier = Modifier.fillMaxWidth()
 					) {
+						Row {
+							Text(
+								text = stringResource(R.string.edit_notes) + " :",
+								style = typography.headlineSmall,
+								fontWeight = FontWeight.SemiBold,
+								modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))
+							)
+							Spacer(Modifier.weight(1f))
+							IconButton(
+								onClick = deleteNotes
+							) {
+								Icon(
+									imageVector = Icons.Default.Delete,
+									contentDescription = "Delete"
+								)
+							}
+						}
 						TextField(
 							value = flightNotes.text,
 							onValueChange = onFlightNotesChange,
@@ -507,9 +522,8 @@ fun FlightNotesComposable(
 
 @Composable
 fun ActionButtons(
-	flightCard: () -> Bitmap,
-	onEditPressed: () -> Unit,
-	onSharePressed: (Bitmap) -> Unit,
+	onEditPressed: () -> Unit = {},
+	onSharePressed: () -> Unit = {},
 	modifier: Modifier = Modifier
 ) {
 	Row (
@@ -527,9 +541,7 @@ fun ActionButtons(
 			)
 		}
 		Button(
-			onClick = {
-				onSharePressed(flightCard.invoke())
-			},
+			onClick = onSharePressed,
 			modifier = Modifier.weight(1f)
 		) {
 			Text(
@@ -557,11 +569,9 @@ private fun shareFlight(context: Context, flightCardUri: Uri, departureCode: Str
 
 @Preview
 @Composable
-fun FlightDetailsPreview() {
-	FlightDetails(
-		uiState = FlightDetailsUIState(
-			flight = Flight.getPlaceholderFlight1()
-		)
+fun FlightCardPreview() {
+	FlightCard(
+		flight = Flight.getPlaceholderFlight1()
 	)
 }
 
@@ -583,4 +593,10 @@ fun FlightNotesEditPreview() {
 		notesVisible = true,
 		notesEdition = true
 	)
+}
+
+@Preview
+@Composable
+fun FlightActionButtonPreview() {
+	ActionButtons()
 }

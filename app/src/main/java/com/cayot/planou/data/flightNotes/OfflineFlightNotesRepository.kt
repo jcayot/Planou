@@ -13,7 +13,7 @@ class OfflineFlightNotesRepository(private val flightNotesDao: FlightNotesDao) :
         return (flightNotesDao.update(flightNotes))
     }
 
-    override suspend fun removeFlightNotes(flightNotes: FlightNotes) {
-        return (flightNotesDao.delete(flightNotes))
+    override suspend fun removeFlightNotesById(flightId: Int) {
+        return (flightNotesDao.deleteById(flightId))
     }
 }

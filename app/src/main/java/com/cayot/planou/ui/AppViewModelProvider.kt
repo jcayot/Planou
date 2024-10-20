@@ -22,6 +22,7 @@ object AppViewModelProvider {
 			FlightEditViewModel(
 				flightsRepository = planouApplication().container.flightsRepository,
 				airportsRepository = planouApplication().container.airportsRepository,
+				flightNotesRepository = planouApplication().container.flightNotesRepository,
 				savedStateHandle = this.createSavedStateHandle()
 			)
 		}

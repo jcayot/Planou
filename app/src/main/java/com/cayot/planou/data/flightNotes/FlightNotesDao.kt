@@ -1,7 +1,6 @@
 package com.cayot.planou.data.flightNotes
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -16,8 +15,8 @@ interface FlightNotesDao {
     @Update
     suspend fun update(flightNotes: FlightNotes)
 
-    @Delete
-    suspend fun delete(flightNotes: FlightNotes)
+    @Query("DELETE from flight_notes WHERE flightId = :flightId")
+    suspend fun deleteById(flightId : Int)
 
     @Query("SELECT * FROM flight_notes WHERE flightId =:flightId")
     suspend fun getFromFlight(flightId : Int) : FlightNotes?

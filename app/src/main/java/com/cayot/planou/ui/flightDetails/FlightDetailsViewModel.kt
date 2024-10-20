@@ -47,22 +47,16 @@ class FlightDetailsViewModel(
 		viewModelScope.launch {
 			flightNotesAccessJob = getNotesDatabase(flightId)
 
-			var hasEmitted = false
-
 			flightsRepository.getFlight(flightId).collect { flight ->
-				hasEmitted = true
-				val originAirport = airportsRepository.getAirportByIataCode(flight.originAirportCode)
-				val destinationAirport = airportsRepository.getAirportByIataCode(flight.destinationAirportCode)
+				if (flight != null) {
+					val originAirport = airportsRepository.getAirportByIataCode(flight.originAirportCode)
+					val destinationAirport = airportsRepository.getAirportByIataCode(flight.destinationAirportCode)
 
-				onFlightRetrieved(flight = flight,
-					originAirport = originAirport,
-					destinationAirport = destinationAirport)
-			}
-
-			if (!hasEmitted) {
-				_uiState.update {
-					it.copy(isRetrievingFlight = false)
-				}
+					onFlightRetrieved(flight = flight,
+						originAirport = originAirport,
+						destinationAirport = destinationAirport)
+				} else
+					_navigateBack.emit(Unit)
 			}
 		}
 	}
@@ -108,9 +102,10 @@ class FlightDetailsViewModel(
 
 	fun deleteFlightNotes() {
 		if (!flightNotesAccessJob.isActive) {
-			flightNotesAccessJob = deleteFlightNotesDatabase(_uiState.value.flightNotes!!)
+			flightNotesAccessJob = deleteFlightNotesDatabase(flightId)
 			_uiState.update {
-				it.copy(flightNotes = null)
+				it.copy(flightNotes = null,
+					notesEdition = false)
 			}
 		}
 	}
@@ -137,8 +132,7 @@ class FlightDetailsViewModel(
 			it.copy(flight = flight,
 				retrievedOriginAirport = originAirport,
 				retrievedDestinationAirport = destinationAirport,
-				flightMapState = flightMapState,
-				isRetrievingFlight = false)
+				flightMapState = flightMapState)
 		}
 	}
 
@@ -155,8 +149,8 @@ class FlightDetailsViewModel(
 		flightNotesRepository.updateFlightNotes(flightNotes)
 	}
 
-	private fun deleteFlightNotesDatabase(flightNotes: FlightNotes) = viewModelScope.launch {
-		flightNotesRepository.removeFlightNotes(flightNotes)
+	private fun deleteFlightNotesDatabase(flightId: Int) = viewModelScope.launch {
+		flightNotesRepository.removeFlightNotesById(flightId)
 	}
 
 	private fun getNotesDatabase(flightId: Int) = viewModelScope.launch {

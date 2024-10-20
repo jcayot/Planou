@@ -10,6 +10,7 @@ import com.google.maps.android.compose.AdvancedMarker
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
+import com.google.maps.android.compose.Marker
 
 @Composable
 fun FlightMap(
@@ -18,7 +19,7 @@ fun FlightMap(
 ) {
 	LaunchedEffect(flightMapState.mapBounds) {
 		flightMapState.cameraPositionState.animate(
-			CameraUpdateFactory.newLatLngBounds(flightMapState.mapBounds, 100)
+			CameraUpdateFactory.newLatLngBounds(flightMapState.mapBounds, 50)
 		)
 	}
 	GoogleMap(
@@ -40,10 +41,10 @@ fun FlightMap(
 		),
 		modifier = modifier.fillMaxSize(),
 		) {
-		AdvancedMarker(
+		Marker(
 			state = flightMapState.originMarkerState
 		)
-		AdvancedMarker(
+		Marker(
 			state = flightMapState.destinationMarkerState
 		)
 	}

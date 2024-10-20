@@ -7,7 +7,7 @@ class OfflineFlightsRepository(private val flightDao: FlightDao) : FlightsReposi
 		return (flightDao.getAllFlights())
 	}
 
-	override fun getFlight(id: Int): Flow<Flight> {
+	override fun getFlight(id: Int): Flow<Flight?> {
 		return (flightDao.getFlight(id))
 	}
 
@@ -15,8 +15,8 @@ class OfflineFlightsRepository(private val flightDao: FlightDao) : FlightsReposi
 		return (flightDao.insert(flight))
 	}
 
-	override suspend fun deleteFlight(flight: Flight) {
-		return (flightDao.delete(flight))
+	override suspend fun deleteFlightById(id: Int) {
+		return (flightDao.deleteById(id))
 	}
 
 	override suspend fun updateFlight(flight: Flight) {

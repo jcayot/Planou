@@ -10,6 +10,7 @@ data class FlightEditUIState(
 	val flightForm: FlightForm = FlightForm(),
 	val formEnabled: Boolean = false,
 	val	isEntryValid: Boolean = false,
+	val	canDelete: Boolean = false,
 	val formElementVisibility: FormElementVisibility = FormElementVisibility()
 	)
 

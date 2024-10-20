@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cayot.planou.data.airport.Airport
 import com.cayot.planou.data.airport.AirportsRepository
-import com.cayot.planou.data.flight.Flight
 import com.cayot.planou.data.flight.FlightsRepository
 import com.cayot.planou.data.flight.toFlightForm
+import com.cayot.planou.data.flightNotes.FlightNotesRepository
 import com.cayot.planou.ui.navigation.PlanouScreen
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 class FlightEditViewModel(
 	private val flightsRepository: FlightsRepository,
 	private val airportsRepository: AirportsRepository,
+	private val flightNotesRepository: FlightNotesRepository,
 	savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -76,6 +77,10 @@ class FlightEditViewModel(
 		))
 	}
 
+	fun departureAirportDismissed(arrivalInput: String, foundAirport: List<Airport>) {
+		originAirport = onAirportDropdownCollapse(arrivalInput, foundAirport)
+	}
+
 	fun searchArrivalAirport(airportString: String) {
 		destinationAirport = null
 		updateFlightForm(flightForm = _uiState.value.flightForm.copy(destinationAirportString = airportString))
@@ -96,11 +101,11 @@ class FlightEditViewModel(
 		))
 	}
 
+	fun arrivalAirportDismissed(arrivalInput: String, foundAirport: List<Airport>) {
+		destinationAirport = onAirportDropdownCollapse(arrivalInput, foundAirport)
+	}
+
 	fun updateFormElementVisibility(formElementVisibility: FormElementVisibility) {
-		if (formElementVisibility.originAirportDropdownVisible != _uiState.value.formElementVisibility.originAirportDropdownVisible)
-			originAirport = onAirportDropdownCollapse(_uiState.value.flightForm.originAirportString, _uiState.value.flightForm.foundOriginAirportsList)
-		if (formElementVisibility.destinationAirportDropdownVisible != _uiState.value.formElementVisibility.destinationAirportDropdownVisible)
-			destinationAirport = onAirportDropdownCollapse(_uiState.value.flightForm.destinationAirportString, _uiState.value.flightForm.foundDestinationAirportList)
 		_uiState.update {
 			it.copy(formElementVisibility = formElementVisibility)
 		}
@@ -120,6 +125,17 @@ class FlightEditViewModel(
 						originAirport = originAirport!!,
 						destinationAirport = destinationAirport!!))
 				}
+				_navigateBack.emit(Unit)
+			}
+		}
+	}
+
+	fun deleteFlight() {
+		if (flightId != 0) {
+			_uiState.update { it.copy(formEnabled = false) }
+			viewModelScope.launch {
+				flightsRepository.deleteFlightById(flightId)
+				flightNotesRepository.removeFlightNotesById(flightId)
 				_navigateBack.emit(Unit)
 			}
 		}
@@ -146,19 +162,22 @@ class FlightEditViewModel(
 	}
 
 	private fun getFlight(flightId: Int)  = viewModelScope.launch {
-		var hasEmitted = false
 
 		flightsRepository.getFlight(flightId).collect{ flight ->
-			hasEmitted = true
-			updateFlightForm(flight.toFlightForm())
-			_uiState.update { it.copy(formEnabled = true) }
-			originSearchJob?.cancel()
-			originSearchJob = getOriginAirport(flight.originAirportId)
-			destinationSearchJob?.cancel()
-			destinationSearchJob = getDestinationAirport(flight.destinationAirportId)
+			if (flight != null) {
+				updateFlightForm(flight.toFlightForm())
+				_uiState.update {
+					it.copy(
+						formEnabled = true,
+						canDelete = true)
+				}
+				originSearchJob?.cancel()
+				originSearchJob = getOriginAirport(flight.originAirportId)
+				destinationSearchJob?.cancel()
+				destinationSearchJob = getDestinationAirport(flight.destinationAirportId)
+			} else
+				_navigateBack.emit(Unit)
 		}
-		if (!hasEmitted)
-			_navigateBack.emit(Unit)
 	}
 
 	private fun getOriginAirport(id: Int) = viewModelScope.launch {

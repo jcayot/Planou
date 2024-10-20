@@ -17,11 +17,11 @@ interface FlightDao {
 	@Update
 	suspend fun update(flight: Flight)
 
-	@Delete
-	suspend fun delete(flight: Flight)
+	@Query("DELETE from flights WHERE id = :id")
+	suspend fun deleteById(id: Int)
 
 	@Query("SELECT * from flights WHERE id = :id")
-	fun getFlight(id: Int) : Flow<Flight>
+	fun getFlight(id: Int) : Flow<Flight?>
 
 	@Query("SELECT * from flights ORDER BY departureTime DESC")
 	fun getAllFlights() : Flow<List<Flight>>

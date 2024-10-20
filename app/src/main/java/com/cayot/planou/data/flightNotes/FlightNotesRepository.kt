@@ -8,5 +8,5 @@ interface FlightNotesRepository {
 
     suspend fun updateFlightNotes(flightNotes: FlightNotes)
 
-    suspend fun removeFlightNotes(flightNotes: FlightNotes)
+    suspend fun removeFlightNotesById(flightId: Int)
 }

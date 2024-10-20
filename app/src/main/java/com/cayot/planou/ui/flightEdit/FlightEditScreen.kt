@@ -24,12 +24,14 @@ import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -63,9 +65,7 @@ fun FlightEditScreen(
 	val uiState by viewModel.uiState.collectAsState()
 
 	LaunchedEffect(Unit) {
-		viewModel.navigateBack.collect{
-			navigateBack()
-		}
+		viewModel.navigateBack.collect{ navigateBack() }
 	}
 
 	Scaffold (
@@ -82,10 +82,13 @@ fun FlightEditScreen(
 			updateFlightDetails = viewModel::updateFlightForm,
 			searchDepartureAirport = viewModel::searchDepartureAirport,
 			departureAirportSelected = viewModel::departureAirportSelected,
+			searchDepartureDismissed = viewModel::departureAirportDismissed,
 			searchArrivalAirport = viewModel::searchArrivalAirport,
 			arrivalAirportSelected = viewModel::arrivalAirportSelected,
+			searchArrivalDismissed = viewModel::arrivalAirportDismissed,
 			updateFormElementVisibility = viewModel::updateFormElementVisibility,
-			onContinueClicked = viewModel::saveFlight,
+			onSaveClicked = viewModel::saveFlight,
+			onDeleteClicked = viewModel::deleteFlight,
 			modifier = Modifier
 				.padding(
 					start = innerPadding.calculateStartPadding(LocalLayoutDirection.current),
@@ -103,10 +106,13 @@ fun FlightEditScreenContent(
 	updateFlightDetails: (FlightForm) -> Unit = {},
 	searchDepartureAirport: (String) -> Unit = {},
 	departureAirportSelected: (Airport) -> Unit = {},
+	searchDepartureDismissed: (String, List<Airport>) -> Unit = { _: String, _: List<Airport> -> },
 	searchArrivalAirport: (String) -> Unit = {},
 	arrivalAirportSelected: (Airport) -> Unit = {},
+	searchArrivalDismissed: (String, List<Airport>) -> Unit = { _: String, _: List<Airport> -> },
 	updateFormElementVisibility: (FormElementVisibility) -> Unit = {},
-	onContinueClicked: () -> Unit = {},
+	onSaveClicked: () -> Unit = {},
+	onDeleteClicked: () -> Unit = {},
 	modifier: Modifier = Modifier
 ) {
 	Column (
@@ -119,13 +125,15 @@ fun FlightEditScreenContent(
 			updateFlightDetails = updateFlightDetails,
 			searchDepartureAirport = searchDepartureAirport,
 			departureAirportSelected = departureAirportSelected,
+			searchDepartureDismissed = searchDepartureDismissed,
 			searchArrivalAirport = searchArrivalAirport,
 			arrivalAirportSelected = arrivalAirportSelected,
+			searchArrivalDismissed = searchArrivalDismissed,
 			updateFormElementVisibility = updateFormElementVisibility,
 			modifier = Modifier.fillMaxWidth()
 		)
 		Button(
-			onClick = { onContinueClicked() },
+			onClick = { onSaveClicked() },
 			enabled = uiState.isEntryValid && uiState.formEnabled,
 		) {
 			Text(
@@ -133,6 +141,18 @@ fun FlightEditScreenContent(
 				fontSize = 16.sp,
 				modifier = Modifier.padding(dimensionResource(R.dimen.padding_mini))
 			)
+		}
+		if (uiState.canDelete) {
+			TextButton(
+				onClick = { onDeleteClicked() },
+				enabled = uiState.isEntryValid && uiState.formEnabled,
+			) {
+				Text(
+					text = stringResource(R.string.delete_flight),
+					fontSize = 14.sp,
+					color = Color.Red
+				)
+			}
 		}
 	}
 }
@@ -144,8 +164,10 @@ fun FlightEditForm(
 	updateFlightDetails: (FlightForm) -> Unit,
 	searchDepartureAirport: (String) -> Unit,
 	departureAirportSelected: (Airport) -> Unit,
+	searchDepartureDismissed: (String, List<Airport>) -> Unit,
 	searchArrivalAirport: (String) -> Unit,
 	arrivalAirportSelected: (Airport) -> Unit,
+	searchArrivalDismissed: (String, List<Airport>) -> Unit,
 	updateFormElementVisibility: (FormElementVisibility) -> Unit,
 	modifier: Modifier = Modifier
 ) {
@@ -172,6 +194,7 @@ fun FlightEditForm(
 					items = uiState.flightForm.foundOriginAirportsList,
 					onValueChange = searchDepartureAirport,
 					onItemClicked = departureAirportSelected,
+					onDismissed = searchDepartureDismissed,
 					updateVisibility = {
 						updateFormElementVisibility(uiState.formElementVisibility.copy(
 							originAirportDropdownVisible = it
@@ -188,6 +211,7 @@ fun FlightEditForm(
 					items = uiState.flightForm.foundDestinationAirportList,
 					onValueChange = searchArrivalAirport,
 					onItemClicked = arrivalAirportSelected,
+					onDismissed = searchArrivalDismissed,
 					updateVisibility = {
 						updateFormElementVisibility(uiState.formElementVisibility.copy(
 							destinationAirportDropdownVisible = it

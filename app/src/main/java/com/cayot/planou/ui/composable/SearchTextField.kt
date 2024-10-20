@@ -21,6 +21,7 @@ fun <T> SearchTextField(
     items: List<T>,
     onValueChange : (String) -> Unit,
     onItemClicked : (T) -> Unit,
+    onDismissed: (String, List<T>) -> Unit,
     updateVisibility: (Boolean) -> Unit,
     expanded: Boolean,
     enabled: Boolean,
@@ -44,7 +45,9 @@ fun <T> SearchTextField(
         )
         ExposedDropdownMenu(
             expanded = expanded && enabled,
-            onDismissRequest = { updateVisibility(false) },
+            onDismissRequest = {
+                onDismissed(value, items)
+                updateVisibility(false) },
         ) {
             if (value.isBlank()) {
 

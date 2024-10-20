@@ -6,11 +6,11 @@ interface FlightsRepository {
 
 	fun getAllFlightsStream() : Flow<List<Flight>>
 
-	fun getFlight(id: Int): Flow<Flight>
+	fun getFlight(id: Int): Flow<Flight?>
 
 	suspend fun insertFlight(flight: Flight)
 
-	suspend fun deleteFlight(flight: Flight)
+	suspend fun deleteFlightById(id: Int)
 
 	suspend fun updateFlight(flight: Flight)
 }
