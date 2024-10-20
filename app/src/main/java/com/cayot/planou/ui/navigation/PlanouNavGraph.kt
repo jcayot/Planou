@@ -15,7 +15,7 @@ import com.cayot.planou.ui.flightList.FlightListScreen
 
 enum class PlanouScreen(@StringRes val title: Int, val argName : String) {
 	List(R.string.flight_list, ""),
-	Edit(R.string.add_flight, "flightId"),
+	Edit(R.string.edit_flight, "flightId"),
 	Details(R.string.flight_details, "flightId")
 }
 

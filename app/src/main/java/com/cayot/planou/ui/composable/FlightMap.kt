@@ -6,7 +6,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import com.cayot.planou.data.FlightMapState
 import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.maps.android.compose.AdvancedMarker
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
@@ -15,11 +14,12 @@ import com.google.maps.android.compose.Marker
 @Composable
 fun FlightMap(
 	flightMapState: FlightMapState,
+	padding: Int,
 	modifier: Modifier = Modifier
 ) {
 	LaunchedEffect(flightMapState.mapBounds) {
 		flightMapState.cameraPositionState.animate(
-			CameraUpdateFactory.newLatLngBounds(flightMapState.mapBounds, 50)
+			CameraUpdateFactory.newLatLngBounds(flightMapState.mapBounds, padding)
 		)
 	}
 	GoogleMap(

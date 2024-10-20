@@ -54,8 +54,6 @@ import com.cayot.planou.ui.AppViewModelProvider
 import com.cayot.planou.ui.PlanouTopBar
 import com.cayot.planou.ui.composable.FlightMap
 import com.cayot.planou.ui.navigation.PlanouScreen
-import java.util.Calendar
-import java.util.TimeZone
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -268,6 +266,7 @@ fun FlightItemMap(
 		if (flightMapState != null) {
 			FlightMap(
 				flightMapState = flightMapState,
+				padding = 10
 			)
 		}
 	}

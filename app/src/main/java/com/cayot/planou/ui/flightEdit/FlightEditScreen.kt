@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -110,10 +112,13 @@ fun FlightEditScreenContent(
 	onDeleteClicked: () -> Unit = {},
 	modifier: Modifier = Modifier
 ) {
+	val scrollState = rememberScrollState()
+
 	Column (
 		verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_medium)),
 		horizontalAlignment = Alignment.CenterHorizontally,
 		modifier = modifier.padding(dimensionResource(id = R.dimen.padding_medium))
+			.verticalScroll(scrollState)
 	) {
 		FlightEditForm(
 			uiState = uiState,

@@ -40,7 +40,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -261,6 +260,7 @@ fun FlightCard(
 				if (flightMapState != null) {
 					FlightMap(
 						flightMapState = flightMapState,
+						padding = 50
 					)
 				}
 			}
