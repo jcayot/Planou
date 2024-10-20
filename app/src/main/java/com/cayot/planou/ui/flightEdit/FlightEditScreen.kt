@@ -7,21 +7,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
-import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -46,8 +39,9 @@ import com.cayot.planou.data.airport.Airport
 import com.cayot.planou.ui.AppViewModelProvider
 import com.cayot.planou.ui.PlanouTopBar
 import com.cayot.planou.ui.composable.OutlinedDatePicker
-import com.cayot.planou.ui.composable.SearchTextField
 import com.cayot.planou.ui.composable.OutlinedTimePicker
+import com.cayot.planou.ui.composable.SearchTextField
+import com.cayot.planou.ui.composable.SelectDropdown
 import com.cayot.planou.ui.navigation.PlanouScreen
 import com.cayot.planou.utils.SelectableDateAll
 import com.cayot.planou.utils.SelectableDatesTo
@@ -235,15 +229,17 @@ fun FlightEditForm(
 				modifier = modifier,
 				horizontalArrangement = Arrangement.SpaceBetween
 			) {
-				TravelClassDropdown(
-					currentTravelClass = uiState.flightForm.travelClass,
-					expanded = uiState.formElementVisibility.travelClassDropdownVisible,
-					onTravelClassSelected = { updateFlightDetails(uiState.flightForm.copy(travelClass = it)) },
+				SelectDropdown(
+					labelText = stringResource(R.string.travel_class),
+					items = TravelClass.entries.toList(),
+					selected = uiState.flightForm.travelClass,
+					onItemSelected = { updateFlightDetails(uiState.flightForm.copy(travelClass = it))},
 					updateVisibility = { visibility ->
 						updateFormElementVisibility(uiState.formElementVisibility.copy(
 							travelClassDropdownVisible = visibility
 						))
 					},
+					expanded = uiState.formElementVisibility.travelClassDropdownVisible,
 					enabled = uiState.formEnabled,
 					modifier = Modifier.weight(1f)
 				)
@@ -342,58 +338,6 @@ fun FlightEditForm(
 					},
 					enabled = uiState.formEnabled,
 					modifier = Modifier.weight(2f)
-				)
-			}
-		}
-	}
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun	TravelClassDropdown(
-	currentTravelClass: TravelClass,
-	expanded: Boolean,
-	onTravelClassSelected: (TravelClass) -> Unit,
-	updateVisibility: (Boolean) -> Unit,
-	enabled: Boolean,
-	modifier: Modifier = Modifier
-) {
-
-	ExposedDropdownMenuBox(
-		expanded = expanded && enabled,
-		onExpandedChange = { updateVisibility(it) },
-		modifier = modifier.wrapContentSize(Alignment.TopStart)
-	) {
-		OutlinedTextField(
-			label = { Text(stringResource(R.string.travel_class)) },
-			value = currentTravelClass.name,
-			onValueChange = {  },
-			modifier = modifier
-				.menuAnchor(MenuAnchorType.PrimaryNotEditable, enabled)
-				.fillMaxWidth(),
-			singleLine = true,
-			readOnly = true,
-			enabled = enabled,
-			shape = shapes.large,
-			trailingIcon = {
-				ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-			},
-			colors = ExposedDropdownMenuDefaults.textFieldColors()
-		)
-		DropdownMenu(
-			expanded = expanded && enabled,
-			onDismissRequest = { updateVisibility(false) },
-			modifier = Modifier.exposedDropdownSize()
-
-		) {
-			TravelClass.entries.forEach { travelClass ->
-				DropdownMenuItem(
-					text = { Text(text = travelClass.name, fontSize = 14.sp) },
-					onClick = {
-						onTravelClassSelected(travelClass)
-						updateVisibility(false)
-					},
-					modifier = Modifier.fillMaxWidth()
 				)
 			}
 		}
