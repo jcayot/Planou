@@ -7,9 +7,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -31,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -119,6 +122,7 @@ fun FlightEditScreenContent(
 		horizontalAlignment = Alignment.CenterHorizontally,
 		modifier = modifier.padding(dimensionResource(id = R.dimen.padding_medium))
 			.verticalScroll(scrollState)
+			.imePadding()
 	) {
 		FlightEditForm(
 			uiState = uiState,
@@ -171,6 +175,7 @@ fun FlightEditForm(
 	updateFormElementVisibility: (FormElementVisibility) -> Unit,
 	modifier: Modifier = Modifier
 ) {
+
 	Card(
 		elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
 		modifier = modifier
@@ -201,6 +206,7 @@ fun FlightEditForm(
 					},
 					expanded = uiState.formElementVisibility.originAirportDropdownVisible,
 					enabled = uiState.formEnabled,
+					keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
 					modifier = Modifier.weight(1f)
 				)
 				Spacer(modifier = Modifier.width(8.dp))
@@ -218,6 +224,7 @@ fun FlightEditForm(
 					},
 					expanded = uiState.formElementVisibility.destinationAirportDropdownVisible,
 					enabled = uiState.formEnabled,
+					keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
 					modifier = Modifier.weight(1f)
 				)
 			}
@@ -228,6 +235,7 @@ fun FlightEditForm(
 				singleLine = true,
 				enabled = uiState.formEnabled,
 				shape = shapes.large,
+				keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
 				modifier = modifier
 			)
 			Row (
@@ -256,6 +264,7 @@ fun FlightEditForm(
 					singleLine = true,
 					enabled = uiState.formEnabled,
 					shape = shapes.large,
+					keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
 					modifier = Modifier.weight(1f)
 				)
 
@@ -267,6 +276,7 @@ fun FlightEditForm(
 				singleLine = true,
 				enabled = uiState.formEnabled,
 				shape = shapes.large,
+				keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
 				modifier = modifier
 			)
 			Row (

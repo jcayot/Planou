@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -202,6 +203,7 @@ fun FlightDetails(
 		modifier = modifier
 			.fillMaxWidth()
 			.verticalScroll(scrollState)
+			.imePadding()
 			.padding(horizontal = dimensionResource(id = R.dimen.padding_smadium))
 			.padding(bottom = dimensionResource(id = R.dimen.padding_medium)),
 		verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_smadium)),

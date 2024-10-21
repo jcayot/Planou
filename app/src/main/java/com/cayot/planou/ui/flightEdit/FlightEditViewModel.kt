@@ -70,6 +70,7 @@ class FlightEditViewModel(
 	}
 
 	fun departureAirportSelected(airport: Airport) {
+		originSearchJob?.cancel()
 		originAirport = airport
 		updateFlightForm(flightForm = _uiState.value.flightForm.copy(
 			originAirportString = airport.iataCode,
@@ -78,6 +79,7 @@ class FlightEditViewModel(
 	}
 
 	fun departureAirportDismissed(arrivalInput: String, foundAirport: List<Airport>) {
+		originSearchJob?.cancel()
 		originAirport = onAirportDropdownCollapse(arrivalInput, foundAirport)
 		_uiState.update { it.copy(isEntryValid = flightDetailsValid()) }
 	}
@@ -95,6 +97,7 @@ class FlightEditViewModel(
 	}
 
 	fun arrivalAirportSelected(airport: Airport) {
+		destinationSearchJob?.cancel()
 		destinationAirport = airport
 		updateFlightForm(flightForm = _uiState.value.flightForm.copy(
 			destinationAirportString = airport.iataCode,
@@ -103,6 +106,7 @@ class FlightEditViewModel(
 	}
 
 	fun arrivalAirportDismissed(arrivalInput: String, foundAirport: List<Airport>) {
+		destinationSearchJob?.cancel()
 		destinationAirport = onAirportDropdownCollapse(arrivalInput, foundAirport)
 		_uiState.update { it.copy(isEntryValid = flightDetailsValid()) }
 	}
