@@ -19,5 +19,5 @@ dependencyResolutionManagement {
 	}
 }
 
-rootProject.name = "Planou"
+rootProject.name = "Flying More"
 include(":app")

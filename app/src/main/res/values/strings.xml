@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Planou</string>
+    <string name="app_name">Flying More</string>
     <string name="flight_list">Flight List</string>
     <string name="add_flight">Add Flight</string>
     <string name="flight_details">Flight Details</string>

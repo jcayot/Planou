@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-	namespace = "com.cayot.planou"
+	namespace = "com.cayot.flyingmore"
 	compileSdk = 34
 
 	defaultConfig {
-		applicationId = "com.cayot.planou"
+		applicationId = "com.cayot.flyingmore"
 		minSdk = 28
 		targetSdk = 34
 		versionCode = 1
