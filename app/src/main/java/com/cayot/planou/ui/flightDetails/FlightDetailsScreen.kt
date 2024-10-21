@@ -256,7 +256,7 @@ fun FlightCard(
 				contentAlignment = Alignment.Center,
 				modifier = Modifier
 					.fillMaxWidth()
-					.aspectRatio(1f)
+					.aspectRatio(1.33f)
 					.clip(RoundedCornerShape(8.dp))
 			) {
 				if (flightMapState != null) {
@@ -371,7 +371,7 @@ fun FlightCard(
 					horizontalAlignment = Alignment.CenterHorizontally,
 					labelText = stringResource(R.string.arrival_time),
 					labelStyle = typography.labelSmall,
-					dataText = flight.getArrivalTimeString(),
+					dataText = flight.getArrivalTimeString() ?: stringResource(R.string.empty_value),
 					dataStyle = typography.bodyMedium,
 					dataWeight = FontWeight.SemiBold,
 					modifier = Modifier.weight(1f)
@@ -389,7 +389,7 @@ fun FlightCard(
 					horizontalAlignment = Alignment.CenterHorizontally,
 					labelText = stringResource(R.string.seat),
 					labelStyle = typography.labelSmall,
-					dataText = "-",
+					dataText = flight.seatNumber ?: stringResource(R.string.empty_value),
 					dataStyle = typography.bodyMedium,
 					dataWeight = FontWeight.SemiBold,
 					modifier = Modifier.weight(1f)

@@ -25,7 +25,8 @@ data class FlightForm (
 	val planeModel: String = "",
 	val travelClass: TravelClass = TravelClass.ECONOMY,
 	val departureTime: Instant = Instant.now(),
-	val arrivalTime: Instant? = null
+	val arrivalTime: Instant? = null,
+	val seatNumber: String = "",
 	)
 
 data class FormElementVisibility(
@@ -64,6 +65,10 @@ fun FlightForm.areDateValid() : Boolean {
 	return (departureTime.isBefore(Instant.now()) && arrivalTime?.isAfter(departureTime) ?: true)
 }
 
+fun FlightForm.seatNumberValid() : Boolean {
+	return (seatNumber.isNotBlank() && seatNumber.length < 4)
+}
+
 fun FlightForm.toFlight(originAirport: Airport, destinationAirport: Airport) : Flight {
 	return (Flight(
 		id = id,
@@ -77,6 +82,7 @@ fun FlightForm.toFlight(originAirport: Airport, destinationAirport: Airport) : F
 		destinationAirportCode = destinationAirport.iataCode,
 		destinationAirportId = destinationAirport.id,
 		distance = originAirport.distanceToAirport(destinationAirport),
-		planeModel = planeModel
+		planeModel = planeModel,
+		seatNumber = if (seatNumberValid()) seatNumber else null
 	))
 }

@@ -269,16 +269,31 @@ fun FlightEditForm(
 				)
 
 			}
-			OutlinedTextField(
-				label = { Text(stringResource(R.string.plane_model)) },
-				value = uiState.flightForm.planeModel,
-				onValueChange = { updateFlightDetails(uiState.flightForm.copy(planeModel = it)) },
-				singleLine = true,
-				enabled = uiState.formEnabled,
-				shape = shapes.large,
-				keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+			Row (
+				horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small)),
 				modifier = modifier
-			)
+			) {
+				OutlinedTextField(
+					label = { Text(stringResource(R.string.plane_model)) },
+					value = uiState.flightForm.planeModel,
+					onValueChange = { updateFlightDetails(uiState.flightForm.copy(planeModel = it)) },
+					singleLine = true,
+					enabled = uiState.formEnabled,
+					shape = shapes.large,
+					keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+					modifier = Modifier.weight(3f)
+				)
+				OutlinedTextField(
+					label = { Text(stringResource(R.string.seat)) },
+					value = uiState.flightForm.seatNumber,
+					onValueChange = { updateFlightDetails(uiState.flightForm.copy(seatNumber = it)) },
+					singleLine = true,
+					enabled = uiState.formEnabled,
+					shape = shapes.large,
+					keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+					modifier = Modifier.weight(1f)
+					)
+			}
 			Row (
 				horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small)),
 				modifier = modifier

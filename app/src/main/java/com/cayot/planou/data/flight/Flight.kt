@@ -22,10 +22,11 @@ data class Flight(
 	val destinationAirportCode: String,
 	val	destinationAirportId: Int,
 	val distance: Float,
+	val travelClass: TravelClass,
+	val planeModel: String,
 	val departureTime: Long,
 	val	arrivalTime: Long? = null,
-	val travelClass: TravelClass,
-	val planeModel: String
+	val seatNumber: String?
 ) {
 	companion object {
 		fun getPlaceholderFlight1() : Flight {
@@ -40,7 +41,8 @@ data class Flight(
 				departureTime = Date.from(Instant.now()).time,
 				arrivalTime = Date.from(Instant.now()).time,
 				travelClass = TravelClass.BUSINESS,
-				planeModel = "Airbus A220"
+				planeModel = "Airbus A220",
+				seatNumber = "1A"
 			))
 		}
 		fun getPlaceholderFlight2() : Flight {
@@ -54,7 +56,8 @@ data class Flight(
 				distance = 1910000.0f,
 				departureTime = Date.from(Instant.now()).time,
 				travelClass = TravelClass.ECONOMY,
-				planeModel = "Airbus A220"
+				planeModel = "Airbus A220",
+				seatNumber = "11F"
 			))
 		}
 	}
@@ -72,9 +75,9 @@ fun Flight.getDepartureTimeString() : String {
 	return (SimpleDateFormat("h:mm a", Locale.getDefault()).format(departureTime))
 }
 
-fun Flight.getArrivalTimeString() : String {
+fun Flight.getArrivalTimeString() : String? {
 	if (arrivalTime == null)
-		return ("-")
+		return (null)
 	val dayDifference = ChronoUnit.DAYS.between(Instant.ofEpochMilli(departureTime), Instant.ofEpochMilli(arrivalTime))
 	val dayDiffSuffix = if (dayDifference < 1)
 		""
@@ -93,6 +96,7 @@ fun Flight.toFlightForm() : FlightForm {
 		departureTime = Instant.ofEpochMilli(departureTime),
 		arrivalTime = arrivalTime?.let { Instant.ofEpochMilli(it) },
 		travelClass = travelClass,
-		planeModel = planeModel
+		planeModel = planeModel,
+		seatNumber = seatNumber ?: ""
 	))
 }
