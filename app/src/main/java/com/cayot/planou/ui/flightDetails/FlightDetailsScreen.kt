@@ -41,6 +41,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -49,6 +50,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -90,6 +92,9 @@ fun FlightDetailsScreen(
 	val uiState by viewModel.uiState.collectAsState()
 	val context = LocalContext.current
 
+	val scrollState = rememberScrollState()
+	val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
 	if (uiState.flight != null) {
 		LaunchedEffect (Unit) {
 			viewModel.shareCard.collect {
@@ -105,11 +110,13 @@ fun FlightDetailsScreen(
 	}
 
 	Scaffold (
+		modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
 		topBar = {
 			PlanouTopBar(
 				title = stringResource(PlanouScreen.Details.title),
 				canNavigateBack = true,
 				navigateUp = onNavigateUp,
+				scrollBehavior = scrollBehavior
 			)
 		}
 	) { innerPadding ->
@@ -132,6 +139,8 @@ fun FlightDetailsScreen(
 					top = innerPadding.calculateTopPadding()
 				)
 				.fillMaxWidth()
+				.verticalScroll(scrollState)
+				.imePadding()
 		)
 	}
 }
@@ -197,13 +206,9 @@ fun FlightDetails(
 	deleteNotes: () -> Unit,
 	modifier: Modifier = Modifier
 ) {
-	val scrollState = rememberScrollState()
-
 	Column(
 		modifier = modifier
 			.fillMaxWidth()
-			.verticalScroll(scrollState)
-			.imePadding()
 			.padding(horizontal = dimensionResource(id = R.dimen.padding_smadium))
 			.padding(bottom = dimensionResource(id = R.dimen.padding_medium)),
 		verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_smadium)),

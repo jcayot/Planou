@@ -130,13 +130,13 @@ fun EmptyFlightListPlaceholder(
 ) {
 	Column (
 		horizontalAlignment = Alignment.CenterHorizontally,
+		verticalArrangement = Arrangement.Center,
 		modifier = modifier,
 	) {
 		Image(
 			painter = painterResource(R.drawable.airplanemode_inactive_40px),
 			contentDescription = stringResource(R.string.list_empty_sad_plane),
 			modifier = Modifier
-				.padding(top = 80.dp)
 				.size(100.dp)
 		)
 		Text(

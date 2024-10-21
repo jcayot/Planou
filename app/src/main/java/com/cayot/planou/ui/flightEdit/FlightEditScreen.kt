@@ -291,7 +291,7 @@ fun FlightEditForm(
 					enabled = uiState.formEnabled,
 					shape = shapes.large,
 					keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-					modifier = Modifier.weight(1f)
+					modifier = Modifier.weight(2f)
 					)
 			}
 			Row (
