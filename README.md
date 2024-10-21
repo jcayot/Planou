@@ -1,7 +1,7 @@
 # Flying More
 
-Flying More is an Android application designed to help you keep track of your flights, view your flight history, and interact with friends to compare statistics.
-App is still in early stage of development
+Flying More is an Android application designed to help you keep track of your flights, view your flight history, and interact with friends to compare statistics.  
+### App is still in development
 
 ## Features
 
