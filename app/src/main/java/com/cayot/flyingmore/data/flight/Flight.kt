@@ -28,6 +28,58 @@ data class Flight(
 	val	arrivalTime: Long? = null,
 	val seatNumber: String?
 ) {
+	override fun equals(other: Any?): Boolean {
+		if (this === other)
+			return true
+		if (javaClass != other?.javaClass)
+			return false
+
+		other as Flight
+
+		if (flightNumber != other.flightNumber)
+			return false
+		if (airline != other.airline)
+			return false
+		if (originAirportCode != other.originAirportCode)
+			return false
+		if (originAirportId != other.originAirportId)
+			return false
+		if (destinationAirportCode != other.destinationAirportCode)
+			return false
+		if (destinationAirportId != other.destinationAirportId)
+			return false
+		if (distance != other.distance)
+			return false
+		if (travelClass != other.travelClass)
+			return false
+		if (planeModel != other.planeModel)
+			return false
+		if (departureTime != other.departureTime)
+			return false
+		if (arrivalTime != other.arrivalTime)
+			return false
+		if (seatNumber != other.seatNumber)
+			return false
+
+		return true
+	}
+
+	override fun hashCode(): Int {
+		var result = flightNumber.hashCode()
+		result = 31 * result + airline.hashCode()
+		result = 31 * result + originAirportCode.hashCode()
+		result = 31 * result + originAirportId
+		result = 31 * result + destinationAirportCode.hashCode()
+		result = 31 * result + destinationAirportId
+		result = 31 * result + distance.hashCode()
+		result = 31 * result + travelClass.hashCode()
+		result = 31 * result + planeModel.hashCode()
+		result = 31 * result + departureTime.hashCode()
+		result = 31 * result + (arrivalTime?.hashCode() ?: 0)
+		result = 31 * result + (seatNumber?.hashCode() ?: 0)
+		return result
+	}
+
 	companion object {
 		fun getPlaceholderFlight1() : Flight {
 			return (Flight(

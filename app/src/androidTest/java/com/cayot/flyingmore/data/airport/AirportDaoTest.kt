@@ -1,40 +1,24 @@
 package com.cayot.flyingmore.data.airport
 
-import android.content.Context
-import androidx.room.Room
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.cayot.flyingmore.data.PlanouDatabase
+import com.cayot.flyingmore.data.DatabaseTest
 import kotlinx.coroutines.runBlocking
-import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.io.IOException
 
 
 @RunWith(AndroidJUnit4::class)
-class AirportDaoTest {
+class AirportDaoTest : DatabaseTest() {
     private lateinit var airportDao: AirportDao
-    private lateinit var planouDatabase: PlanouDatabase
 
     private val airportList = listOf(Airport.getCDG(), Airport.getHEL(), Airport.getJFK())
 
     @Before
-    fun createDatabase() {
-        val context: Context = ApplicationProvider.getApplicationContext()
-
-        planouDatabase = Room.inMemoryDatabaseBuilder(context, PlanouDatabase::class.java)
-            .allowMainThreadQueries()
-            .build()
-        airportDao = planouDatabase.airportDao()
-    }
-
-    @After
-    @Throws(IOException::class)
-    fun closeDatabase() {
-        planouDatabase.close()
+    override fun createDatabase() {
+        super.createDatabase()
+        airportDao = flyingMoreDatabase.airportDao()
     }
 
     private suspend fun fillDatabase() {

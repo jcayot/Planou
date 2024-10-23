@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalFoundationApi::class)
+
 package com.cayot.flyingmore.ui.flightDetails
 
 import android.content.Context
@@ -5,8 +7,10 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +26,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -46,10 +52,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -79,6 +88,8 @@ import com.cayot.flyingmore.ui.composable.FlightMap
 import com.cayot.flyingmore.ui.composable.LabelledData
 import com.cayot.flyingmore.ui.composable.composableBitmap
 import com.cayot.flyingmore.ui.navigation.FlyingMoreScreen
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -138,9 +149,9 @@ fun FlightDetailsScreen(
 					end = innerPadding.calculateEndPadding(LocalLayoutDirection.current),
 					top = innerPadding.calculateTopPadding()
 				)
-				.fillMaxWidth()
-				.verticalScroll(scrollState)
 				.imePadding()
+				.fillMaxSize()
+				.verticalScroll(scrollState)
 		)
 	}
 }
@@ -417,11 +428,22 @@ fun FlightNotesComposable(
 	deleteNotes: () -> Unit = {},
 	modifier: Modifier = Modifier
 ) {
+	val bringIntoViewRequester = remember { BringIntoViewRequester() }
+	val bringIntoViewCoroutine = rememberCoroutineScope()
+
 	Row (
 		verticalAlignment = Alignment.CenterVertically,
 		modifier = modifier
 			.height(25.dp)
 			.clickable { updateNotesVisibility() }
+			.onFocusChanged {
+				if (it.isFocused) {
+					bringIntoViewCoroutine.launch {
+						delay(420)
+						bringIntoViewRequester.bringIntoView()
+					}
+				}
+			}.focusable()
 	) {
 		Box(
 			contentAlignment = Alignment.Center,
@@ -444,6 +466,7 @@ fun FlightNotesComposable(
 	AnimatedVisibility(notesVisible) {
 		Card(
 			modifier = modifier
+				.bringIntoViewRequester(bringIntoViewRequester)
 		) {
 			Column (
 				horizontalAlignment = Alignment.CenterHorizontally,
@@ -460,7 +483,15 @@ fun FlightNotesComposable(
 						)
 					}
 					Button (
-						onClick = editNotes
+						onClick = editNotes,
+						modifier = Modifier.onFocusChanged {
+							if (it.isFocused) {
+								bringIntoViewCoroutine.launch {
+									delay(420)
+									bringIntoViewRequester.bringIntoView()
+								}
+							}
+						}.focusable()
 					) {
 						Text(
 							text =  if (flightNotes != null)
@@ -495,6 +526,13 @@ fun FlightNotesComposable(
 							value = flightNotes.text,
 							onValueChange = onFlightNotesChange,
 							modifier = Modifier.fillMaxWidth()
+								.onFocusChanged {
+									if (it.isFocused)
+										bringIntoViewCoroutine.launch {
+											delay(420)
+											bringIntoViewRequester.bringIntoView()
+										}
+								}
 						)
 					}
 					Row (

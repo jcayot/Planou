@@ -57,6 +57,7 @@ import java.time.Instant
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FlightEditScreen(
+	title: String,
 	navigateBack: () -> Unit,
 	onNavigateUp: () -> Unit,
 	canNavigateBack: Boolean = true
@@ -71,7 +72,7 @@ fun FlightEditScreen(
 	Scaffold (
 		topBar = {
 			PlanouTopBar(
-				title = stringResource(FlyingMoreScreen.Edit.title),
+				title = title + " " + stringResource(R.string.flight),
 				canNavigateBack = canNavigateBack,
 				navigateUp = onNavigateUp
 			)

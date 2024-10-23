@@ -15,6 +15,7 @@ import com.cayot.flyingmore.ui.flightList.FlightListScreen
 
 enum class FlyingMoreScreen(@StringRes val title: Int, val argName : String) {
 	List(R.string.flight_list, ""),
+	Add(R.string.add_flight, ""),
 	Edit(R.string.edit_flight, "flightId"),
 	Details(R.string.flight_details, "flightId")
 }
@@ -34,7 +35,14 @@ fun FlyingMoreNavHost(
 				onFlightPressed = {
 					navController.navigate(FlyingMoreScreen.Details.name + "/" + it)
 				},
-				onAddFlightPressed = { navController.navigate(FlyingMoreScreen.Edit.name + "/" + 0) }
+				onAddFlightPressed = { navController.navigate(FlyingMoreScreen.Add.name) }
+			)
+		}
+		composable(route = FlyingMoreScreen.Add.name) {
+			FlightEditScreen(
+				title = FlyingMoreScreen.Add.name,
+				onNavigateUp = { navController.navigateUp() },
+				navigateBack = { navController.popBackStack() }
 			)
 		}
 		composable(
@@ -44,6 +52,7 @@ fun FlyingMoreNavHost(
 			})
 		) {
 			FlightEditScreen(
+				title = FlyingMoreScreen.Edit.name,
 				onNavigateUp = { navController.navigateUp() },
 				navigateBack = { navController.popBackStack() }
 			)

@@ -17,13 +17,13 @@ interface AppContainer {
 
 class AppDataContainer(private val context: Context) : AppContainer {
 	override val flightsRepository: FlightsRepository by lazy {
-		OfflineFlightsRepository(PlanouDatabase.getDatabase(context).flightDao())
+		OfflineFlightsRepository(FlyingMoreDatabase.getDatabase(context).flightDao())
 	}
 	override val airportsRepository: AirportsRepository by lazy {
-		OfflineAirportsRepository(PlanouDatabase.getDatabase(context).airportDao())
+		OfflineAirportsRepository(FlyingMoreDatabase.getDatabase(context).airportDao())
 	}
 	override val flightNotesRepository: FlightNotesRepository by lazy {
-		OfflineFlightNotesRepository(PlanouDatabase.getDatabase(context).flightNotesDao())
+		OfflineFlightNotesRepository(FlyingMoreDatabase.getDatabase(context).flightNotesDao())
 	}
 	override val imageRepository: ImageRepository by lazy {
 		ImageRepository(context)

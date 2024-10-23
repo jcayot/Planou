@@ -24,7 +24,7 @@ class FlightEditViewModel(
 	savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-	private val flightId: Int = checkNotNull(savedStateHandle[FlyingMoreScreen.Edit.argName])
+	private val flightId: Int? = savedStateHandle[FlyingMoreScreen.Edit.argName]
 
 	private val _uiState = MutableStateFlow(FlightEditUIState())
 	val uiState: StateFlow<FlightEditUIState> = _uiState
@@ -39,7 +39,7 @@ class FlightEditViewModel(
 	private var destinationSearchJob: Job? = null
 
 	init {
-	    if (flightId != 0)
+	    if (flightId != null)
 			getFlight(flightId)
 		else
 			_uiState.update { it.copy(formEnabled = true) }
@@ -121,7 +121,7 @@ class FlightEditViewModel(
 		if (flightDetailsValid()) {
 			viewModelScope.launch {
 				_uiState.update { it.copy(formEnabled = false) }
-				if (flightId == 0) {
+				if (flightId == null) {
 					flightsRepository.insertFlight(_uiState.value.flightForm.toFlight(
 						originAirport = originAirport!!,
 						destinationAirport = destinationAirport!!)
@@ -137,7 +137,7 @@ class FlightEditViewModel(
 	}
 
 	fun deleteFlight() {
-		if (flightId != 0) {
+		if (flightId != null) {
 			_uiState.update { it.copy(formEnabled = false) }
 			viewModelScope.launch {
 				flightsRepository.deleteFlightById(flightId)

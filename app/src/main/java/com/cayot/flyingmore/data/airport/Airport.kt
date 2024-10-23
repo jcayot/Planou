@@ -21,6 +21,43 @@ data class Airport(
 		return (name)
 	}
 
+	override fun equals(other: Any?): Boolean {
+		if (this === other)
+			return true
+		if (javaClass != other?.javaClass)
+			return false
+
+		other as Airport
+
+		if (name != other.name)
+			return false
+		if (isoCountry != other.isoCountry)
+			return false
+		if (isoRegion != other.isoRegion)
+			return false
+		if (municipality != other.municipality)
+			return false
+		if (iataCode != other.iataCode)
+			return false
+		if (latitude != other.latitude)
+			return false
+		if (longitude != other.longitude)
+			return false
+
+		return true
+	}
+
+	override fun hashCode(): Int {
+		var result = name.hashCode()
+		result = 31 * result + isoCountry.hashCode()
+		result = 31 * result + isoRegion.hashCode()
+		result = 31 * result + municipality.hashCode()
+		result = 31 * result + iataCode.hashCode()
+		result = 31 * result + latitude.hashCode()
+		result = 31 * result + longitude.hashCode()
+		return result
+	}
+
 	companion object {
 
 		fun getJFK() : Airport {

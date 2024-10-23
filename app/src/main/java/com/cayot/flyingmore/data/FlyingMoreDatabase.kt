@@ -12,7 +12,7 @@ import com.cayot.flyingmore.data.flightNotes.FlightNotes
 import com.cayot.flyingmore.data.flightNotes.FlightNotesDao
 
 @Database(entities = [Flight::class, Airport::class, FlightNotes::class], version = 1, exportSchema = false)
-abstract class PlanouDatabase : RoomDatabase() {
+abstract class FlyingMoreDatabase : RoomDatabase() {
 
 	abstract fun flightDao() : FlightDao
 	abstract fun airportDao() : AirportDao
@@ -20,11 +20,11 @@ abstract class PlanouDatabase : RoomDatabase() {
 
 	companion object {
 		@Volatile
-		private var Instance: PlanouDatabase? = null
+		private var Instance: FlyingMoreDatabase? = null
 
-		fun getDatabase(context: Context) : PlanouDatabase {
+		fun getDatabase(context: Context) : FlyingMoreDatabase {
 			return Instance ?: synchronized(this) {
-				Room.databaseBuilder(context, PlanouDatabase::class.java, "planou_database")
+				Room.databaseBuilder(context, FlyingMoreDatabase::class.java, "planou_database")
 					.createFromAsset("airports.db")
 					.build()
 					.also { Instance = it }

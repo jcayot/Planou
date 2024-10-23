@@ -38,4 +38,5 @@
     <string name="type_airport_code">Type airport code</string>
     <string name="no_airport_matching">No known airport matching</string>
     <string name="empty_value">-</string>
+    <string name="flight">Flight</string>
 </resources>
