@@ -8,6 +8,7 @@ import com.cayot.flyingmore.data.airport.AirportsRepository
 import com.cayot.flyingmore.data.flight.FlightsRepository
 import com.cayot.flyingmore.data.flight.toFlightForm
 import com.cayot.flyingmore.data.flightNotes.FlightNotesRepository
+import com.cayot.flyingmore.domain.DeleteFlightWithNoteUseCase
 import com.cayot.flyingmore.ui.navigation.FlyingMoreScreen
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -21,7 +22,7 @@ import kotlinx.coroutines.launch
 class FlightEditViewModel(
 	private val flightsRepository: FlightsRepository,
 	private val airportsRepository: AirportsRepository,
-	private val flightNotesRepository: FlightNotesRepository,
+	private val deleteFlightWithNoteUseCase: DeleteFlightWithNoteUseCase,
 	savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -141,8 +142,7 @@ class FlightEditViewModel(
 		if (flightId != null) {
 			_uiState.update { it.copy(formEnabled = false) }
 			viewModelScope.launch {
-				flightsRepository.deleteFlightById(flightId)
-				flightNotesRepository.removeFlightNotesById(flightId)
+				deleteFlightWithNoteUseCase(flightId)
 				_navigateBack.emit(Unit)
 			}
 		}

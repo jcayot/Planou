@@ -6,6 +6,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.cayot.flyingmore.FlyingMoreApplication
+import com.cayot.flyingmore.domain.DeleteFlightWithNoteUseCase
 import com.cayot.flyingmore.ui.flightEdit.FlightEditViewModel
 import com.cayot.flyingmore.ui.flightDetails.FlightDetailsViewModel
 import com.cayot.flyingmore.ui.flightList.FlightListViewModel
@@ -20,7 +21,10 @@ object AppViewModelProvider {
 			FlightEditViewModel(
 				flightsRepository = planouApplication().container.flightsRepository,
 				airportsRepository = planouApplication().container.airportsRepository,
-				flightNotesRepository = planouApplication().container.flightNotesRepository,
+				deleteFlightWithNoteUseCase = DeleteFlightWithNoteUseCase(
+					planouApplication().container.flightsRepository,
+					planouApplication().container.flightNotesRepository
+				),
 				savedStateHandle = this.createSavedStateHandle()
 			)
 		}
