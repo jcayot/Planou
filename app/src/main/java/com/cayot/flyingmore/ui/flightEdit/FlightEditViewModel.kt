@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -122,12 +123,12 @@ class FlightEditViewModel(
 			viewModelScope.launch {
 				_uiState.update { it.copy(formEnabled = false) }
 				if (flightId == null) {
-					flightsRepository.insertFlight(_uiState.value.flightForm.toFlight(
+					flightsRepository.insertFlight(_uiState.value.flightForm.toFlightDetails(
 						originAirport = originAirport!!,
 						destinationAirport = destinationAirport!!)
 					)
 				} else {
-					flightsRepository.updateFlight(_uiState.value.flightForm.toFlight(
+					flightsRepository.updateFlight(_uiState.value.flightForm.toFlightDetails(
 						originAirport = originAirport!!,
 						destinationAirport = destinationAirport!!))
 				}
@@ -168,40 +169,20 @@ class FlightEditViewModel(
 	}
 
 	private fun getFlight(flightId: Int)  = viewModelScope.launch {
+		val flight = flightsRepository.getFlight(flightId).first()
 
-		flightsRepository.getFlight(flightId).collect{ flight ->
-			if (flight != null) {
-				updateFlightForm(flight.toFlightForm())
-				_uiState.update {
-					it.copy(
-						formEnabled = true,
-						canDelete = true)
-				}
-				originSearchJob?.cancel()
-				originSearchJob = getOriginAirport(flight.originAirportId)
-				destinationSearchJob?.cancel()
-				destinationSearchJob = getDestinationAirport(flight.destinationAirportId)
-			} else
-				_navigateBack.emit(Unit)
-		}
-	}
-
-	private fun getOriginAirport(id: Int) = viewModelScope.launch {
-		originAirport = getAirportDatabase(id)
-		_uiState.update {
-			it.copy(isEntryValid = flightDetailsValid())
-		}
-	}
-
-	private fun getDestinationAirport(id: Int) = viewModelScope.launch {
-		destinationAirport = getAirportDatabase(id)
-		_uiState.update {
-			it.copy(isEntryValid = flightDetailsValid())
-		}
-	}
-
-	private suspend fun getAirportDatabase(id: Int) : Airport? {
-		return (airportsRepository.getAirport(id))
+		if (flight != null) {
+			updateFlightForm(flight.toFlightForm())
+			originAirport = flight.originAirport
+			destinationAirport = flight.destinationAirport
+			_uiState.update {
+				it.copy(
+					formEnabled = true,
+					canDelete = true
+				)
+			}
+		} else
+			_navigateBack.emit(Unit)
 	}
 
 	private suspend fun searchAirportsDatabase(airportString: String) : List<Airport> {

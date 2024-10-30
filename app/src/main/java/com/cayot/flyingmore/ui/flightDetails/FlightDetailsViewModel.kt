@@ -7,9 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cayot.flyingmore.data.FlightMapState
 import com.cayot.flyingmore.data.ImageRepository
-import com.cayot.flyingmore.data.airport.Airport
-import com.cayot.flyingmore.data.airport.AirportsRepository
-import com.cayot.flyingmore.data.flight.Flight
+import com.cayot.flyingmore.data.flight.FlightDetails
 import com.cayot.flyingmore.data.flight.FlightsRepository
 import com.cayot.flyingmore.data.flightNotes.FlightNotes
 import com.cayot.flyingmore.data.flightNotes.FlightNotesRepository
@@ -24,7 +22,6 @@ import kotlinx.coroutines.launch
 
 class FlightDetailsViewModel(
 	private val flightsRepository: FlightsRepository,
-	private val airportsRepository: AirportsRepository,
 	private val flightNotesRepository: FlightNotesRepository,
 	private val imageRepository: ImageRepository,
 	savedStateHandle: SavedStateHandle
@@ -41,21 +38,14 @@ class FlightDetailsViewModel(
 	private val _navigateBack = MutableSharedFlow<Unit>()
 	val navigateBack: SharedFlow<Unit> = _navigateBack
 
-	private lateinit var flightNotesAccessJob: Job
+	private var flightNotesAccessJob: Job? = null
 
 	init {
 		viewModelScope.launch {
-			flightNotesAccessJob = getNotesDatabase(flightId)
-
 			flightsRepository.getFlight(flightId).collect { flight ->
-				if (flight != null) {
-					val originAirport = airportsRepository.getAirportByIataCode(flight.originAirportCode)
-					val destinationAirport = airportsRepository.getAirportByIataCode(flight.destinationAirportCode)
-
-					onFlightRetrieved(flight = flight,
-						originAirport = originAirport,
-						destinationAirport = destinationAirport)
-				} else
+				if (flight != null)
+					onFlightRetrieved(flight = flight)
+				else
 					_navigateBack.emit(Unit)
 			}
 		}
@@ -67,23 +57,20 @@ class FlightDetailsViewModel(
 		}
 	}
 
-	fun onFlightNotesChange(flightNotes: FlightNotes) {
-		_uiState.update {
-			it.copy(flightNotes = flightNotes)
-		}
+	fun onFlightNotesTextChange(text: String) {
+		updateFlightNotesUIState(_uiState.value.flight!!.flightNotes!!.copy(text = text))
 	}
 
 	fun editNotes() {
-		if (!flightNotesAccessJob.isActive) {
-			if (_uiState.value.flightNotes == null)
+		if (flightNotesAccessJob == null || flightNotesAccessJob?.isActive == false) {
+			if (_uiState.value.flight!!.flightNotes == null)
 				flightNotesAccessJob = createFlightNotesDatabase()
-			else
-				_uiState.update { it.copy(notesEdition = true) }
+			_uiState.update { it.copy(notesEdition = true) }
 		}
 	}
 
 	fun discardFlightNotesChanges() {
-		if (!flightNotesAccessJob.isActive) {
+		if (flightNotesAccessJob == null || flightNotesAccessJob?.isActive == false) {
 			flightNotesAccessJob = getNotesDatabase(flightId)
 			_uiState.update {
 				it.copy(notesEdition = false)
@@ -92,8 +79,8 @@ class FlightDetailsViewModel(
 	}
 
 	fun saveFlightNotes() {
-		if (!flightNotesAccessJob.isActive) {
-			flightNotesAccessJob = updateFlightNotesDatabase(_uiState.value.flightNotes!!)
+		if (flightNotesAccessJob == null || flightNotesAccessJob?.isActive == false) {
+			flightNotesAccessJob = updateFlightNotesDatabase(_uiState.value.flight!!.flightNotes!!)
 			_uiState.update {
 				it.copy(notesEdition = false)
 			}
@@ -101,12 +88,10 @@ class FlightDetailsViewModel(
 	}
 
 	fun deleteFlightNotes() {
-		if (!flightNotesAccessJob.isActive) {
+		if (flightNotesAccessJob == null || flightNotesAccessJob?.isActive == false) {
 			flightNotesAccessJob = deleteFlightNotesDatabase(flightId)
-			_uiState.update {
-				it.copy(flightNotes = null,
-					notesEdition = false)
-			}
+			updateFlightNotesUIState(null)
+			_uiState.update { it.copy(notesEdition = false) }
 		}
 	}
 
@@ -118,20 +103,17 @@ class FlightDetailsViewModel(
 		}
 	}
 
-	private	fun onFlightRetrieved(
-		flight: Flight,
-		originAirport: Airport?,
-		destinationAirport: Airport?
-	) {
-		var flightMapState : FlightMapState? = null
+	private fun updateFlightNotesUIState(flightNotes: FlightNotes?) {
+		_uiState.update {
+			it.copy(flight = it.flight!!.copy(flightNotes = flightNotes))
+		}
+	}
 
-		if (originAirport != null && destinationAirport != null)
-			flightMapState = FlightMapState.fromAirports(originAirport, destinationAirport)
+	private	fun onFlightRetrieved(flight: FlightDetails) {
+		val flightMapState = FlightMapState.fromAirports(flight.originAirport, flight.destinationAirport)
 
 		_uiState.update {
 			it.copy(flight = flight,
-				retrievedOriginAirport = originAirport,
-				retrievedDestinationAirport = destinationAirport,
 				flightMapState = flightMapState)
 		}
 	}
@@ -139,10 +121,7 @@ class FlightDetailsViewModel(
 	private fun createFlightNotesDatabase()  = viewModelScope.launch {
 		val newFlightNotes = FlightNotes(flightId, "")
 		flightNotesRepository.insertFlightNotes(newFlightNotes)
-		_uiState.update {
-			it.copy(flightNotes = newFlightNotes,
-				notesEdition = true)
-		}
+		updateFlightNotesUIState(flightNotes = newFlightNotes)
 	}
 
 	private fun updateFlightNotesDatabase(flightNotes: FlightNotes) = viewModelScope.launch {
@@ -155,8 +134,6 @@ class FlightDetailsViewModel(
 
 	private fun getNotesDatabase(flightId: Int) = viewModelScope.launch {
 		val flightNotes = flightNotesRepository.getFromFlight(flightId)
-		_uiState.update {
-			it.copy(flightNotes = flightNotes)
-		}
+		updateFlightNotesUIState(flightNotes = flightNotes)
 	}
 }

@@ -13,9 +13,7 @@ import com.cayot.flyingmore.ui.flightList.FlightListViewModel
 object AppViewModelProvider {
 	val factory = viewModelFactory {
 		initializer {
-			FlightListViewModel(
-				flightsRepository = planouApplication().container.flightsRepository,
-				airportsRepository = planouApplication().container.airportsRepository)
+			FlightListViewModel(flightsRepository = planouApplication().container.flightsRepository)
 		}
 
 		initializer {
@@ -29,11 +27,10 @@ object AppViewModelProvider {
 
 		initializer {
 			FlightDetailsViewModel(
-				savedStateHandle = this.createSavedStateHandle(),
 				flightsRepository = planouApplication().container.flightsRepository,
-				airportsRepository = planouApplication().container.airportsRepository,
 				flightNotesRepository = planouApplication().container.flightNotesRepository,
-				imageRepository = planouApplication().container.imageRepository
+				imageRepository = planouApplication().container.imageRepository,
+				savedStateHandle = this.createSavedStateHandle()
 			)
 		}
 	}

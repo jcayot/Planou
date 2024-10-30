@@ -9,7 +9,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class FlightNotesDaoTest : DatabaseTest() {
+class FlightApiModelNotesDaoTest : DatabaseTest() {
     private lateinit var flightNotesDao: FlightNotesDao
 
     private val flightNotesList = listOf(

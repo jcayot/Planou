@@ -1,9 +1,8 @@
 package com.cayot.flyingmore.ui.flightList
 
 import com.cayot.flyingmore.data.FlightMapState
-import com.cayot.flyingmore.data.flight.Flight
-import java.util.Calendar
-import java.util.TimeZone
+import com.cayot.flyingmore.data.flight.FlightBrief
+import java.time.ZoneId
 
 data class FlightListUIState(
 	val flightList: List<FlightItem>? = null,
@@ -11,17 +10,17 @@ data class FlightListUIState(
 )
 
 data class FlightItem(
-	val flight: Flight? = null,
+	val flight: FlightBrief? = null,
 	val year: String? = null
 )
 
-fun makeFlightItemsList(flightList: List<Flight>) : List<FlightItem> {
+fun makeFlightItemsList(flightList: List<FlightBrief>) : List<FlightItem> {
 	val listFlightItem = mutableListOf<FlightItem>()
 
 	var	previousFlightYear : Int? = null
-	flightList.forEach { flight: Flight ->
+	flightList.forEach { flight: FlightBrief ->
 
-		val flightYear = Calendar.getInstance(TimeZone.getDefault()).apply { timeInMillis = flight.departureTime }.get(Calendar.YEAR)
+		val flightYear = flight.departureTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().year
 
 		if (previousFlightYear == null || previousFlightYear != flightYear) {
 			listFlightItem.add(FlightItem(year = flightYear.toString()))

@@ -75,8 +75,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cayot.flyingmore.R
 import com.cayot.flyingmore.data.FlightMapState
-import com.cayot.flyingmore.data.airport.Airport
-import com.cayot.flyingmore.data.flight.Flight
+import com.cayot.flyingmore.data.flight.FlightDetails
 import com.cayot.flyingmore.data.flight.getArrivalTimeString
 import com.cayot.flyingmore.data.flight.getDepartureDateString
 import com.cayot.flyingmore.data.flight.getDepartureTimeString
@@ -109,7 +108,7 @@ fun FlightDetailsScreen(
 	if (uiState.flight != null) {
 		LaunchedEffect (Unit) {
 			viewModel.shareCard.collect {
-				shareFlight(context, it, uiState.flight!!.originAirportCode, uiState.flight!!.destinationAirportCode)
+				shareFlight(context, it, uiState.flight!!.originAirport.iataCode, uiState.flight!!.destinationAirport.iataCode)
 			}
 		}
 	}
@@ -136,9 +135,7 @@ fun FlightDetailsScreen(
 			onEditPressed = { editFlight(uiState.flight!!.id ) },
 			onSharePressed = viewModel::shareFlightCard,
 			updateNotesVisibility = viewModel::updateNotesVisibility,
-			onFlightNotesChange = {
-				viewModel.onFlightNotesChange(uiState.flightNotes!!.copy(text = it))
-			},
+			onFlightNotesChange = { viewModel.onFlightNotesTextChange(it) },
 			editNotes = viewModel::editNotes,
 			discardNotesChanges = viewModel::discardFlightNotesChanges,
 			saveNotes = viewModel::saveFlightNotes,
@@ -227,12 +224,10 @@ fun FlightDetails(
 	) {
 		val flightCard = composableBitmap { FlightCard(
 			flight = uiState.flight!!,
-			originAirport = uiState.retrievedOriginAirport,
-			destinationAirport = uiState.retrievedDestinationAirport,
 			flightMapState = uiState.flightMapState,
 		) }
 		FlightNotesComposable(
-			flightNotes = uiState.flightNotes,
+			flightNotes = uiState.flight!!.flightNotes,
 			notesVisible = uiState.notesVisible,
 			notesEdition = uiState.notesEdition,
 			updateNotesVisibility = updateNotesVisibility,
@@ -253,9 +248,7 @@ fun FlightDetails(
 
 @Composable
 fun FlightCard(
-	flight: Flight,
-	originAirport: Airport? = null,
-	destinationAirport: Airport? = null,
+	flight: FlightDetails,
 	flightMapState: FlightMapState? = null,
 	modifier: Modifier = Modifier,
 	elevation: CardElevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
@@ -308,8 +301,8 @@ fun FlightCard(
 			){
 				LabelledData(
 					horizontalAlignment = Alignment.Start,
-					labelText = originAirport?.municipality ?: stringResource(R.string.error_retriving_airport),
-					dataText = originAirport?.iataCode ?: flight.originAirportCode,
+					labelText = flight.originAirport.municipality,
+					dataText = flight.originAirport.iataCode,
 					dataStyle = typography.displayMedium,
 					modifier = Modifier
 						.weight(1f)
@@ -339,8 +332,8 @@ fun FlightCard(
 				}
 				LabelledData(
 					horizontalAlignment = Alignment.End,
-					labelText = destinationAirport?.municipality ?: stringResource(R.string.error_retriving_airport),
-					dataText = destinationAirport?.iataCode ?: flight.destinationAirportCode,
+					labelText = flight.destinationAirport.municipality,
+					dataText = flight.destinationAirport.municipality,
 					dataStyle = typography.displayMedium,
 					modifier = Modifier
 						.weight(1f)
@@ -616,7 +609,7 @@ private fun shareFlight(context: Context, flightCardUri: Uri, departureCode: Str
 @Composable
 fun FlightCardPreview() {
 	FlightCard(
-		flight = Flight.getPlaceholderFlight1()
+		flight = FlightDetails.getPlaceholder1()
 	)
 }
 

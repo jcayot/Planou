@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
@@ -11,17 +12,19 @@ import kotlinx.coroutines.flow.Flow
 interface FlightDao {
 
 	@Insert(onConflict = OnConflictStrategy.IGNORE)
-	suspend fun insert(flight: Flight)
+	suspend fun insert(flight: FlightApiModel)
 
 	@Update
-	suspend fun update(flight: Flight)
+	suspend fun update(flight: FlightApiModel)
 
 	@Query("DELETE from flights WHERE id = :id")
 	suspend fun deleteById(id: Int)
 
-	@Query("SELECT * from flights WHERE id = :id")
-	fun getFlight(id: Int) : Flow<Flight?>
+	@Transaction
+	@Query("SELECT * FROM flights WHERE id = :flightId")
+	fun getFlightDetails(flightId: Int): Flow<FlightDetailsPOJO>
 
-	@Query("SELECT * from flights ORDER BY departureTime DESC")
-	fun getAllFlights() : Flow<List<Flight>>
+	@Transaction
+	@Query("SELECT * FROM flights")
+	fun getAllFlightBriefs(): Flow<List<FlightBriefPOJO>>
 }

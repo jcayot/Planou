@@ -3,8 +3,9 @@ package com.cayot.flyingmore.ui.flightEdit
 import com.cayot.flyingmore.data.TravelClass
 import com.cayot.flyingmore.data.airport.Airport
 import com.cayot.flyingmore.data.airport.distanceToAirport
-import com.cayot.flyingmore.data.flight.Flight
+import com.cayot.flyingmore.data.flight.FlightDetails
 import java.time.Instant
+import java.util.Date
 
 data class FlightEditUIState(
 	val flightForm: FlightForm = FlightForm(),
@@ -69,18 +70,16 @@ fun FlightForm.seatNumberValid() : Boolean {
 	return (seatNumber.isNotBlank() && seatNumber.length < 4)
 }
 
-fun FlightForm.toFlight(originAirport: Airport, destinationAirport: Airport) : Flight {
-	return (Flight(
+fun FlightForm.toFlightDetails(originAirport: Airport, destinationAirport: Airport) : FlightDetails {
+	return (FlightDetails(
 		id = id,
 		flightNumber = flightNumber,
 		airline = airline,
-		departureTime = departureTime.toEpochMilli(),
-		arrivalTime = arrivalTime?.toEpochMilli(),
+		departureTime = Date.from(departureTime),
+		arrivalTime = arrivalTime?.let { Date.from(it) },
 		travelClass = travelClass,
-		originAirportCode = originAirport.iataCode,
-		originAirportId = originAirport.id,
-		destinationAirportCode = destinationAirport.iataCode,
-		destinationAirportId = destinationAirport.id,
+		originAirport = originAirport,
+		destinationAirport = destinationAirport,
 		distance = originAirport.distanceToAirport(destinationAirport),
 		planeModel = planeModel,
 		seatNumber = if (seatNumberValid()) seatNumber else null

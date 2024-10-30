@@ -47,7 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cayot.flyingmore.R
 import com.cayot.flyingmore.data.FlightMapState
-import com.cayot.flyingmore.data.flight.Flight
+import com.cayot.flyingmore.data.flight.FlightBrief
 import com.cayot.flyingmore.data.flight.getDepartureDateString
 import com.cayot.flyingmore.data.flight.getDistanceString
 import com.cayot.flyingmore.ui.AppViewModelProvider
@@ -100,7 +100,7 @@ fun FlightListScreen(
 fun FlightListScreenContent(
 	uiState: FlightListUIState,
 	onFlightPressed: (Int) -> Unit,
-	onItemVisible: (Flight) -> Unit,
+	onItemVisible: (FlightBrief) -> Unit,
 	modifier: Modifier = Modifier,
 	contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
@@ -153,7 +153,7 @@ fun FlightListList(
 	flightList: List<FlightItem>,
 	flightMapStateMap: Map<Int, FlightMapState?> = emptyMap(),
 	onFlightPressed: (Int) -> Unit = {},
-	onItemVisible: (Flight) -> Unit = {},
+	onItemVisible: (FlightBrief) -> Unit = {},
 	modifier: Modifier = Modifier,
 	contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
@@ -186,7 +186,7 @@ fun FlightListList(
 
 @Composable
 fun FlightListItemComposable(
-	flight : Flight,
+	flight : FlightBrief,
 	flightMapState: FlightMapState? = null,
 	onFlightPressed: (Int) -> Unit = {},
 	modifier: Modifier = Modifier
@@ -228,7 +228,7 @@ fun FlightListItemComposable(
 					)
 				}
 				Text(
-					text = flight.originAirportCode + " - " + flight.destinationAirportCode,
+					text = flight.originAirport.iataCode + " - " + flight.destinationAirport.iataCode,
 					style = MaterialTheme.typography.titleLarge,
 				)
 				Spacer(
@@ -277,8 +277,8 @@ fun FlightItemMap(
 fun	FlightListScreenContentPreview() {
 	FlightListList(
         flightList = makeFlightItemsList(listOf(
-            Flight.getPlaceholderFlight1(),
-			Flight.getPlaceholderFlight2()
+            FlightBrief.getPlaceholder1(),
+			FlightBrief.getPlaceholder1(),
         )),
     )
 }
@@ -293,6 +293,6 @@ fun EmptyFlightListPreview() {
 @Composable
 fun FlightListItemPreview() {
 	FlightListItemComposable(
-		flight = Flight.getPlaceholderFlight1(),
+		flight = FlightBrief.getPlaceholder1(),
 	)
 }

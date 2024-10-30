@@ -4,13 +4,13 @@ import kotlinx.coroutines.flow.Flow
 
 interface FlightsRepository {
 
-	fun getAllFlightsStream() : Flow<List<Flight>>
+	fun getAllFlightBriefsStream() : Flow<List<FlightBrief>>
 
-	fun getFlight(id: Int): Flow<Flight?>
+	fun getFlight(id: Int): Flow<FlightDetails?>
 
-	suspend fun insertFlight(flight: Flight)
+	suspend fun insertFlight(flight: FlightDetails)
 
 	suspend fun deleteFlightById(id: Int)
 
-	suspend fun updateFlight(flight: Flight)
+	suspend fun updateFlight(flight: FlightDetails)
 }
