@@ -47,7 +47,6 @@ import com.cayot.flyingmore.ui.composable.OutlinedDatePicker
 import com.cayot.flyingmore.ui.composable.OutlinedTimePicker
 import com.cayot.flyingmore.ui.composable.SearchTextField
 import com.cayot.flyingmore.ui.composable.SelectDropdown
-import com.cayot.flyingmore.ui.navigation.FlyingMoreScreen
 import com.cayot.flyingmore.utils.SelectableDateAll
 import com.cayot.flyingmore.utils.SelectableDatesTo
 import com.cayot.flyingmore.utils.updateInstantDate
@@ -150,7 +149,7 @@ fun FlightEditScreenContent(
 		if (uiState.canDelete) {
 			TextButton(
 				onClick = { onDeleteClicked() },
-				enabled = uiState.isEntryValid && uiState.formEnabled,
+				enabled = uiState.formEnabled,
 			) {
 				Text(
 					text = stringResource(R.string.delete_flight),

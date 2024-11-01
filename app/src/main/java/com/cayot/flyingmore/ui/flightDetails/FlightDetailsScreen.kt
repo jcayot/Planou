@@ -333,7 +333,7 @@ fun FlightCard(
 				LabelledData(
 					horizontalAlignment = Alignment.End,
 					labelText = flight.destinationAirport.municipality,
-					dataText = flight.destinationAirport.municipality,
+					dataText = flight.destinationAirport.iataCode,
 					dataStyle = typography.displayMedium,
 					modifier = Modifier
 						.weight(1f)

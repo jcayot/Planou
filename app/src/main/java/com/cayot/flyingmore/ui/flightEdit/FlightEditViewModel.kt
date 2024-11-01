@@ -7,7 +7,6 @@ import com.cayot.flyingmore.data.airport.Airport
 import com.cayot.flyingmore.data.airport.AirportsRepository
 import com.cayot.flyingmore.data.flight.FlightsRepository
 import com.cayot.flyingmore.data.flight.toFlightForm
-import com.cayot.flyingmore.data.flightNotes.FlightNotesRepository
 import com.cayot.flyingmore.domain.DeleteFlightWithNoteUseCase
 import com.cayot.flyingmore.ui.navigation.FlyingMoreScreen
 import kotlinx.coroutines.Job
@@ -172,9 +171,9 @@ class FlightEditViewModel(
 		val flight = flightsRepository.getFlight(flightId).first()
 
 		if (flight != null) {
-			updateFlightForm(flight.toFlightForm())
 			originAirport = flight.originAirport
 			destinationAirport = flight.destinationAirport
+			updateFlightForm(flight.toFlightForm())
 			_uiState.update {
 				it.copy(
 					formEnabled = true,

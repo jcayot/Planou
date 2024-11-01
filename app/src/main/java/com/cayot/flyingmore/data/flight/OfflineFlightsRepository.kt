@@ -11,7 +11,7 @@ class OfflineFlightsRepository(private val flightDao: FlightDao) : FlightsReposi
 	}
 
 	override fun getFlight(id: Int): Flow<FlightDetails?> {
-		return (flightDao.getFlightDetails(id).map { it.toFlightDetails() })
+		return (flightDao.getFlightDetails(id).map { it?.toFlightDetails() })
 	}
 
 	override suspend fun insertFlight(flight: FlightDetails) {
