@@ -8,9 +8,8 @@ import com.cayot.flyingmore.data.airport.Airport
 import com.cayot.flyingmore.data.flightNotes.FlightNotes
 import com.cayot.flyingmore.ui.flightEdit.FlightForm
 import java.text.SimpleDateFormat
-import java.time.Instant
+import java.time.temporal.ChronoUnit
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
 
 data class FlightDetails(
@@ -22,8 +21,8 @@ data class FlightDetails(
     val distance: Float,
     val travelClass: TravelClass,
     val planeModel: String,
-    val departureTime: Date,
-    val	arrivalTime: Date?,
+    val departureTime: Calendar,
+    val	arrivalTime: Calendar?,
     val seatNumber: String?,
     val flightNotes: FlightNotes? = null
 ) {
@@ -38,8 +37,8 @@ data class FlightDetails(
                 distance = 6000000f,
                 travelClass = TravelClass.ECONOMY,
                 planeModel = "Airbus A350",
-                departureTime = Date(),
-                arrivalTime = Date(),
+                departureTime = Calendar.getInstance(),
+                arrivalTime = Calendar.getInstance(),
                 seatNumber = "33D"
             ))
         }
@@ -51,32 +50,25 @@ fun FlightDetails.getDistanceString() : String {
 }
 
 fun FlightDetails.getDepartureDateString() : String {
-    return (SimpleDateFormat("d MMM yyyy", Locale.getDefault()).format(departureTime))
+    return (SimpleDateFormat("d MMM yyyy", Locale.getDefault()).format(departureTime.time))
 }
 
 fun FlightDetails.getDepartureTimeString() : String {
-    return (SimpleDateFormat("h:mm a", Locale.getDefault()).format(departureTime))
+    return (SimpleDateFormat("h:mm a", Locale.getDefault()).format(departureTime.time))
 }
 
 fun FlightDetails.getArrivalTimeString() : String? {
     if (arrivalTime == null) {
-        return null
+        return (null)
     }
 
-    val departureCalendar = Calendar.getInstance().apply { time = departureTime }
-    val arrivalCalendar = Calendar.getInstance().apply { time = arrivalTime }
+    val dayDifference = ChronoUnit.DAYS.between(departureTime.toInstant(), arrivalTime.toInstant())
 
-    var dayDifference = 0
-    while (departureCalendar.before(arrivalCalendar)) {
-        departureCalendar.add(Calendar.DAY_OF_YEAR, 1)
-        dayDifference++
-    }
+    val dayDiffSuffix = if (dayDifference < 1) "" else " + $dayDifference"
 
-    val dayDiffSuffix = if (dayDifference < 1) "" else "+ $dayDifference"
+    val formattedArrivalTime = SimpleDateFormat("h:mm a", Locale.getDefault()).format(arrivalTime.time)
 
-    val formattedArrivalTime = SimpleDateFormat("h:mm a", Locale.getDefault()).format(arrivalTime)
-
-    return formattedArrivalTime + dayDiffSuffix
+    return (formattedArrivalTime + dayDiffSuffix)
 }
 
 fun FlightDetails.toFlightForm() : FlightForm {
@@ -87,7 +79,7 @@ fun FlightDetails.toFlightForm() : FlightForm {
         originAirportString = originAirport.iataCode,
         destinationAirportString = destinationAirport.iataCode,
         departureTime = departureTime.toInstant(),
-        arrivalTime = arrivalTime?.let { departureTime.toInstant() },
+        arrivalTime = arrivalTime?.let { arrivalTime.toInstant() },
         travelClass = travelClass,
         planeModel = planeModel,
         seatNumber = seatNumber ?: ""
@@ -140,8 +132,8 @@ fun FlightDetailsPOJO.toFlightDetails() : FlightDetails {
         distance = flightApiModel.distance,
         travelClass = flightApiModel.travelClass,
         planeModel = flightApiModel.planeModel,
-        departureTime = Date.from(Instant.ofEpochMilli(flightApiModel.departureTime)),
-        arrivalTime = flightApiModel.arrivalTime?.let { Date.from(Instant.ofEpochMilli(it)) },
+        departureTime = Calendar.getInstance().apply { timeInMillis = flightApiModel.departureTime },
+        arrivalTime = flightApiModel.arrivalTime?.let { Calendar.getInstance().apply { timeInMillis = flightApiModel.arrivalTime }},
         seatNumber = flightApiModel.seatNumber,
         flightNotes = flightNotes
     ))

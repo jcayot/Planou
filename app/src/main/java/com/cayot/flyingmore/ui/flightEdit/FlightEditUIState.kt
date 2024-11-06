@@ -5,7 +5,7 @@ import com.cayot.flyingmore.data.airport.Airport
 import com.cayot.flyingmore.data.airport.distanceToAirport
 import com.cayot.flyingmore.data.flight.FlightDetails
 import java.time.Instant
-import java.util.Date
+import java.util.Calendar
 
 data class FlightEditUIState(
 	val flightForm: FlightForm = FlightForm(),
@@ -75,8 +75,8 @@ fun FlightForm.toFlightDetails(originAirport: Airport, destinationAirport: Airpo
 		id = id,
 		flightNumber = flightNumber,
 		airline = airline,
-		departureTime = Date.from(departureTime),
-		arrivalTime = arrivalTime?.let { Date.from(it) },
+		departureTime = Calendar.getInstance().apply { timeInMillis = departureTime.toEpochMilli() },
+		arrivalTime = arrivalTime?.let { Calendar.getInstance().apply { timeInMillis = arrivalTime.toEpochMilli() } },
 		travelClass = travelClass,
 		originAirport = originAirport,
 		destinationAirport = destinationAirport,

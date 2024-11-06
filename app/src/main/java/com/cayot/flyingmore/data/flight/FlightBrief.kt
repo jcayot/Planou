@@ -5,8 +5,7 @@ import androidx.room.Embedded
 import androidx.room.Relation
 import com.cayot.flyingmore.data.airport.Airport
 import java.text.SimpleDateFormat
-import java.time.Instant
-import java.util.Date
+import java.util.Calendar
 import java.util.Locale
 
 data class FlightBrief(
@@ -16,7 +15,7 @@ data class FlightBrief(
     val originAirport: Airport,
     val destinationAirport: Airport,
     val distance: Float,
-    val departureTime: Date
+    val departureTime: Calendar
 ) {
     companion object {
         fun getPlaceholder1() : FlightBrief {
@@ -27,7 +26,7 @@ data class FlightBrief(
                 originAirport = Airport.getCDG(),
                 destinationAirport = Airport.getJFK(),
                 distance = 6000000f,
-                departureTime = Date()
+                departureTime = Calendar.getInstance()
             )
         }
     }
@@ -38,7 +37,7 @@ fun FlightBrief.getDistanceString() : String {
 }
 
 fun FlightBrief.getDepartureDateString() : String {
-    return (SimpleDateFormat("d MMM yyyy", Locale.getDefault()).format(departureTime))
+    return (SimpleDateFormat("d MMM yyyy", Locale.getDefault()).format(departureTime.time))
 }
 
 data class FlightBriefPOJO(
@@ -63,7 +62,7 @@ fun FlightBriefPOJO.toFlightBrief() : FlightBrief {
         airline = flightApiModel.airline,
         originAirport = originAirport,
         destinationAirport = destinationAirport,
-        departureTime = Date.from(Instant.ofEpochMilli(flightApiModel.departureTime)),
+        departureTime = Calendar.getInstance().apply { timeInMillis = flightApiModel.departureTime },
         distance = flightApiModel.distance
     ))
 }

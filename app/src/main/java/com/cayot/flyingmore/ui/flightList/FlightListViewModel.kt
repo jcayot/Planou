@@ -20,9 +20,7 @@ class FlightListViewModel(
 	init {
 		viewModelScope.launch {
 			flightsRepository.getAllFlightBriefsStream().collect { flights ->
-				_uiState.update {
-					it.copy(flightList = makeFlightItemsList(flights))
-				}
+				_uiState.update { it.copy(flightList = makeFlightItemsList(flights)) }
 			}
 		}
 	}
@@ -35,9 +33,7 @@ class FlightListViewModel(
 				val updatedFlightMapStateMap = _uiState.value.flightMapStateMap.toMutableMap()
 				updatedFlightMapStateMap[flight.id] = mapState
 
-				_uiState.update {
-					it.copy(flightMapStateMap = updatedFlightMapStateMap.toMap())
-				}
+				_uiState.update { it.copy(flightMapStateMap = updatedFlightMapStateMap.toMap()) }
 			}
 		}
 	}
