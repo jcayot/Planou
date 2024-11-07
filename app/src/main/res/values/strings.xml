@@ -18,8 +18,6 @@
     <string name="flight_destination">Destination</string>
     <string name="flight_airline">Airline</string>
     <string name="plane_right_icon">Plane heading right icon</string>
-    <string name="error_retriving_flight">Couldn\'t retrieve flight data</string>
-    <string name="error_retriving_airport">Couldn\'t retrieve airport</string>
     <string name="plane_model">Plane model</string>
     <string name="departure_day">Departure day</string>
     <string name="departure_time">Departure time</string>

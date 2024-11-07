@@ -22,7 +22,7 @@ fun	PlanouTopBar(
 	modifier: Modifier = Modifier,
 	scrollBehavior: TopAppBarScrollBehavior? = null,
 	navigateUp: () -> Unit = {},
-	actions: @Composable() (RowScope.() -> Unit) = {},
+	actions: @Composable (RowScope.() -> Unit) = {},
 	) {
 	CenterAlignedTopAppBar(
 		title = { Text(text = title) },

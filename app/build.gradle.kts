@@ -1,13 +1,14 @@
 plugins {
 	alias(libs.plugins.android.application)
 	alias(libs.plugins.kotlin.android)
-	id("com.google.devtools.ksp") version "1.9.20-1.0.14"
+	id("com.google.devtools.ksp") version "2.0.20-1.0.25"
 	id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+	alias(libs.plugins.kotlin.compose)
 }
 
 android {
 	namespace = "com.cayot.flyingmore"
-	compileSdk = 34
+	compileSdk = 35
 
 	defaultConfig {
 		applicationId = "com.cayot.flyingmore"
@@ -80,6 +81,11 @@ dependencies {
 
 	debugImplementation(libs.androidx.ui.tooling)
 	debugImplementation(libs.androidx.ui.test.manifest)
+}
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
 }
 
 secrets {
