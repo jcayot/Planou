@@ -41,8 +41,9 @@ fun FlyingMoreNavHost(
 		composable(route = FlyingMoreScreen.Add.name) {
 			FlightEditScreen(
 				title = FlyingMoreScreen.Add.name,
+				navigateBack = { navController.popBackStack() },
 				onNavigateUp = { navController.navigateUp() },
-				navigateBack = { navController.popBackStack() }
+				navigateHome = { navController.navigate(FlyingMoreScreen.List.name) }
 			)
 		}
 		composable(
@@ -54,7 +55,8 @@ fun FlyingMoreNavHost(
 			FlightEditScreen(
 				title = FlyingMoreScreen.Edit.name,
 				onNavigateUp = { navController.navigateUp() },
-				navigateBack = { navController.popBackStack() }
+				navigateBack = { navController.popBackStack() },
+				navigateHome = { navController.navigate(FlyingMoreScreen.List.name) }
 			)
 		}
 		composable(
@@ -67,8 +69,7 @@ fun FlyingMoreNavHost(
 				editFlight = {
 					navController.navigate(FlyingMoreScreen.Edit.name + "/" + it)
 				},
-				onNavigateUp = { navController.navigateUp() },
-				navigateBack = { navController.popBackStack() }
+				onNavigateUp = { navController.navigateUp() }
 			)
 		}
 	}

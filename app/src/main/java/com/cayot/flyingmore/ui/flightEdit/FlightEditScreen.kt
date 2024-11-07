@@ -59,13 +59,18 @@ fun FlightEditScreen(
 	title: String,
 	navigateBack: () -> Unit,
 	onNavigateUp: () -> Unit,
-	canNavigateBack: Boolean = true
+	canNavigateBack: Boolean = true,
+	navigateHome: () -> Unit
 ) {
 	val	viewModel: FlightEditViewModel = viewModel(factory = AppViewModelProvider.factory)
 	val uiState by viewModel.uiState.collectAsState()
 
 	LaunchedEffect(Unit) {
 		viewModel.navigateBack.collect{ navigateBack() }
+	}
+
+	LaunchedEffect(Unit) {
+		viewModel.navigateHome.collect{ navigateHome() }
 	}
 
 	Scaffold (

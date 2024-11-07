@@ -94,7 +94,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun FlightDetailsScreen(
 	editFlight: (Int) -> Unit,
-	navigateBack: () -> Unit,
 	onNavigateUp: () -> Unit,
 	modifier: Modifier = Modifier
 ) {
@@ -110,12 +109,6 @@ fun FlightDetailsScreen(
 			viewModel.shareCard.collect {
 				shareFlight(context, it, uiState.flight!!.originAirport.iataCode, uiState.flight!!.destinationAirport.iataCode)
 			}
-		}
-	}
-
-	LaunchedEffect (Unit) {
-		viewModel.navigateBack.collect{
-			navigateBack()
 		}
 	}
 

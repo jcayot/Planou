@@ -6,7 +6,7 @@ interface FlightsRepository {
 
 	fun getAllFlightBriefsStream() : Flow<List<FlightBrief>>
 
-	fun getFlight(id: Int): Flow<FlightDetails?>
+	fun getFlight(id: Int): Flow<FlightDetails>
 
 	suspend fun insertFlight(flight: FlightDetails)
 

@@ -35,18 +35,12 @@ class FlightDetailsViewModel(
 	private val _shareCard = MutableSharedFlow<Uri>()
 	val shareCard: SharedFlow<Uri> = _shareCard
 
-	private val _navigateBack = MutableSharedFlow<Unit>()
-	val navigateBack: SharedFlow<Unit> = _navigateBack
-
 	private var flightNotesAccessJob: Job? = null
 
 	init {
 		viewModelScope.launch {
 			flightsRepository.getFlight(flightId).collect { flight ->
-				if (flight != null)
-					onFlightRetrieved(flight = flight)
-				else
-					_navigateBack.emit(Unit)
+				onFlightRetrieved(flight = flight)
 			}
 		}
 	}

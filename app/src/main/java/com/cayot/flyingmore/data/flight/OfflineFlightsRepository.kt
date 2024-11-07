@@ -1,6 +1,7 @@
 package com.cayot.flyingmore.data.flight
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 
 class OfflineFlightsRepository(private val flightDao: FlightDao) : FlightsRepository {
@@ -10,8 +11,8 @@ class OfflineFlightsRepository(private val flightDao: FlightDao) : FlightsReposi
 		})
 	}
 
-	override fun getFlight(id: Int): Flow<FlightDetails?> {
-		return (flightDao.getFlightDetails(id).map { it?.toFlightDetails() })
+	override fun getFlight(id: Int): Flow<FlightDetails> {
+		return (flightDao.getFlightDetails(id).filterNotNull().map { it.toFlightDetails() })
 	}
 
 	override suspend fun insertFlight(flight: FlightDetails) {

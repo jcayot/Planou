@@ -33,6 +33,9 @@ class FlightEditViewModel(
 	private val _navigateBack = MutableSharedFlow<Unit>()
 	val navigateBack: SharedFlow<Unit> = _navigateBack
 
+	private val _navigateHome = MutableSharedFlow<Unit>()
+	val navigateHome: SharedFlow<Unit> = _navigateHome
+
 	private var originAirport: Airport? = null
 	private var destinationAirport: Airport? = null
 
@@ -142,7 +145,7 @@ class FlightEditViewModel(
 			_uiState.update { it.copy(formEnabled = false) }
 			viewModelScope.launch {
 				deleteFlightWithNoteUseCase(flightId)
-				_navigateBack.emit(Unit)
+				_navigateHome.emit(Unit)
 			}
 		}
 	}
@@ -170,18 +173,15 @@ class FlightEditViewModel(
 	private fun getFlight(flightId: Int)  = viewModelScope.launch {
 		val flight = flightsRepository.getFlight(flightId).first()
 
-		if (flight != null) {
-			originAirport = flight.originAirport
-			destinationAirport = flight.destinationAirport
-			updateFlightForm(flight.toFlightForm())
-			_uiState.update {
-				it.copy(
-					formEnabled = true,
-					canDelete = true
-				)
-			}
-		} else
-			_navigateBack.emit(Unit)
+		originAirport = flight.originAirport
+		destinationAirport = flight.destinationAirport
+		updateFlightForm(flight.toFlightForm())
+		_uiState.update {
+			it.copy(
+				formEnabled = true,
+				canDelete = true
+			)
+		}
 	}
 
 	private suspend fun searchAirportsDatabase(airportString: String) : List<Airport> {

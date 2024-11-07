@@ -22,7 +22,7 @@ interface FlightDao {
 
 	@Transaction
 	@Query("SELECT * FROM flights WHERE id = :flightId")
-	fun getFlightDetails(flightId: Int): Flow<FlightDetailsPOJO?>
+	fun getFlightDetails(flightId: Int): Flow<FlightDetailsPOJO>
 
 	@Transaction
 	@Query("SELECT * FROM flights  ORDER BY departureTime DESC")
