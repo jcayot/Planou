@@ -49,8 +49,6 @@ import com.cayot.flyingmore.ui.composable.SearchTextField
 import com.cayot.flyingmore.ui.composable.SelectDropdown
 import com.cayot.flyingmore.utils.SelectableDateAll
 import com.cayot.flyingmore.utils.SelectableDatesTo
-import com.cayot.flyingmore.utils.updateInstantDate
-import com.cayot.flyingmore.utils.updateInstantHourMinute
 import java.time.Instant
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -304,13 +302,12 @@ fun FlightEditForm(
 				modifier = modifier
 			) {
 				OutlinedDatePicker(
-					selectedInstant = uiState.flightForm.departureTime,
+					selectedDate = uiState.flightForm.departureDate,
 					visible = uiState.formElementVisibility.departureDayModalVisible,
 					selectableDates = SelectableDatesTo(Instant.now()),
 					labelText = stringResource(R.string.departure_day),
 					onDateSelected = { date ->
-						val newDepartureTime = updateInstantDate(uiState.flightForm.departureTime, Instant.ofEpochMilli(date))
-						updateFlightDetails(uiState.flightForm.copy(departureTime = newDepartureTime))
+						updateFlightDetails(uiState.flightForm.copy(departureDate = date))
 					},
 					updateVisibility = { visibility ->
 						updateFormElementVisibility(uiState.formElementVisibility.copy(
@@ -321,12 +318,15 @@ fun FlightEditForm(
 					modifier = Modifier.weight(3f)
 				)
 				OutlinedTimePicker(
-					selectedInstant = uiState.flightForm.departureTime,
+					selectedHour = uiState.flightForm.departureHour,
+					selectedMinute = uiState.flightForm.departureMinute,
 					visible = uiState.formElementVisibility.departureTimeModalVisible,
 					labelText = stringResource(R.string.departure_time),
 					onTimeSelected = { hour, minute ->
-						val newDepartureTime = updateInstantHourMinute(uiState.flightForm.departureTime, hour, minute)
-						updateFlightDetails(uiState.flightForm.copy(departureTime = newDepartureTime))
+						updateFlightDetails(uiState.flightForm.copy(
+							departureHour = hour,
+							departureMinute = minute
+						))
 					},
 					updateVisibility = { visibility ->
 						updateFormElementVisibility(uiState.formElementVisibility.copy(
@@ -342,13 +342,12 @@ fun FlightEditForm(
 				modifier = modifier
 			) {
 				OutlinedDatePicker(
-					selectedInstant = uiState.flightForm.arrivalTime,
+					selectedDate = uiState.flightForm.arrivalDate,
 					visible = uiState.formElementVisibility.arrivalDayModalVisible,
 					selectableDates = SelectableDateAll(),
 					labelText = stringResource(R.string.arrival_day),
 					onDateSelected = { date ->
-						val newArrivalTime = updateInstantDate(uiState.flightForm.arrivalTime, Instant.ofEpochMilli(date))
-						updateFlightDetails(uiState.flightForm.copy(arrivalTime = newArrivalTime))
+						updateFlightDetails(uiState.flightForm.copy(arrivalDate = date))
 					},
 					updateVisibility = { visibility ->
 						updateFormElementVisibility(uiState.formElementVisibility.copy(
@@ -359,12 +358,15 @@ fun FlightEditForm(
 					modifier = Modifier.weight(3f)
 				)
 				OutlinedTimePicker(
-					selectedInstant = uiState.flightForm.arrivalTime,
+					selectedHour = uiState.flightForm.arrivalHour,
+					selectedMinute = uiState.flightForm.arrivalMinute,
 					visible = uiState.formElementVisibility.arrivalTimeModalVisible,
 					labelText = stringResource(R.string.arrival_time),
 					onTimeSelected = { hour, minute ->
-						val newArrivalTime = updateInstantHourMinute(uiState.flightForm.arrivalTime, hour, minute)
-						updateFlightDetails(uiState.flightForm.copy(arrivalTime = newArrivalTime))
+						updateFlightDetails(uiState.flightForm.copy(
+							arrivalHour = hour,
+							arrivalMinute = minute
+						))
 					},
 					updateVisibility = { visibility ->
 						updateFormElementVisibility(uiState.formElementVisibility.copy(

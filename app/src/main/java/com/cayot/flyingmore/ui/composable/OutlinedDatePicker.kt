@@ -16,7 +16,7 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OutlinedDatePicker(
-    selectedInstant: Instant?,
+    selectedDate: Long?,
     selectableDates: SelectableDates,
     labelText: String,
     visible: Boolean,
@@ -25,20 +25,21 @@ fun OutlinedDatePicker(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     ) {
+    val formattedDate = if (selectedDate != null)
+        SimpleDateFormat("d MMM yyyy", Locale.getDefault()).format(selectedDate)
+    else
+        ""
+
     OutlinedTextFieldButton(
         label = { Text(labelText) },
-        value =
-        if (selectedInstant != null)
-            SimpleDateFormat("d MMM yyyy", Locale.getDefault()).format(selectedInstant.toEpochMilli())
-        else
-            "",
+        value = formattedDate,
         onClick = { updateVisibility(true) },
         enabled = enabled,
         modifier = modifier,
     )
     if (enabled) {
         val datePickerState = rememberDatePickerState(
-            initialSelectedDateMillis = selectedInstant?.toEpochMilli(),
+            initialSelectedDateMillis = selectedDate,
             selectableDates = selectableDates
         )
         if (visible) {

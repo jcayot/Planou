@@ -16,7 +16,8 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OutlinedTimePicker(
-    selectedInstant: Instant?,
+    selectedHour: Int?,
+    selectedMinute: Int?,
     labelText: String,
     visible: Boolean,
     onTimeSelected: (Int, Int) -> Unit,
@@ -24,22 +25,23 @@ fun OutlinedTimePicker(
     modifier: Modifier = Modifier,
     enabled: Boolean = true
     ) {
+    val formattedTime = if (selectedHour != null && selectedMinute != null) {
+        String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute)
+    } else {
+        ""
+    }
     OutlinedTextFieldButton(
         label = { Text(labelText) },
-        value =
-        if (selectedInstant != null)
-            SimpleDateFormat("h:mm a", Locale.getDefault()).format(selectedInstant.toEpochMilli())
-        else
-            "",
+        value = formattedTime,
         onClick = { updateVisibility(true) },
         enabled = enabled,
         modifier = modifier
     )
     if (enabled) {
-        val timePickerState = if (selectedInstant != null)
+        val timePickerState = if (selectedHour != null && selectedMinute != null)
                 rememberTimePickerState(
-                    initialHour = selectedInstant.atZone(ZoneId.systemDefault()).hour,
-                    initialMinute = selectedInstant.atZone(ZoneId.systemDefault()).minute
+                    initialHour = selectedHour,
+                    initialMinute = selectedMinute
                 ) else rememberTimePickerState(
                 initialHour = 0,
                 initialMinute = 0)

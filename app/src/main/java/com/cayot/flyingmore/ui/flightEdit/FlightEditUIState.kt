@@ -4,8 +4,9 @@ import com.cayot.flyingmore.data.TravelClass
 import com.cayot.flyingmore.data.airport.Airport
 import com.cayot.flyingmore.data.airport.distanceToAirport
 import com.cayot.flyingmore.data.flight.FlightDetails
-import java.time.Instant
-import java.util.Calendar
+import com.cayot.flyingmore.domain.ConvertLocalTimeToCalendarUseCase
+import java.time.LocalDate
+import java.time.ZoneId
 
 data class FlightEditUIState(
 	val flightForm: FlightForm = FlightForm(),
@@ -25,8 +26,12 @@ data class FlightForm (
 	val	flightNumber: String = "",
 	val planeModel: String = "",
 	val travelClass: TravelClass = TravelClass.ECONOMY,
-	val departureTime: Instant = Instant.now(),
-	val arrivalTime: Instant? = null,
+	val departureDate: Long = LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli(),
+	val departureHour: Int = 0,
+	val departureMinute: Int = 0,
+	val arrivalDate: Long? = null,
+	val arrivalHour: Int? = null,
+	val arrivalMinute: Int? = null,
 	val seatNumber: String = "",
 	)
 
@@ -62,21 +67,41 @@ fun FlightForm.isPlaneModelValid() : Boolean {
 	return (planeModel.isNotBlank())
 }
 
-fun FlightForm.areDateValid() : Boolean {
-	return (departureTime.isBefore(Instant.now()) && arrivalTime?.isAfter(departureTime) ?: true)
+fun FlightForm.areDateValid(
+	timeToUtcUseCase: ConvertLocalTimeToCalendarUseCase,
+	originTimeZone: String,
+	destinationTimeZone: String
+) : Boolean {
+	val departureUtcCalendar = timeToUtcUseCase(departureDate, departureHour, departureMinute, originTimeZone)
+
+	if (arrivalDate == null && arrivalHour == null && arrivalMinute == null) {
+		return (true)
+	}
+
+	if (arrivalDate == null || arrivalHour == null || arrivalMinute == null) {
+		return (false)
+	}
+
+	val arrivalUtcCalendar = timeToUtcUseCase(arrivalDate, arrivalHour, arrivalMinute, destinationTimeZone)
+
+	return (arrivalUtcCalendar.timeInMillis > departureUtcCalendar.timeInMillis)
 }
 
 fun FlightForm.seatNumberValid() : Boolean {
 	return (seatNumber.isNotBlank() && seatNumber.length < 4)
 }
 
-fun FlightForm.toFlightDetails(originAirport: Airport, destinationAirport: Airport) : FlightDetails {
+fun FlightForm.toFlightDetails(
+	originAirport: Airport,
+	destinationAirport: Airport,
+	timeToUtcUseCase: ConvertLocalTimeToCalendarUseCase
+): FlightDetails {
 	return (FlightDetails(
 		id = id,
 		flightNumber = flightNumber,
 		airline = airline,
-		departureTime = Calendar.getInstance().apply { timeInMillis = departureTime.toEpochMilli() },
-		arrivalTime = arrivalTime?.let { Calendar.getInstance().apply { timeInMillis = arrivalTime.toEpochMilli() } },
+		departureTime = timeToUtcUseCase(departureDate, departureHour, departureMinute, originAirport.timezone),
+		arrivalTime = arrivalDate?.let { timeToUtcUseCase(arrivalDate, arrivalHour!!, arrivalMinute!!, destinationAirport.timezone) },
 		travelClass = travelClass,
 		originAirport = originAirport,
 		destinationAirport = destinationAirport,

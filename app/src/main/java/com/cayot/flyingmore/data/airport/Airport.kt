@@ -14,7 +14,8 @@ data class Airport(
 	val municipality: String,
 	val iataCode: String,
 	val latitude: Double,
-	val longitude: Double
+	val longitude: Double,
+	val timezone: String
 ) {
 
 	override fun toString(): String {
@@ -69,7 +70,8 @@ data class Airport(
 				municipality = "New York",
 				iataCode = "JFK",
 				latitude = 40.639447,
-				longitude = -73.779317
+				longitude = -73.779317,
+				timezone = "America/New_York"
 			))
 		}
 
@@ -82,7 +84,8 @@ data class Airport(
 				municipality = "Paris (Roissy-en-France, Val-d'Oise)",
 				iataCode = "CDG",
 				latitude = 49.012798,
-				longitude = 2.55
+				longitude = 2.55,
+				timezone = "Europe/Paris"
 			))
 		}
 
@@ -95,7 +98,8 @@ data class Airport(
 				municipality = "Helsinki",
 				iataCode = "HEL",
 				latitude = 60.318363,
-				longitude = 24.963341
+				longitude = 24.963341,
+				timezone = "Europe/Helsinki"
 			))
 		}
 	}

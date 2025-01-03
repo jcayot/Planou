@@ -24,7 +24,7 @@ class ImageRepository(private val context: Context) {
             FileOutputStream(imageFile).use { stream ->
                 bitmap.compress(Bitmap.CompressFormat.PNG, 90, stream)
             }
-            uri = FileProvider.getUriForFile(context, "com.cayot.planou.fileprovider", imageFile)
+            uri = FileProvider.getUriForFile(context, "com.cayot.flyingmore.fileprovider", imageFile)
         } catch (e: IOException) {
             Log.e(TAG, "IOException while trying to write file for sharing: ${e.message}")
         }

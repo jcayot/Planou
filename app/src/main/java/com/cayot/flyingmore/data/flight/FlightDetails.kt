@@ -6,11 +6,16 @@ import androidx.room.Relation
 import com.cayot.flyingmore.data.TravelClass
 import com.cayot.flyingmore.data.airport.Airport
 import com.cayot.flyingmore.data.flightNotes.FlightNotes
+import com.cayot.flyingmore.domain.ConvertUtcTimeToLocalCalendarUseCase
 import com.cayot.flyingmore.ui.flightEdit.FlightForm
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 import java.util.Calendar
 import java.util.Locale
+import java.util.TimeZone
 
 data class FlightDetails(
     val id: Int,
@@ -50,40 +55,82 @@ fun FlightDetails.getDistanceString() : String {
 }
 
 fun FlightDetails.getDepartureDateString() : String {
-    return (SimpleDateFormat("d MMM yyyy", Locale.getDefault()).format(departureTime.time))
+    val dateFormat = SimpleDateFormat("d MMM yyyy", Locale.getDefault()).apply {
+        timeZone = TimeZone.getTimeZone(originAirport.timezone)
+    }
+
+    return (dateFormat.format(departureTime.time))
 }
 
 fun FlightDetails.getDepartureTimeString() : String {
-    return (SimpleDateFormat("h:mm a", Locale.getDefault()).format(departureTime.time))
+    val timeFormat = SimpleDateFormat("h:mm a", Locale.getDefault()).apply {
+        timeZone = TimeZone.getTimeZone(originAirport.timezone)
+    }
+
+    return (timeFormat.format(departureTime.time))
 }
 
 fun FlightDetails.getArrivalTimeString() : String? {
     if (arrivalTime == null) {
-        return (null)
+        return null
+    }
+
+    val timeFormat = SimpleDateFormat("h:mm a", Locale.getDefault()).apply {
+        timeZone = TimeZone.getTimeZone(destinationAirport.timezone)
     }
 
     val dayDifference = ChronoUnit.DAYS.between(departureTime.toInstant(), arrivalTime.toInstant())
 
     val dayDiffSuffix = if (dayDifference < 1) "" else " + $dayDifference"
 
-    val formattedArrivalTime = SimpleDateFormat("h:mm a", Locale.getDefault()).format(arrivalTime.time)
+    val formattedArrivalTime = timeFormat.format(arrivalTime.time)
 
     return (formattedArrivalTime + dayDiffSuffix)
 }
 
-fun FlightDetails.toFlightForm() : FlightForm {
-    return (FlightForm(
+fun FlightDetails.toFlightForm(
+    convertUtcTimeToLocalCalendarUseCase: ConvertUtcTimeToLocalCalendarUseCase = ConvertUtcTimeToLocalCalendarUseCase()
+) : FlightForm {
+    val departureLocalCalendar = convertUtcTimeToLocalCalendarUseCase(departureTime.timeInMillis, originAirport.timezone)
+
+    val arrivalLocalCalendar = arrivalTime?.let {
+        convertUtcTimeToLocalCalendarUseCase(it.timeInMillis, destinationAirport.timezone)
+    }
+
+    val departureCopy = departureLocalCalendar.clone() as Calendar
+    departureCopy.apply {
+        set(Calendar.HOUR_OF_DAY, 0)
+        set(Calendar.MINUTE, 0)
+        set(Calendar.SECOND, 0)
+        set(Calendar.MILLISECOND, 0)
+    }
+
+    val arrivalCopy = arrivalLocalCalendar?.clone() as Calendar?
+    arrivalCopy?.let {
+        it.apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+    }
+
+    return FlightForm(
         id = id,
         flightNumber = flightNumber,
         airline = airline,
         originAirportString = originAirport.iataCode,
         destinationAirportString = destinationAirport.iataCode,
-        departureTime = departureTime.toInstant(),
-        arrivalTime = arrivalTime?.let { arrivalTime.toInstant() },
+        departureDate = departureCopy.timeInMillis,
+        departureHour = departureLocalCalendar.get(Calendar.HOUR_OF_DAY),
+        departureMinute = departureLocalCalendar.get(Calendar.MINUTE),
+        arrivalDate = arrivalCopy?.timeInMillis,
+        arrivalHour = arrivalLocalCalendar?.get(Calendar.HOUR_OF_DAY),
+        arrivalMinute = arrivalLocalCalendar?.get(Calendar.MINUTE),
         travelClass = travelClass,
         planeModel = planeModel,
         seatNumber = seatNumber ?: ""
-    ))
+    )
 }
 
 fun FlightDetails.toFlightApiModel() : FlightApiModel {
@@ -122,7 +169,9 @@ data class FlightDetailsPOJO(
     val flightNotes: FlightNotes?
 )
 
-fun FlightDetailsPOJO.toFlightDetails() : FlightDetails {
+fun FlightDetailsPOJO.toFlightDetails(
+    convertUtcTimeToLocalCalendarUseCase: ConvertUtcTimeToLocalCalendarUseCase = ConvertUtcTimeToLocalCalendarUseCase()
+) : FlightDetails {
     return (FlightDetails(
         id = flightApiModel.id,
         flightNumber = flightApiModel.flightNumber,
@@ -132,8 +181,8 @@ fun FlightDetailsPOJO.toFlightDetails() : FlightDetails {
         distance = flightApiModel.distance,
         travelClass = flightApiModel.travelClass,
         planeModel = flightApiModel.planeModel,
-        departureTime = Calendar.getInstance().apply { timeInMillis = flightApiModel.departureTime },
-        arrivalTime = flightApiModel.arrivalTime?.let { Calendar.getInstance().apply { timeInMillis = flightApiModel.arrivalTime }},
+        departureTime = convertUtcTimeToLocalCalendarUseCase(flightApiModel.departureTime, originAirport.timezone),
+        arrivalTime = flightApiModel.arrivalTime?.let { convertUtcTimeToLocalCalendarUseCase(flightApiModel.arrivalTime, destinationAirport.timezone)},
         seatNumber = flightApiModel.seatNumber,
         flightNotes = flightNotes
     ))

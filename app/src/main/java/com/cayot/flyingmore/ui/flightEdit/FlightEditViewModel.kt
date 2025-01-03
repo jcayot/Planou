@@ -7,6 +7,7 @@ import com.cayot.flyingmore.data.airport.Airport
 import com.cayot.flyingmore.data.airport.AirportsRepository
 import com.cayot.flyingmore.data.flight.FlightsRepository
 import com.cayot.flyingmore.data.flight.toFlightForm
+import com.cayot.flyingmore.domain.ConvertLocalTimeToCalendarUseCase
 import com.cayot.flyingmore.domain.DeleteFlightWithNoteUseCase
 import com.cayot.flyingmore.ui.navigation.FlyingMoreScreen
 import kotlinx.coroutines.Job
@@ -22,6 +23,7 @@ class FlightEditViewModel(
 	private val flightsRepository: FlightsRepository,
 	private val airportsRepository: AirportsRepository,
 	private val deleteFlightWithNoteUseCase: DeleteFlightWithNoteUseCase,
+	private val convertLocalTimeToCalendarUseCase: ConvertLocalTimeToCalendarUseCase,
 	savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -125,16 +127,14 @@ class FlightEditViewModel(
 		if (flightDetailsValid()) {
 			viewModelScope.launch {
 				_uiState.update { it.copy(formEnabled = false) }
-				if (flightId == null) {
-					flightsRepository.insertFlight(_uiState.value.flightForm.toFlightDetails(
-						originAirport = originAirport!!,
-						destinationAirport = destinationAirport!!)
-					)
-				} else {
-					flightsRepository.updateFlight(_uiState.value.flightForm.toFlightDetails(
-						originAirport = originAirport!!,
-						destinationAirport = destinationAirport!!))
-				}
+				val flightDetails = _uiState.value.flightForm.toFlightDetails(
+					originAirport = originAirport!!,
+					destinationAirport = destinationAirport!!,
+					convertLocalTimeToCalendarUseCase)
+				if (flightId == null)
+					flightsRepository.insertFlight(flightDetails)
+				else
+					flightsRepository.updateFlight(flightDetails)
 				_navigateBack.emit(Unit)
 			}
 		}
@@ -155,7 +155,10 @@ class FlightEditViewModel(
 				flightForm.isFlightNumberValid() &&
 				flightForm.isAirlineValid() &&
 				flightForm.isPlaneModelValid() &&
-				flightForm.areDateValid())
+				flightForm.areDateValid(
+					convertLocalTimeToCalendarUseCase,
+					originAirport!!.timezone,
+					destinationAirport!!.timezone))
 	}
 
 	private fun airportsValid(origin: Airport?, destination: Airport?) : Boolean{

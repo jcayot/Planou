@@ -98,9 +98,7 @@ class FlightDetailsViewModel(
 	}
 
 	private fun updateFlightNotesUIState(flightNotes: FlightNotes?) {
-		_uiState.update {
-			it.copy(flight = it.flight!!.copy(flightNotes = flightNotes))
-		}
+		_uiState.update { it.copy(flight = it.flight!!.copy(flightNotes = flightNotes)) }
 	}
 
 	private	fun onFlightRetrieved(flight: FlightDetails) {
