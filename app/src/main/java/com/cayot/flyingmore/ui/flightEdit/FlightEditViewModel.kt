@@ -7,6 +7,7 @@ import com.cayot.flyingmore.data.airport.Airport
 import com.cayot.flyingmore.data.airport.AirportsRepository
 import com.cayot.flyingmore.data.flight.FlightsRepository
 import com.cayot.flyingmore.data.flight.toFlightForm
+import com.cayot.flyingmore.domain.CalendarFromDayDifferenceHourMinuteUseCase
 import com.cayot.flyingmore.domain.ConvertLocalTimeToCalendarUseCase
 import com.cayot.flyingmore.domain.DeleteFlightWithNoteUseCase
 import com.cayot.flyingmore.ui.navigation.FlyingMoreScreen
@@ -24,6 +25,7 @@ class FlightEditViewModel(
 	private val airportsRepository: AirportsRepository,
 	private val deleteFlightWithNoteUseCase: DeleteFlightWithNoteUseCase,
 	private val convertLocalTimeToCalendarUseCase: ConvertLocalTimeToCalendarUseCase,
+	private val calendarFromDifference: CalendarFromDayDifferenceHourMinuteUseCase,
 	savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -130,7 +132,8 @@ class FlightEditViewModel(
 				val flightDetails = _uiState.value.flightForm.toFlightDetails(
 					originAirport = originAirport!!,
 					destinationAirport = destinationAirport!!,
-					convertLocalTimeToCalendarUseCase)
+					convertLocalTimeToCalendarUseCase,
+					calendarFromDifference)
 				if (flightId == null)
 					flightsRepository.insertFlight(flightDetails)
 				else
@@ -155,8 +158,9 @@ class FlightEditViewModel(
 				flightForm.isFlightNumberValid() &&
 				flightForm.isAirlineValid() &&
 				flightForm.isPlaneModelValid() &&
-				flightForm.areDateValid(
+				flightForm.dateValid(
 					convertLocalTimeToCalendarUseCase,
+					calendarFromDifference,
 					originAirport!!.timezone,
 					destinationAirport!!.timezone))
 	}

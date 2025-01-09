@@ -6,6 +6,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.cayot.flyingmore.FlyingMoreApplication
+import com.cayot.flyingmore.domain.CalendarFromDayDifferenceHourMinuteUseCase
 import com.cayot.flyingmore.domain.ConvertLocalTimeToCalendarUseCase
 import com.cayot.flyingmore.domain.DeleteFlightWithNoteUseCase
 import com.cayot.flyingmore.ui.flightEdit.FlightEditViewModel
@@ -27,6 +28,7 @@ object AppViewModelProvider {
 					planouApplication().container.flightNotesRepository
 				),
 				convertLocalTimeToCalendarUseCase = ConvertLocalTimeToCalendarUseCase(),
+				calendarFromDifference = CalendarFromDayDifferenceHourMinuteUseCase(),
 				savedStateHandle = this.createSavedStateHandle()
 			)
 		}

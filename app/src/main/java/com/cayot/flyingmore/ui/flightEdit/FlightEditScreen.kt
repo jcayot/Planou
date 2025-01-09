@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -20,7 +21,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -39,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cayot.flyingmore.R
+import com.cayot.flyingmore.data.DayDifference
 import com.cayot.flyingmore.data.TravelClass
 import com.cayot.flyingmore.data.airport.Airport
 import com.cayot.flyingmore.ui.AppViewModelProvider
@@ -47,7 +53,7 @@ import com.cayot.flyingmore.ui.composable.OutlinedDatePicker
 import com.cayot.flyingmore.ui.composable.OutlinedTimePicker
 import com.cayot.flyingmore.ui.composable.SearchTextField
 import com.cayot.flyingmore.ui.composable.SelectDropdown
-import com.cayot.flyingmore.utils.SelectableDateAll
+import com.cayot.flyingmore.ui.theme.Typography
 import com.cayot.flyingmore.utils.SelectableDatesTo
 import java.time.Instant
 
@@ -123,7 +129,8 @@ fun FlightEditScreenContent(
 	Column (
 		verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_medium)),
 		horizontalAlignment = Alignment.CenterHorizontally,
-		modifier = modifier.padding(dimensionResource(id = R.dimen.padding_medium))
+		modifier = modifier
+			.padding(dimensionResource(id = R.dimen.padding_medium))
 			.verticalScroll(scrollState)
 			.imePadding()
 	) {
@@ -341,22 +348,30 @@ fun FlightEditForm(
 				horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small)),
 				modifier = modifier
 			) {
-				OutlinedDatePicker(
-					selectedDate = uiState.flightForm.arrivalDate,
-					visible = uiState.formElementVisibility.arrivalDayModalVisible,
-					selectableDates = SelectableDateAll(),
-					labelText = stringResource(R.string.arrival_day),
-					onDateSelected = { date ->
-						updateFlightDetails(uiState.flightForm.copy(arrivalDate = date))
-					},
-					updateVisibility = { visibility ->
-						updateFormElementVisibility(uiState.formElementVisibility.copy(
-							arrivalDayModalVisible = visibility
-						))
-					},
-					enabled = uiState.formEnabled,
-					modifier = Modifier.weight(3f)
-				)
+				Column (
+					modifier = Modifier.weight(3f),
+				) {
+					Text(
+						text = stringResource(R.string.day_difference),
+						style = Typography.bodySmall
+					)
+					SingleChoiceSegmentedButtonRow(
+						modifier = Modifier.height(OutlinedTextFieldDefaults.MinHeight)
+					) {
+						DayDifference.entries.forEachIndexed { index, dayDifference ->
+							SegmentedButton(
+								label = { Text("+${dayDifference.value}") },
+								shape = SegmentedButtonDefaults.itemShape(
+									index = index,
+									count = DayDifference.entries.size
+								),
+								onClick = { updateFlightDetails(uiState.flightForm.copy(dayDifference = dayDifference)) },
+								selected = uiState.flightForm.dayDifference == dayDifference,
+								enabled = uiState.formEnabled,
+							)
+						}
+					}
+				}
 				OutlinedTimePicker(
 					selectedHour = uiState.flightForm.arrivalHour,
 					selectedMinute = uiState.flightForm.arrivalMinute,

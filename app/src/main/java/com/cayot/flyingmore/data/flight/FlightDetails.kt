@@ -3,19 +3,18 @@ package com.cayot.flyingmore.data.flight
 import androidx.compose.ui.util.fastRoundToInt
 import androidx.room.Embedded
 import androidx.room.Relation
+import com.cayot.flyingmore.data.DayDifference
 import com.cayot.flyingmore.data.TravelClass
 import com.cayot.flyingmore.data.airport.Airport
 import com.cayot.flyingmore.data.flightNotes.FlightNotes
 import com.cayot.flyingmore.domain.ConvertUtcTimeToLocalCalendarUseCase
 import com.cayot.flyingmore.ui.flightEdit.FlightForm
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.ZoneId
-import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
+import java.util.concurrent.TimeUnit
 
 data class FlightDetails(
     val id: Int,
@@ -115,6 +114,23 @@ fun FlightDetails.toFlightForm(
         }
     }
 
+    val dayDifference = arrivalLocalCalendar?.let {
+        val diffInMillis = it.timeInMillis - departureLocalCalendar.timeInMillis
+        val diffInDays = TimeUnit.MILLISECONDS.toDays(diffInMillis).toInt()
+        when (diffInDays) {
+            0 -> DayDifference.ZERO
+            1 -> DayDifference.ONE
+            2 -> DayDifference.TWO
+            else -> {
+                if (diffInDays < 0) {
+                    DayDifference.ZERO
+                } else {
+                    DayDifference.TWO
+                }
+            }
+        }
+    } ?: DayDifference.ZERO
+
     return FlightForm(
         id = id,
         flightNumber = flightNumber,
@@ -124,7 +140,7 @@ fun FlightDetails.toFlightForm(
         departureDate = departureCopy.timeInMillis,
         departureHour = departureLocalCalendar.get(Calendar.HOUR_OF_DAY),
         departureMinute = departureLocalCalendar.get(Calendar.MINUTE),
-        arrivalDate = arrivalCopy?.timeInMillis,
+        dayDifference = dayDifference,
         arrivalHour = arrivalLocalCalendar?.get(Calendar.HOUR_OF_DAY),
         arrivalMinute = arrivalLocalCalendar?.get(Calendar.MINUTE),
         travelClass = travelClass,
