@@ -47,6 +47,34 @@ data class FlightDetails(
             ))
         }
     }
+
+    //TODO FUCKING RETARDED
+    fun getDepartureArrivalDayDifference() : Int {
+        if (arrivalTime == null) {
+            return 0
+        }
+        val departureYear = departureTime.get(Calendar.YEAR)
+        val departureMonth = departureTime.get(Calendar.MONTH)
+        val departureDay = departureTime.get(Calendar.DAY_OF_MONTH)
+
+        val arrivalYear = arrivalTime.get(Calendar.YEAR)
+        val arrivalMonth = arrivalTime.get(Calendar.MONTH)
+        val arrivalDay = arrivalTime.get(Calendar.DAY_OF_MONTH)
+
+        var dayDifference = 0
+        val departureCalendar = Calendar.getInstance().apply {
+            set(departureYear, departureMonth, departureDay)
+        }
+        val arrivalCalendar = Calendar.getInstance().apply {
+            set(arrivalYear, arrivalMonth, arrivalDay)
+        }
+
+        while (departureCalendar.before(arrivalCalendar)) {
+            departureCalendar.add(Calendar.DAY_OF_YEAR, 1)
+            dayDifference++
+        }
+        return (dayDifference)
+    }
 }
 
 fun FlightDetails.getDistanceString() : String {
@@ -78,7 +106,7 @@ fun FlightDetails.getArrivalTimeString() : String? {
         timeZone = TimeZone.getTimeZone(destinationAirport.timezone)
     }
 
-    val dayDifference = ChronoUnit.DAYS.between(departureTime.toInstant(), arrivalTime.toInstant())
+    val dayDifference = getDepartureArrivalDayDifference()
 
     val dayDiffSuffix = if (dayDifference < 1) "" else " + $dayDifference"
 
@@ -104,29 +132,15 @@ fun FlightDetails.toFlightForm(
         set(Calendar.MILLISECOND, 0)
     }
 
-    val arrivalCopy = arrivalLocalCalendar?.clone() as Calendar?
-    arrivalCopy?.let {
-        it.apply {
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
-    }
 
     val dayDifference = arrivalLocalCalendar?.let {
-        val diffInMillis = it.timeInMillis - departureLocalCalendar.timeInMillis
-        val diffInDays = TimeUnit.MILLISECONDS.toDays(diffInMillis).toInt()
+        val diffInDays = getDepartureArrivalDayDifference()
         when (diffInDays) {
             0 -> DayDifference.ZERO
             1 -> DayDifference.ONE
             2 -> DayDifference.TWO
             else -> {
-                if (diffInDays < 0) {
-                    DayDifference.ZERO
-                } else {
-                    DayDifference.TWO
-                }
+                DayDifference.ZERO
             }
         }
     } ?: DayDifference.ZERO
