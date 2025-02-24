@@ -9,9 +9,9 @@ import com.cayot.flyingmore.FlyingMoreApplication
 import com.cayot.flyingmore.domain.CalendarFromDayDifferenceHourMinuteUseCase
 import com.cayot.flyingmore.domain.ConvertLocalTimeToCalendarUseCase
 import com.cayot.flyingmore.domain.DeleteFlightWithNoteUseCase
-import com.cayot.flyingmore.ui.flightEdit.FlightEditViewModel
-import com.cayot.flyingmore.ui.flightDetails.FlightDetailsViewModel
-import com.cayot.flyingmore.ui.flightList.FlightListViewModel
+import com.cayot.flyingmore.ui.flight.flightEdit.FlightEditViewModel
+import com.cayot.flyingmore.ui.flight.flightDetails.FlightDetailsViewModel
+import com.cayot.flyingmore.ui.home.list.FlightListViewModel
 
 object AppViewModelProvider {
 	val factory = viewModelFactory {

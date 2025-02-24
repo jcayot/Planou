@@ -8,13 +8,11 @@ import com.cayot.flyingmore.data.TravelClass
 import com.cayot.flyingmore.data.airport.Airport
 import com.cayot.flyingmore.data.flightNotes.FlightNotes
 import com.cayot.flyingmore.domain.ConvertUtcTimeToLocalCalendarUseCase
-import com.cayot.flyingmore.ui.flightEdit.FlightForm
+import com.cayot.flyingmore.ui.flight.flightEdit.FlightForm
 import java.text.SimpleDateFormat
-import java.time.temporal.ChronoUnit
 import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
-import java.util.concurrent.TimeUnit
 
 data class FlightDetails(
     val id: Int,

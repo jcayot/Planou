@@ -1,4 +1,4 @@
-package com.cayot.flyingmore.ui.flightEdit
+package com.cayot.flyingmore.ui.flight.flightEdit
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel

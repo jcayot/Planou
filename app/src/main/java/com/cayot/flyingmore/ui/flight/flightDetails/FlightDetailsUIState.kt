@@ -1,4 +1,4 @@
-package com.cayot.flyingmore.ui.flightDetails
+package com.cayot.flyingmore.ui.flight.flightDetails
 
 import com.cayot.flyingmore.data.FlightMapState
 import com.cayot.flyingmore.data.flight.FlightDetails

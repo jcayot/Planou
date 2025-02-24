@@ -9,15 +9,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.cayot.flyingmore.R
-import com.cayot.flyingmore.ui.flightEdit.FlightEditScreen
-import com.cayot.flyingmore.ui.flightDetails.FlightDetailsScreen
-import com.cayot.flyingmore.ui.flightList.FlightListScreen
+import com.cayot.flyingmore.ui.flight.flightDetails.FlightDetailsScreen
+import com.cayot.flyingmore.ui.flight.flightEdit.FlightEditScreen
+import com.cayot.flyingmore.ui.home.HomeScreen
 
 enum class FlyingMoreScreen(@StringRes val title: Int, val argName : String) {
-	List(R.string.flight_list, ""),
+	Home(R.string.home, ""),
 	Add(R.string.add_flight, ""),
 	Edit(R.string.edit_flight, "flightId"),
-	Details(R.string.flight_details, "flightId")
+	Details(R.string.flight_details, "flightId"),
 }
 
 @Composable
@@ -27,11 +27,11 @@ fun FlyingMoreNavHost(
 ) {
 	NavHost(
 		navController = navController,
-		startDestination = FlyingMoreScreen.List.name,
+		startDestination = FlyingMoreScreen.Home.name,
 		modifier = modifier
 	) {
-		composable(route = FlyingMoreScreen.List.name) {
-			FlightListScreen(
+		composable(route = FlyingMoreScreen.Home.name) {
+			HomeScreen(
 				onFlightPressed = {
 					navController.navigate(FlyingMoreScreen.Details.name + "/" + it)
 				},
@@ -43,7 +43,7 @@ fun FlyingMoreNavHost(
 				title = FlyingMoreScreen.Add.name,
 				navigateBack = { navController.popBackStack() },
 				onNavigateUp = { navController.navigateUp() },
-				navigateHome = { navController.navigate(FlyingMoreScreen.List.name) }
+				navigateHome = { navController.navigate(FlyingMoreScreen.Home.name) }
 			)
 		}
 		composable(
@@ -56,7 +56,7 @@ fun FlyingMoreNavHost(
 				title = FlyingMoreScreen.Edit.name,
 				onNavigateUp = { navController.navigateUp() },
 				navigateBack = { navController.popBackStack() },
-				navigateHome = { navController.navigate(FlyingMoreScreen.List.name) }
+				navigateHome = { navController.navigate(FlyingMoreScreen.Home.name) }
 			)
 		}
 		composable(

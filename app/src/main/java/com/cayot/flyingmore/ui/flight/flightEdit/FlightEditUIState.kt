@@ -1,4 +1,4 @@
-package com.cayot.flyingmore.ui.flightEdit
+package com.cayot.flyingmore.ui.flight.flightEdit
 
 import com.cayot.flyingmore.data.DayDifference
 import com.cayot.flyingmore.data.TravelClass

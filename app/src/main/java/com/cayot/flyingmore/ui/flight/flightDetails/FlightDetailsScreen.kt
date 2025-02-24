@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalFoundationApi::class)
 
-package com.cayot.flyingmore.ui.flightDetails
+package com.cayot.flyingmore.ui.flight.flightDetails
 
 import android.content.Context
 import android.content.Intent

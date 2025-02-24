@@ -1,4 +1,4 @@
-package com.cayot.flyingmore.ui.flightDetails
+package com.cayot.flyingmore.ui.flight.flightDetails
 
 import android.graphics.Bitmap
 import android.net.Uri

@@ -38,4 +38,8 @@
     <string name="empty_value">-</string>
     <string name="flight">Flight</string>
     <string name="day_difference">Day Difference</string>
+    <string name="flying_statistics">Flying Statistics</string>
+    <string name="home">Home</string>
+    <string name="list">List</string>
+    <string name="statistics">Statistics</string>
 </resources>
