@@ -1,7 +1,7 @@
 plugins {
 	alias(libs.plugins.android.application)
 	alias(libs.plugins.kotlin.android)
-	id("com.google.devtools.ksp") version "2.0.20-1.0.25"
+	id("com.google.devtools.ksp") version "2.1.10-1.0.29"
 	id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 	alias(libs.plugins.kotlin.compose)
 }
@@ -13,7 +13,7 @@ android {
 	defaultConfig {
 		applicationId = "com.cayot.flyingmore"
 		minSdk = 28
-		targetSdk = 34
+		targetSdk = 35
 		versionCode = 1
 		versionName = "1.0"
 
