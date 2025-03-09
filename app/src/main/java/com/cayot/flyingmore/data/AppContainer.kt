@@ -8,8 +8,6 @@ import com.cayot.flyingmore.data.repository.FlightsRepository
 import com.cayot.flyingmore.data.local.repository.OfflineFlightsRepository
 import com.cayot.flyingmore.data.repository.FlightNotesRepository
 import com.cayot.flyingmore.data.local.repository.OfflineFlightNotesRepository
-import com.cayot.flyingmore.data.local.repository.OfflineFlyingStatisticsRepository
-import com.cayot.flyingmore.data.repository.FlyingStatisticsRepository
 import com.cayot.flyingmore.data.repository.ImageRepository
 
 interface AppContainer {
