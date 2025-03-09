@@ -16,6 +16,7 @@ interface AppContainer {
 	val flightsRepository: FlightsRepository
 	val airportsRepository: AirportsRepository
 	val flightNotesRepository: FlightNotesRepository
+	val flyingStatisticsRepository: FlyingStatisticsRepository
 	val imageRepository: ImageRepository
 }
 
@@ -28,6 +29,9 @@ class AppDataContainer(private val context: Context) : AppContainer {
 	}
 	override val flightNotesRepository: FlightNotesRepository by lazy {
 		OfflineFlightNotesRepository(FlyingMoreDatabase.getDatabase(context).flightNotesDao())
+	}
+	override val flyingStatisticsRepository: FlyingStatisticsRepository by lazy {
+		OfflineFlyingStatisticsRepository(FlyingMoreDatabase.getDatabase(context).flyingStatisticsDao())
 	}
 	override val imageRepository: ImageRepository by lazy {
         ImageRepository(context)
