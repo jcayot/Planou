@@ -1,15 +1,15 @@
 package com.cayot.flyingmore.data.repository
 
-import com.cayot.flyingmore.data.model.statistics.TemporalStatistic
+import com.cayot.flyingmore.data.model.statistics.YearTemporalStatistic
 import kotlinx.coroutines.flow.Flow
 
 interface FlyingStatisticsRepository {
 
-    fun getAllFlyingStatistics() : Flow<List<TemporalStatistic>>
+    fun <T> getAllFlyingStatistics() : Flow<List<YearTemporalStatistic<T>>>
 
-    fun getFlyingStatistic(name: String) : Flow<TemporalStatistic>
+    fun <T> getFlyingStatistic(name: String) : Flow<YearTemporalStatistic<T>>
 
-    suspend fun insertFlyingStatistic(temporalStatistic: TemporalStatistic)
+    suspend fun <T> insertFlyingStatistic(yearTemporalStatistic: YearTemporalStatistic<T>)
 
-    suspend fun updateFlyingStatistic(temporalStatistic: TemporalStatistic)
+    suspend fun <T> updateFlyingStatistic(yearTemporalStatistic: YearTemporalStatistic<T>)
 }
