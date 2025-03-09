@@ -1,14 +1,13 @@
-package com.cayot.flyingmore.data.flight
+package com.cayot.flyingmore.data.model
 
 import androidx.compose.ui.util.fastRoundToInt
 import androidx.room.Embedded
 import androidx.room.Relation
-import com.cayot.flyingmore.data.DayDifference
-import com.cayot.flyingmore.data.TravelClass
-import com.cayot.flyingmore.data.airport.Airport
-import com.cayot.flyingmore.data.flightNotes.FlightNotes
+import com.cayot.flyingmore.data.local.model.Airport
+import com.cayot.flyingmore.data.local.model.FlightEntity
+import com.cayot.flyingmore.data.local.model.FlightNotes
 import com.cayot.flyingmore.domain.ConvertUtcTimeToLocalCalendarUseCase
-import com.cayot.flyingmore.ui.flight.flightEdit.FlightForm
+import com.cayot.flyingmore.ui.flight.edit.FlightForm
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -161,8 +160,8 @@ fun FlightDetails.toFlightForm(
     )
 }
 
-fun FlightDetails.toFlightApiModel() : FlightApiModel {
-    return FlightApiModel(
+fun FlightDetails.toFlightApiModel() : FlightEntity {
+    return FlightEntity(
         id = id,
         flightNumber = flightNumber,
         airline = airline,
@@ -179,7 +178,7 @@ fun FlightDetails.toFlightApiModel() : FlightApiModel {
 
 data class FlightDetailsPOJO(
     @Embedded
-    val flightApiModel: FlightApiModel,
+    val flightEntity: FlightEntity,
     @Relation(
         parentColumn = "originAirportId",
         entityColumn = "id"
@@ -201,17 +200,17 @@ fun FlightDetailsPOJO.toFlightDetails(
     convertUtcTimeToLocalCalendarUseCase: ConvertUtcTimeToLocalCalendarUseCase = ConvertUtcTimeToLocalCalendarUseCase()
 ) : FlightDetails {
     return (FlightDetails(
-        id = flightApiModel.id,
-        flightNumber = flightApiModel.flightNumber,
+        id = flightEntity.id,
+        flightNumber = flightEntity.flightNumber,
         originAirport = originAirport,
         destinationAirport = destinationAirport,
-        airline = flightApiModel.airline,
-        distance = flightApiModel.distance,
-        travelClass = flightApiModel.travelClass,
-        planeModel = flightApiModel.planeModel,
-        departureTime = convertUtcTimeToLocalCalendarUseCase(flightApiModel.departureTime, originAirport.timezone),
-        arrivalTime = flightApiModel.arrivalTime?.let { convertUtcTimeToLocalCalendarUseCase(flightApiModel.arrivalTime, destinationAirport.timezone)},
-        seatNumber = flightApiModel.seatNumber,
+        airline = flightEntity.airline,
+        distance = flightEntity.distance,
+        travelClass = flightEntity.travelClass,
+        planeModel = flightEntity.planeModel,
+        departureTime = convertUtcTimeToLocalCalendarUseCase(flightEntity.departureTime, originAirport.timezone),
+        arrivalTime = flightEntity.arrivalTime?.let { convertUtcTimeToLocalCalendarUseCase(flightEntity.arrivalTime, destinationAirport.timezone)},
+        seatNumber = flightEntity.seatNumber,
         flightNotes = flightNotes
     ))
 }

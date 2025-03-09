@@ -1,5 +1,11 @@
-package com.cayot.flyingmore.data.flight
+package com.cayot.flyingmore.data.repository
 
+import com.cayot.flyingmore.data.local.dao.FlightDao
+import com.cayot.flyingmore.data.model.FlightBrief
+import com.cayot.flyingmore.data.model.FlightDetails
+import com.cayot.flyingmore.data.model.toFlightApiModel
+import com.cayot.flyingmore.data.model.toFlightBrief
+import com.cayot.flyingmore.data.model.toFlightDetails
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map

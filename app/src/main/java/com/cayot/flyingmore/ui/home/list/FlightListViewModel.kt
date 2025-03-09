@@ -2,9 +2,9 @@ package com.cayot.flyingmore.ui.home.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cayot.flyingmore.data.FlightMapState
-import com.cayot.flyingmore.data.flight.FlightBrief
-import com.cayot.flyingmore.data.flight.FlightsRepository
+import com.cayot.flyingmore.data.model.FlightMapState
+import com.cayot.flyingmore.data.model.FlightBrief
+import com.cayot.flyingmore.data.repository.FlightsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update

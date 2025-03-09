@@ -1,12 +1,12 @@
-package com.cayot.flyingmore.ui.flight.flightEdit
+package com.cayot.flyingmore.ui.flight.edit
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cayot.flyingmore.data.airport.Airport
-import com.cayot.flyingmore.data.airport.AirportsRepository
-import com.cayot.flyingmore.data.flight.FlightsRepository
-import com.cayot.flyingmore.data.flight.toFlightForm
+import com.cayot.flyingmore.data.local.model.Airport
+import com.cayot.flyingmore.data.repository.AirportsRepository
+import com.cayot.flyingmore.data.repository.FlightsRepository
+import com.cayot.flyingmore.data.model.toFlightForm
 import com.cayot.flyingmore.domain.CalendarFromDayDifferenceHourMinuteUseCase
 import com.cayot.flyingmore.domain.ConvertLocalTimeToCalendarUseCase
 import com.cayot.flyingmore.domain.DeleteFlightWithNoteUseCase

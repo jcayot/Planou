@@ -1,4 +1,4 @@
-package com.cayot.flyingmore.data
+package com.cayot.flyingmore.data.model
 
 enum class DayDifference(val value: Int) {
     ZERO(0),

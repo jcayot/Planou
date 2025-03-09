@@ -1,9 +1,10 @@
-package com.cayot.flyingmore.data.flight
+package com.cayot.flyingmore.data.model
 
 import androidx.compose.ui.util.fastRoundToInt
 import androidx.room.Embedded
 import androidx.room.Relation
-import com.cayot.flyingmore.data.airport.Airport
+import com.cayot.flyingmore.data.local.model.Airport
+import com.cayot.flyingmore.data.local.model.FlightEntity
 import com.cayot.flyingmore.domain.ConvertUtcTimeToLocalCalendarUseCase
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -48,7 +49,7 @@ fun FlightBrief.getDepartureDateString() : String {
 
 data class FlightBriefPOJO(
     @Embedded
-    val flightApiModel: FlightApiModel,
+    val flightEntity: FlightEntity,
     @Relation(
         parentColumn = "originAirportId",
         entityColumn = "id"
@@ -65,12 +66,12 @@ fun FlightBriefPOJO.toFlightBrief(
     convertUtcTimeToLocalCalendarUseCase: ConvertUtcTimeToLocalCalendarUseCase = ConvertUtcTimeToLocalCalendarUseCase()
 ) : FlightBrief {
     return (FlightBrief(
-        id = flightApiModel.id,
-        flightNumber = flightApiModel.flightNumber,
-        airline = flightApiModel.airline,
+        id = flightEntity.id,
+        flightNumber = flightEntity.flightNumber,
+        airline = flightEntity.airline,
         originAirport = originAirport,
         destinationAirport = destinationAirport,
-        departureTime = convertUtcTimeToLocalCalendarUseCase(flightApiModel.departureTime, originAirport.timezone),
-        distance = flightApiModel.distance
+        departureTime = convertUtcTimeToLocalCalendarUseCase(flightEntity.departureTime, originAirport.timezone),
+        distance = flightEntity.distance
     ))
 }

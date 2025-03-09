@@ -1,7 +1,7 @@
-package com.cayot.flyingmore.ui.flight.flightDetails
+package com.cayot.flyingmore.ui.flight.details
 
-import com.cayot.flyingmore.data.FlightMapState
-import com.cayot.flyingmore.data.flight.FlightDetails
+import com.cayot.flyingmore.data.model.FlightMapState
+import com.cayot.flyingmore.data.model.FlightDetails
 
 data class FlightDetailsUIState(
     val flight: FlightDetails? = null,

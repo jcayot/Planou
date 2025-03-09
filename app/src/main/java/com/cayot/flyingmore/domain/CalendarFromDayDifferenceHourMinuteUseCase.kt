@@ -1,6 +1,6 @@
 package com.cayot.flyingmore.domain
 
-import com.cayot.flyingmore.data.DayDifference
+import com.cayot.flyingmore.data.model.DayDifference
 import java.util.Calendar
 import java.util.TimeZone
 

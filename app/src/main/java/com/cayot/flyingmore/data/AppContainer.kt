@@ -1,12 +1,14 @@
 package com.cayot.flyingmore.data
 
 import android.content.Context
-import com.cayot.flyingmore.data.airport.AirportsRepository
-import com.cayot.flyingmore.data.airport.OfflineAirportsRepository
-import com.cayot.flyingmore.data.flight.FlightsRepository
-import com.cayot.flyingmore.data.flight.OfflineFlightsRepository
-import com.cayot.flyingmore.data.flightNotes.FlightNotesRepository
-import com.cayot.flyingmore.data.flightNotes.OfflineFlightNotesRepository
+import com.cayot.flyingmore.data.local.FlyingMoreDatabase
+import com.cayot.flyingmore.data.repository.AirportsRepository
+import com.cayot.flyingmore.data.repository.OfflineAirportsRepository
+import com.cayot.flyingmore.data.repository.FlightsRepository
+import com.cayot.flyingmore.data.repository.OfflineFlightsRepository
+import com.cayot.flyingmore.data.repository.FlightNotesRepository
+import com.cayot.flyingmore.data.repository.OfflineFlightNotesRepository
+import com.cayot.flyingmore.data.repository.ImageRepository
 
 interface AppContainer {
 	val flightsRepository: FlightsRepository
@@ -26,6 +28,6 @@ class AppDataContainer(private val context: Context) : AppContainer {
 		OfflineFlightNotesRepository(FlyingMoreDatabase.getDatabase(context).flightNotesDao())
 	}
 	override val imageRepository: ImageRepository by lazy {
-		ImageRepository(context)
+        ImageRepository(context)
 	}
 }

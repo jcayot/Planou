@@ -1,4 +1,4 @@
-package com.cayot.flyingmore.data.flightNotes
+package com.cayot.flyingmore.data.local.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

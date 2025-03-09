@@ -1,8 +1,9 @@
-package com.cayot.flyingmore.data.airport
+package com.cayot.flyingmore.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import com.cayot.flyingmore.data.local.model.Airport
 
 @Dao
 interface AirportDao {

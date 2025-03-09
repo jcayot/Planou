@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalFoundationApi::class)
 
-package com.cayot.flyingmore.ui.flight.flightDetails
+package com.cayot.flyingmore.ui.flight.details
 
 import android.content.Context
 import android.content.Intent
@@ -74,13 +74,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cayot.flyingmore.R
-import com.cayot.flyingmore.data.FlightMapState
-import com.cayot.flyingmore.data.flight.FlightDetails
-import com.cayot.flyingmore.data.flight.getArrivalTimeString
-import com.cayot.flyingmore.data.flight.getDepartureDateString
-import com.cayot.flyingmore.data.flight.getDepartureTimeString
-import com.cayot.flyingmore.data.flight.getDistanceString
-import com.cayot.flyingmore.data.flightNotes.FlightNotes
+import com.cayot.flyingmore.data.model.FlightMapState
+import com.cayot.flyingmore.data.model.FlightDetails
+import com.cayot.flyingmore.data.model.getArrivalTimeString
+import com.cayot.flyingmore.data.model.getDepartureDateString
+import com.cayot.flyingmore.data.model.getDepartureTimeString
+import com.cayot.flyingmore.data.model.getDistanceString
+import com.cayot.flyingmore.data.local.model.FlightNotes
 import com.cayot.flyingmore.ui.AppViewModelProvider
 import com.cayot.flyingmore.ui.PlanouTopBar
 import com.cayot.flyingmore.ui.composable.FlightMap

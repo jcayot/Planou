@@ -1,7 +1,7 @@
 package com.cayot.flyingmore.domain
 
-import com.cayot.flyingmore.data.flight.FlightsRepository
-import com.cayot.flyingmore.data.flightNotes.FlightNotesRepository
+import com.cayot.flyingmore.data.repository.FlightsRepository
+import com.cayot.flyingmore.data.repository.FlightNotesRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

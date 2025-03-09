@@ -1,6 +1,10 @@
-package com.cayot.flyingmore.data.flightNotes
+package com.cayot.flyingmore.data.repository
 
-class OfflineFlightNotesRepository(private val flightNotesDao: FlightNotesDao) : FlightNotesRepository {
+import com.cayot.flyingmore.data.local.dao.FlightNotesDao
+import com.cayot.flyingmore.data.local.model.FlightNotes
+
+class OfflineFlightNotesRepository(private val flightNotesDao: FlightNotesDao) :
+    FlightNotesRepository {
     override suspend fun getFromFlight(flightId: Int): FlightNotes? {
         return (flightNotesDao.getFromFlight(flightId))
     }

@@ -1,4 +1,4 @@
-package com.cayot.flyingmore.ui.flight.flightEdit
+package com.cayot.flyingmore.ui.flight.edit
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -44,9 +44,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cayot.flyingmore.R
-import com.cayot.flyingmore.data.DayDifference
-import com.cayot.flyingmore.data.TravelClass
-import com.cayot.flyingmore.data.airport.Airport
+import com.cayot.flyingmore.data.model.DayDifference
+import com.cayot.flyingmore.data.model.TravelClass
+import com.cayot.flyingmore.data.local.model.Airport
 import com.cayot.flyingmore.ui.AppViewModelProvider
 import com.cayot.flyingmore.ui.PlanouTopBar
 import com.cayot.flyingmore.ui.composable.OutlinedDatePicker

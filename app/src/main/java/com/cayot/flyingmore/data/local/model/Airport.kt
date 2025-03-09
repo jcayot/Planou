@@ -1,4 +1,4 @@
-package com.cayot.flyingmore.data.airport
+package com.cayot.flyingmore.data.local.model
 
 import android.location.Location
 import androidx.room.Entity

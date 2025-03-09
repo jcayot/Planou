@@ -1,10 +1,10 @@
-package com.cayot.flyingmore.ui.flight.flightEdit
+package com.cayot.flyingmore.ui.flight.edit
 
-import com.cayot.flyingmore.data.DayDifference
-import com.cayot.flyingmore.data.TravelClass
-import com.cayot.flyingmore.data.airport.Airport
-import com.cayot.flyingmore.data.airport.distanceToAirport
-import com.cayot.flyingmore.data.flight.FlightDetails
+import com.cayot.flyingmore.data.model.DayDifference
+import com.cayot.flyingmore.data.model.TravelClass
+import com.cayot.flyingmore.data.local.model.Airport
+import com.cayot.flyingmore.data.local.model.distanceToAirport
+import com.cayot.flyingmore.data.model.FlightDetails
 import com.cayot.flyingmore.domain.CalendarFromDayDifferenceHourMinuteUseCase
 import com.cayot.flyingmore.domain.ConvertLocalTimeToCalendarUseCase
 import java.time.LocalDate

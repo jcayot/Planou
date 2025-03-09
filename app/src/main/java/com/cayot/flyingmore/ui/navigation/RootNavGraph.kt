@@ -9,8 +9,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.cayot.flyingmore.R
-import com.cayot.flyingmore.ui.flight.flightDetails.FlightDetailsScreen
-import com.cayot.flyingmore.ui.flight.flightEdit.FlightEditScreen
+import com.cayot.flyingmore.ui.flight.details.FlightDetailsScreen
+import com.cayot.flyingmore.ui.flight.edit.FlightEditScreen
 import com.cayot.flyingmore.ui.home.HomeScreen
 
 enum class FlyingMoreScreen(@StringRes val title: Int, val argName : String) {

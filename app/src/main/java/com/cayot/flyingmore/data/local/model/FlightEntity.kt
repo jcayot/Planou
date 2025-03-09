@@ -1,11 +1,11 @@
-package com.cayot.flyingmore.data.flight
+package com.cayot.flyingmore.data.local.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.cayot.flyingmore.data.TravelClass
+import com.cayot.flyingmore.data.model.TravelClass
 
 @Entity(tableName = "flights")
-data class FlightApiModel(
+data class FlightEntity(
 	@PrimaryKey(autoGenerate = true)
 	val id: Int = 0,
 	val	flightNumber: String,

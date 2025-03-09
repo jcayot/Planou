@@ -1,5 +1,7 @@
-package com.cayot.flyingmore.data.flight
+package com.cayot.flyingmore.data.repository
 
+import com.cayot.flyingmore.data.model.FlightBrief
+import com.cayot.flyingmore.data.model.FlightDetails
 import kotlinx.coroutines.flow.Flow
 
 interface FlightsRepository {

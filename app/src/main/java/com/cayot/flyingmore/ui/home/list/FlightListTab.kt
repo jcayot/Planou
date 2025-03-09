@@ -38,10 +38,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cayot.flyingmore.R
-import com.cayot.flyingmore.data.FlightMapState
-import com.cayot.flyingmore.data.flight.FlightBrief
-import com.cayot.flyingmore.data.flight.getDepartureDateString
-import com.cayot.flyingmore.data.flight.getDistanceString
+import com.cayot.flyingmore.data.model.FlightMapState
+import com.cayot.flyingmore.data.model.FlightBrief
+import com.cayot.flyingmore.data.model.getDepartureDateString
+import com.cayot.flyingmore.data.model.getDistanceString
 import com.cayot.flyingmore.ui.AppViewModelProvider
 import com.cayot.flyingmore.ui.composable.FlightMap
 

@@ -1,16 +1,16 @@
-package com.cayot.flyingmore.ui.flight.flightDetails
+package com.cayot.flyingmore.ui.flight.details
 
 import android.graphics.Bitmap
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cayot.flyingmore.data.FlightMapState
-import com.cayot.flyingmore.data.ImageRepository
-import com.cayot.flyingmore.data.flight.FlightDetails
-import com.cayot.flyingmore.data.flight.FlightsRepository
-import com.cayot.flyingmore.data.flightNotes.FlightNotes
-import com.cayot.flyingmore.data.flightNotes.FlightNotesRepository
+import com.cayot.flyingmore.data.model.FlightMapState
+import com.cayot.flyingmore.data.repository.ImageRepository
+import com.cayot.flyingmore.data.model.FlightDetails
+import com.cayot.flyingmore.data.repository.FlightsRepository
+import com.cayot.flyingmore.data.local.model.FlightNotes
+import com.cayot.flyingmore.data.repository.FlightNotesRepository
 import com.cayot.flyingmore.ui.navigation.FlyingMoreScreen
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow

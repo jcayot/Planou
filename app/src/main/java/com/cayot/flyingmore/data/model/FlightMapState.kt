@@ -1,11 +1,13 @@
-package com.cayot.flyingmore.data
+package com.cayot.flyingmore.data.model
 
-import com.cayot.flyingmore.data.airport.Airport
+import com.cayot.flyingmore.data.local.model.Airport
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.maps.android.compose.CameraPositionState
+import com.google.maps.android.compose.CameraPositionState.Companion.invoke
 import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.MarkerState.Companion.invoke
 
 data class FlightMapState (
 	val cameraPositionState: CameraPositionState,

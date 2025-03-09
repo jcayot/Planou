@@ -1,17 +1,17 @@
-package com.cayot.flyingmore.data
+package com.cayot.flyingmore.data.local
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.cayot.flyingmore.data.airport.Airport
-import com.cayot.flyingmore.data.airport.AirportDao
-import com.cayot.flyingmore.data.flight.FlightApiModel
-import com.cayot.flyingmore.data.flight.FlightDao
-import com.cayot.flyingmore.data.flightNotes.FlightNotes
-import com.cayot.flyingmore.data.flightNotes.FlightNotesDao
+import com.cayot.flyingmore.data.local.dao.AirportDao
+import com.cayot.flyingmore.data.local.dao.FlightDao
+import com.cayot.flyingmore.data.local.dao.FlightNotesDao
+import com.cayot.flyingmore.data.local.model.Airport
+import com.cayot.flyingmore.data.local.model.FlightEntity
+import com.cayot.flyingmore.data.local.model.FlightNotes
 
-@Database(entities = [FlightApiModel::class, Airport::class, FlightNotes::class], version = 1, exportSchema = false)
+@Database(entities = [FlightEntity::class, Airport::class, FlightNotes::class], version = 1, exportSchema = false)
 abstract class FlyingMoreDatabase : RoomDatabase() {
 
 	abstract fun flightDao() : FlightDao

@@ -1,7 +1,7 @@
 package com.cayot.flyingmore.ui.home.list
 
-import com.cayot.flyingmore.data.FlightMapState
-import com.cayot.flyingmore.data.flight.FlightBrief
+import com.cayot.flyingmore.data.model.FlightMapState
+import com.cayot.flyingmore.data.model.FlightBrief
 import java.util.Calendar
 
 data class FlightListUIState(

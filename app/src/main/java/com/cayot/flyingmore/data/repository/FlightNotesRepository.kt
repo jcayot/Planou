@@ -1,4 +1,6 @@
-package com.cayot.flyingmore.data.flightNotes
+package com.cayot.flyingmore.data.repository
+
+import com.cayot.flyingmore.data.local.model.FlightNotes
 
 interface FlightNotesRepository {
 

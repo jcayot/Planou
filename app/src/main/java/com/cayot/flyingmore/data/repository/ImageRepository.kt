@@ -1,4 +1,4 @@
-package com.cayot.flyingmore.data
+package com.cayot.flyingmore.data.repository
 
 import android.content.ContentValues.TAG
 import android.content.Context
