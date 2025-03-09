@@ -1,6 +1,6 @@
 package com.cayot.flyingmore.data.model.statistics
 
-enum class Temporality {
+enum class Resolution {
     DAILY,
     WEEKLY,
     MONTHLY,
