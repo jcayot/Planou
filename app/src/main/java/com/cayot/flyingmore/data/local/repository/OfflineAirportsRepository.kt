@@ -1,7 +1,8 @@
-package com.cayot.flyingmore.data.repository
+package com.cayot.flyingmore.data.local.repository
 
 import com.cayot.flyingmore.data.local.dao.AirportDao
 import com.cayot.flyingmore.data.local.model.Airport
+import com.cayot.flyingmore.data.repository.AirportsRepository
 
 class OfflineAirportsRepository(private val airportDao: AirportDao) : AirportsRepository {
 

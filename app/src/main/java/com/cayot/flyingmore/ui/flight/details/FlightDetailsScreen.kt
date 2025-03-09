@@ -75,7 +75,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cayot.flyingmore.R
 import com.cayot.flyingmore.data.model.FlightMapState
-import com.cayot.flyingmore.data.model.FlightDetails
+import com.cayot.flyingmore.data.model.Flight
 import com.cayot.flyingmore.data.model.getArrivalTimeString
 import com.cayot.flyingmore.data.model.getDepartureDateString
 import com.cayot.flyingmore.data.model.getDepartureTimeString
@@ -241,7 +241,7 @@ fun FlightDetails(
 
 @Composable
 fun FlightCard(
-	flight: FlightDetails,
+	flight: Flight,
 	flightMapState: FlightMapState? = null,
 	modifier: Modifier = Modifier,
 	elevation: CardElevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
@@ -602,7 +602,7 @@ private fun shareFlight(context: Context, flightCardUri: Uri, departureCode: Str
 @Composable
 fun FlightCardPreview() {
 	FlightCard(
-		flight = FlightDetails.getPlaceholder1()
+		flight = Flight.getPlaceholder1()
 	)
 }
 

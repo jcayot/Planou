@@ -4,7 +4,7 @@ import com.cayot.flyingmore.data.model.DayDifference
 import com.cayot.flyingmore.data.model.TravelClass
 import com.cayot.flyingmore.data.local.model.Airport
 import com.cayot.flyingmore.data.local.model.distanceToAirport
-import com.cayot.flyingmore.data.model.FlightDetails
+import com.cayot.flyingmore.data.model.Flight
 import com.cayot.flyingmore.domain.CalendarFromDayDifferenceHourMinuteUseCase
 import com.cayot.flyingmore.domain.ConvertLocalTimeToCalendarUseCase
 import java.time.LocalDate
@@ -96,14 +96,14 @@ fun FlightForm.toFlightDetails(
 	destinationAirport: Airport,
 	timeToUtcUseCase: ConvertLocalTimeToCalendarUseCase,
 	calendarFromDifference: CalendarFromDayDifferenceHourMinuteUseCase
-): FlightDetails {
+): Flight {
 	val departureTime = timeToUtcUseCase(departureDate, departureHour, departureMinute, originAirport.timezone)
 	val arrivalTime: Calendar? = if (arrivalHour != null && arrivalMinute != null)
 		calendarFromDifference(departureTime, dayDifference, arrivalHour, arrivalMinute, destinationAirport.timezone)
 	else
 		null
 
-	return (FlightDetails(
+	return (Flight(
 		id = id,
 		flightNumber = flightNumber,
 		airline = airline,

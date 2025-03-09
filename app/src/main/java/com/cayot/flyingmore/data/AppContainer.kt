@@ -3,11 +3,13 @@ package com.cayot.flyingmore.data
 import android.content.Context
 import com.cayot.flyingmore.data.local.FlyingMoreDatabase
 import com.cayot.flyingmore.data.repository.AirportsRepository
-import com.cayot.flyingmore.data.repository.OfflineAirportsRepository
+import com.cayot.flyingmore.data.local.repository.OfflineAirportsRepository
 import com.cayot.flyingmore.data.repository.FlightsRepository
-import com.cayot.flyingmore.data.repository.OfflineFlightsRepository
+import com.cayot.flyingmore.data.local.repository.OfflineFlightsRepository
 import com.cayot.flyingmore.data.repository.FlightNotesRepository
-import com.cayot.flyingmore.data.repository.OfflineFlightNotesRepository
+import com.cayot.flyingmore.data.local.repository.OfflineFlightNotesRepository
+import com.cayot.flyingmore.data.local.repository.OfflineFlyingStatisticsRepository
+import com.cayot.flyingmore.data.repository.FlyingStatisticsRepository
 import com.cayot.flyingmore.data.repository.ImageRepository
 
 interface AppContainer {

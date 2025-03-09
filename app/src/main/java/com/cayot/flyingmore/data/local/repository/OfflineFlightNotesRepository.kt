@@ -1,7 +1,8 @@
-package com.cayot.flyingmore.data.repository
+package com.cayot.flyingmore.data.local.repository
 
 import com.cayot.flyingmore.data.local.dao.FlightNotesDao
 import com.cayot.flyingmore.data.local.model.FlightNotes
+import com.cayot.flyingmore.data.repository.FlightNotesRepository
 
 class OfflineFlightNotesRepository(private val flightNotesDao: FlightNotesDao) :
     FlightNotesRepository {

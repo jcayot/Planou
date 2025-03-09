@@ -1,18 +1,18 @@
 package com.cayot.flyingmore.data.repository
 
 import com.cayot.flyingmore.data.model.FlightBrief
-import com.cayot.flyingmore.data.model.FlightDetails
+import com.cayot.flyingmore.data.model.Flight
 import kotlinx.coroutines.flow.Flow
 
 interface FlightsRepository {
 
 	fun getAllFlightBriefsStream() : Flow<List<FlightBrief>>
 
-	fun getFlight(id: Int): Flow<FlightDetails>
+	fun getFlight(id: Int): Flow<Flight>
 
-	suspend fun insertFlight(flight: FlightDetails)
+	suspend fun insertFlight(flight: Flight)
 
 	suspend fun deleteFlightById(id: Int)
 
-	suspend fun updateFlight(flight: FlightDetails)
+	suspend fun updateFlight(flight: Flight)
 }

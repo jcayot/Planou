@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cayot.flyingmore.data.model.FlightMapState
 import com.cayot.flyingmore.data.repository.ImageRepository
-import com.cayot.flyingmore.data.model.FlightDetails
+import com.cayot.flyingmore.data.model.Flight
 import com.cayot.flyingmore.data.repository.FlightsRepository
 import com.cayot.flyingmore.data.local.model.FlightNotes
 import com.cayot.flyingmore.data.repository.FlightNotesRepository
@@ -101,7 +101,7 @@ class FlightDetailsViewModel(
 		_uiState.update { it.copy(flight = it.flight!!.copy(flightNotes = flightNotes)) }
 	}
 
-	private	fun onFlightRetrieved(flight: FlightDetails) {
+	private	fun onFlightRetrieved(flight: Flight) {
 		val flightMapState = FlightMapState.fromAirports(flight.originAirport, flight.destinationAirport)
 
 		_uiState.update {

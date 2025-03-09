@@ -13,7 +13,7 @@ import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
 
-data class FlightDetails(
+data class Flight(
     val id: Int,
     val	flightNumber: String,
     val	airline: String,
@@ -28,8 +28,8 @@ data class FlightDetails(
     val flightNotes: FlightNotes? = null
 ) {
     companion object {
-        fun getPlaceholder1() : FlightDetails {
-            return (FlightDetails(
+        fun getPlaceholder1() : Flight {
+            return (Flight(
                 id = 0,
                 flightNumber = "AF001",
                 airline = "Air France",
@@ -74,11 +74,11 @@ data class FlightDetails(
     }
 }
 
-fun FlightDetails.getDistanceString() : String {
+fun Flight.getDistanceString() : String {
     return ((distance / 1000.0f).fastRoundToInt().toString() + " km")
 }
 
-fun FlightDetails.getDepartureDateString() : String {
+fun Flight.getDepartureDateString() : String {
     val dateFormat = SimpleDateFormat("d MMM yyyy", Locale.getDefault()).apply {
         timeZone = TimeZone.getTimeZone(originAirport.timezone)
     }
@@ -86,7 +86,7 @@ fun FlightDetails.getDepartureDateString() : String {
     return (dateFormat.format(departureTime.time))
 }
 
-fun FlightDetails.getDepartureTimeString() : String {
+fun Flight.getDepartureTimeString() : String {
     val timeFormat = SimpleDateFormat("h:mm a", Locale.getDefault()).apply {
         timeZone = TimeZone.getTimeZone(originAirport.timezone)
     }
@@ -94,7 +94,7 @@ fun FlightDetails.getDepartureTimeString() : String {
     return (timeFormat.format(departureTime.time))
 }
 
-fun FlightDetails.getArrivalTimeString() : String? {
+fun Flight.getArrivalTimeString() : String? {
     if (arrivalTime == null) {
         return null
     }
@@ -112,7 +112,7 @@ fun FlightDetails.getArrivalTimeString() : String? {
     return (formattedArrivalTime + dayDiffSuffix)
 }
 
-fun FlightDetails.toFlightForm(
+fun Flight.toFlightForm(
     convertUtcTimeToLocalCalendarUseCase: ConvertUtcTimeToLocalCalendarUseCase = ConvertUtcTimeToLocalCalendarUseCase()
 ) : FlightForm {
     val departureLocalCalendar = convertUtcTimeToLocalCalendarUseCase(departureTime.timeInMillis, originAirport.timezone)
@@ -160,7 +160,7 @@ fun FlightDetails.toFlightForm(
     )
 }
 
-fun FlightDetails.toFlightApiModel() : FlightEntity {
+fun Flight.toFlightEntity() : FlightEntity {
     return FlightEntity(
         id = id,
         flightNumber = flightNumber,
@@ -198,8 +198,8 @@ data class FlightDetailsPOJO(
 
 fun FlightDetailsPOJO.toFlightDetails(
     convertUtcTimeToLocalCalendarUseCase: ConvertUtcTimeToLocalCalendarUseCase = ConvertUtcTimeToLocalCalendarUseCase()
-) : FlightDetails {
-    return (FlightDetails(
+) : Flight {
+    return (Flight(
         id = flightEntity.id,
         flightNumber = flightEntity.flightNumber,
         originAirport = originAirport,
