@@ -20,6 +20,6 @@ interface FlyingStatisticsDao {
     @Query("SELECT * FROM `flying-statistics`")
     fun getAllFlyingStatistics() : Flow<List<FlyingStatisticEntity>>
 
-    @Query("SELECT * FROM `flying-statistics` WHERE name = :name")
-    fun getFlyingStatistic(name: String) : Flow<FlyingStatisticEntity>
+    @Query("SELECT * FROM `flying-statistics` WHERE id = :id")
+    fun getFlyingStatistic(id: Int) : Flow<FlyingStatisticEntity>
 }

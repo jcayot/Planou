@@ -7,7 +7,7 @@ interface FlyingStatisticsRepository {
 
     fun <T> getAllFlyingStatistics() : Flow<List<YearTemporalStatistic<T>>>
 
-    fun <T> getFlyingStatistic(name: String) : Flow<YearTemporalStatistic<T>>
+    fun <T> getFlyingStatistic(id: Int) : Flow<YearTemporalStatistic<T>>
 
     suspend fun <T> insertFlyingStatistic(yearTemporalStatistic: YearTemporalStatistic<T>)
 

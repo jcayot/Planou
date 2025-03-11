@@ -15,8 +15,8 @@ class OfflineFlyingStatisticsRepository(private val flyingStatisticsDao: FlyingS
         })
     }
 
-    override fun <T> getFlyingStatistic(name: String): Flow<YearTemporalStatistic<T>> {
-        return (flyingStatisticsDao.getFlyingStatistic(name).map { it.toTemporalStatistic() })
+    override fun <T> getFlyingStatistic(id: Int): Flow<YearTemporalStatistic<T>> {
+        return (flyingStatisticsDao.getFlyingStatistic(id).map { it.toTemporalStatistic() })
     }
 
     override suspend fun <T> insertFlyingStatistic(yearTemporalStatistic: YearTemporalStatistic<T>) {
