@@ -2,7 +2,6 @@ package com.cayot.flyingmore.data.local.repository
 
 import com.cayot.flyingmore.data.local.dao.FlyingStatisticsDao
 import com.cayot.flyingmore.data.model.statistics.YearTemporalStatistic
-import com.cayot.flyingmore.data.model.statistics.toFlyingStatisticEntity
 import com.cayot.flyingmore.data.model.statistics.toTemporalStatistic
 import com.cayot.flyingmore.data.repository.FlyingStatisticsRepository
 import kotlinx.coroutines.flow.Flow
