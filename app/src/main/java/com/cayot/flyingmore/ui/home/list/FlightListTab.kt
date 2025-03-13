@@ -155,7 +155,7 @@ fun FlightListList(
 fun FlightListItemComposable(
     flight : FlightBrief,
     flightMapState: FlightMapState? = null,
-    onFlightPressed: (Int) -> Unit = {},
+    onFlightPressed: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(elevation = CardDefaults.cardElevation(),
@@ -261,5 +261,6 @@ fun EmptyFlightListPreview() {
 fun FlightListItemPreview() {
     FlightListItemComposable(
         flight = FlightBrief.getPlaceholder1(),
+        onFlightPressed = {}
     )
 }

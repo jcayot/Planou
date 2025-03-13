@@ -42,4 +42,5 @@
     <string name="home">Home</string>
     <string name="list">List</string>
     <string name="statistics">Statistics</string>
+    <string name="all_statistics">All Statistics</string>
 </resources>
