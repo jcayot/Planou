@@ -68,4 +68,18 @@ class MapStringNumberTemporalStatistic(
             dataText = keyWithMaxValue
         )
     }
+
+    fun copy(data: List<Map<String, Int>> = this.data): MapStringNumberTemporalStatistic {
+        return (MapStringNumberTemporalStatistic(
+            id = id,
+            name = name,
+            year = year,
+            dataResolution = dataResolution,
+            defaultDisplayResolution = defaultDisplayResolution,
+            allowedDisplayResolutions = allowedDisplayResolutions,
+            data = data,
+            chartType = chartType,
+            unit = unit
+        ))
+    }
 }

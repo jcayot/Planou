@@ -56,4 +56,18 @@ class NumberYearTemporalStatistic(
             chartType = chartType
         ))
     }
+
+    fun copy(data: List<Int> = this.data): NumberYearTemporalStatistic {
+        return (NumberYearTemporalStatistic(
+            id = id,
+            name = name,
+            year = year,
+            dataResolution = dataResolution,
+            defaultDisplayResolution = defaultDisplayResolution,
+            allowedDisplayResolutions = allowedDisplayResolutions,
+            data = data,
+            chartType = chartType,
+            unit = unit
+        ))
+    }
 }
