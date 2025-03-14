@@ -1,6 +1,5 @@
 package com.cayot.flyingmore.ui.home.list
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,16 +32,16 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cayot.flyingmore.R
-import com.cayot.flyingmore.data.model.FlightMapState
 import com.cayot.flyingmore.data.model.FlightBrief
+import com.cayot.flyingmore.data.model.FlightMapState
 import com.cayot.flyingmore.data.model.getDepartureDateString
 import com.cayot.flyingmore.data.model.getDistanceString
 import com.cayot.flyingmore.ui.AppViewModelProvider
+import com.cayot.flyingmore.ui.composable.EmptyPlaceholder
 import com.cayot.flyingmore.ui.composable.FlightMap
 
 @Composable
@@ -73,7 +72,10 @@ fun FlightListScreenContent(
 ) {
     if (uiState.flightList != null) {
         if (uiState.flightList.isEmpty()) {
-            EmptyFlightListPlaceholder(
+            EmptyPlaceholder(
+                painter = painterResource(R.drawable.airplanemode_inactive_40px),
+                contentDescription = stringResource(R.string.list_empty_sad_plane),
+                text = stringResource(R.string.flight_list_empty),
                 modifier = Modifier
                     .padding(contentPadding)
                     .fillMaxSize()
@@ -92,35 +94,11 @@ fun FlightListScreenContent(
 }
 
 @Composable
-fun EmptyFlightListPlaceholder(
-    modifier: Modifier = Modifier,
-) {
-    Column (
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = modifier,
-    ) {
-        Image(
-            painter = painterResource(R.drawable.airplanemode_inactive_40px),
-            contentDescription = stringResource(R.string.list_empty_sad_plane),
-            modifier = Modifier
-                .size(100.dp)
-        )
-        Text(
-            text = stringResource(R.string.flight_list_empty),
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
-        )
-    }
-}
-
-@Composable
 fun FlightListList(
     flightList: List<FlightItem>,
-    flightMapStateMap: Map<Int, FlightMapState?> = emptyMap(),
-    onFlightPressed: (Int) -> Unit = {},
-    onItemVisible: (FlightBrief) -> Unit = {},
+    flightMapStateMap: Map<Int, FlightMapState?>,
+    onFlightPressed: (Int) -> Unit,
+    onItemVisible: (FlightBrief) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
@@ -154,7 +132,7 @@ fun FlightListList(
 @Composable
 fun FlightListItemComposable(
     flight : FlightBrief,
-    flightMapState: FlightMapState? = null,
+    flightMapState: FlightMapState?,
     onFlightPressed: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -243,17 +221,16 @@ fun FlightItemMap(
 @Composable
 fun	FlightListScreenContentPreview() {
     FlightListList(
-        flightList = makeFlightItemsList(listOf(
-            FlightBrief.getPlaceholder1(),
-            FlightBrief.getPlaceholder1(),
-        )),
+        flightList = makeFlightItemsList(
+            listOf(
+                FlightBrief.getPlaceholder1(),
+                FlightBrief.getPlaceholder1(),
+            )
+        ),
+        flightMapStateMap = emptyMap(),
+        onFlightPressed = {},
+        onItemVisible = {}
     )
-}
-
-@Preview (showBackground = true)
-@Composable
-fun EmptyFlightListPreview() {
-    EmptyFlightListPlaceholder()
 }
 
 @Preview
@@ -261,6 +238,7 @@ fun EmptyFlightListPreview() {
 fun FlightListItemPreview() {
     FlightListItemComposable(
         flight = FlightBrief.getPlaceholder1(),
-        onFlightPressed = {}
+        onFlightPressed = {},
+        flightMapState = null,
     )
 }

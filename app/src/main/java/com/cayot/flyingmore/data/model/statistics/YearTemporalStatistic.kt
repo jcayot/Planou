@@ -25,7 +25,8 @@ abstract class YearTemporalStatistic<T>(
             if (data.size != (if (year.isLeap) 366 else 365))
                 throw IllegalArgumentException("Invalid data")
         }
-        throw IllegalArgumentException("Unimplemented initial resolution")
+        else
+            throw IllegalArgumentException("Unimplemented initial resolution")
     }
 
     abstract fun sumData(data : List<T>) : T
@@ -57,7 +58,7 @@ private fun <T> YearTemporalStatistic<T>.dailyToWeekly() : List<T> {
     var weeklyData: MutableList<T> = mutableListOf()
     var startOfWeek = 0
     while (startOfWeek < numberOfDays) {
-        var endOfWeek = if (startOfWeek == 0) 8 - firstDayOfYear else min(startOfWeek + 7, numberOfDays)
+        var endOfWeek = if (startOfWeek == 0) 7 - firstDayOfYear else min(startOfWeek + 7, numberOfDays)
         weeklyData.add(this.sumData(this.data.subList(startOfWeek, endOfWeek)))
         startOfWeek = endOfWeek
     }
@@ -74,6 +75,7 @@ private fun <T> YearTemporalStatistic<T>.dailyToMonthly() : List<T> {
         var endOfMonth = startOfMonth + this.year.atMonth(currentMonth).lengthOfMonth()
         monthlyData.add(this.sumData(this.data.subList(startOfMonth, endOfMonth)))
         startOfMonth = endOfMonth
+        currentMonth++
     }
     return (monthlyData)
 }
@@ -90,6 +92,7 @@ fun <T> FlyingStatisticEntity.toTemporalStatistic() : YearTemporalStatistic<T>{
     val allowedDisplayTemporalitiesJsonType = object : TypeToken<List<Resolution>>() {}.type
     val listDataType = ListDataType.entries[dataTypeInt]
     val dataJsonType = ListDataType.getType(listDataType)
+    @Suppress("UNCHECKED_CAST")
     return (when (listDataType) {
         ListDataType.INT -> NumberYearTemporalStatistic(
             id = id,
