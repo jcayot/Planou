@@ -1,14 +1,13 @@
 package com.cayot.flyingmore.data.local.repository
 
-import com.cayot.flyingmore.data.model.statistics.NumberYearTemporalStatistic
-import com.cayot.flyingmore.data.model.statistics.enums.ChartType
-import com.cayot.flyingmore.data.model.statistics.enums.Resolution
+import com.cayot.flyingmore.data.model.statistics.NumberDailyTemporalStatistic
+import com.cayot.flyingmore.data.model.statistics.enums.FlyingStatistic
 import com.cayot.flyingmore.fake.data.local.dao.FakeFlyingStatisticsDao
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import java.time.Year
+import java.time.LocalDate
 
 class OfflineFlyingStatisticsRepositoryTest {
 
@@ -16,32 +15,24 @@ class OfflineFlyingStatisticsRepositoryTest {
         flyingStatisticsDao = FakeFlyingStatisticsDao()
     )
 
-    private val temporalStatistic1 = NumberYearTemporalStatistic(
-        name = "Test Statistic 1",
-        year = Year.of(2023),
-        dataResolution = Resolution.DAILY,
-        defaultDisplayResolution = Resolution.MONTHLY,
-        allowedDisplayResolutions = listOf(Resolution.DAILY, Resolution.WEEKLY, Resolution.MONTHLY),
+    private val temporalStatistic1 = NumberDailyTemporalStatistic(
+        timeFrameStart = LocalDate.of(2023, 1, 1),
+        timeFrameEnd = LocalDate.of(2024, 1, 1),
         data = List(
             365,
             init = {0}
         ),
-        chartType = ChartType.BAR_GRAPH,
-        unit = "meters"
+        statisticType = FlyingStatistic.NUMBER_OF_FLIGHT
     )
 
-    private val temporalStatistic2 = NumberYearTemporalStatistic(
-        name = "Test Statistic 2",
-        year = Year.of(2024),
-        dataResolution = Resolution.DAILY,
-        defaultDisplayResolution = Resolution.MONTHLY,
-        allowedDisplayResolutions = listOf(Resolution.DAILY, Resolution.WEEKLY, Resolution.MONTHLY),
+    private val temporalStatistic2 = NumberDailyTemporalStatistic(
+        timeFrameStart = LocalDate.of(2024, 1, 1),
+        timeFrameEnd = LocalDate.of(2025, 1, 1),
         data = List(
             366,
             init = {0}
         ),
-        chartType = ChartType.PIE_CHART,
-        unit = "kilometers"
+        statisticType = FlyingStatistic.NUMBER_OF_FLIGHT
     )
 
     @Test
@@ -55,15 +46,15 @@ class OfflineFlyingStatisticsRepositoryTest {
     @Test
     fun updateFlyingStatistic_updatesSuccessfully() = runBlocking {
         repository.insertFlyingStatistic(temporalStatistic1)
-        val updatedTemporalStatistic: NumberYearTemporalStatistic =
-            (repository.getFlyingStatistic<Int>(1).first() as NumberYearTemporalStatistic)
+        val updatedTemporalStatistic: NumberDailyTemporalStatistic =
+            (repository.getFlyingStatistic<Int>(1).first() as NumberDailyTemporalStatistic)
                 .copy(data = List(
                     365, {5}
                 ))
 
         repository.updateFlyingStatistic(updatedTemporalStatistic)
 
-        val retrievedStatistic = repository.getFlyingStatistic<Int>(1).first() as NumberYearTemporalStatistic
+        val retrievedStatistic = repository.getFlyingStatistic<Int>(1).first() as NumberDailyTemporalStatistic
         assertEquals(updatedTemporalStatistic.data, retrievedStatistic.data)
     }
 
@@ -75,8 +66,8 @@ class OfflineFlyingStatisticsRepositoryTest {
         val allStatistics = repository.getAllFlyingStatistics<Int>().first()
 
         assertEquals(2, allStatistics.size)
-        assertEquals(temporalStatistic1.name, allStatistics[0].name)
-        assertEquals(temporalStatistic2.name, allStatistics[1].name)
+        assertEquals(temporalStatistic1.timeFrameStart, allStatistics[0].timeFrameStart)
+        assertEquals(temporalStatistic2.timeFrameStart, allStatistics[1].timeFrameStart)
     }
 
     @Test
@@ -85,6 +76,6 @@ class OfflineFlyingStatisticsRepositoryTest {
 
         val retrievedStatistic = repository.getFlyingStatistic<Int>(1).first()
 
-        assertEquals(temporalStatistic1.name, retrievedStatistic.name)
+        assertEquals(temporalStatistic1.timeFrameStart, retrievedStatistic.timeFrameStart)
     }
 }

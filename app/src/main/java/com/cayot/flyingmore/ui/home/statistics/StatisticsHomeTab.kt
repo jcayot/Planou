@@ -149,7 +149,7 @@ fun StatisticItemBriefComposable(
                         modifier = Modifier.weight(1f)
                     )
                     Text(
-                        text = statisticBriefItem.year.toString(),
+                        text = statisticBriefItem.timeFrameName,
                         fontWeight = FontWeight.Light
                     )
                 }
@@ -192,7 +192,7 @@ fun StatisticItemBriefComposablePreview() {
     StatisticItemBriefComposable(
         statisticBriefItem = TemporalStatisticBrief(
             displayNameRes = R.string.statistic_name,
-            year = Year.of(2024),
+            timeFrameName = Year.of(2024).toString(),
             unitRes = null,
             data = listOf(1634, 1234, 2435, 0, 134, 9823, 12345, 450, 987, 456, 325, 943),
             chartType = ChartType.BAR_GRAPH,

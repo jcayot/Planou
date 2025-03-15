@@ -6,9 +6,9 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import com.cayot.flyingmore.data.local.model.FlightEntity
 import com.cayot.flyingmore.data.model.FlightBriefPOJO
 import com.cayot.flyingmore.data.model.FlightDetailsPOJO
-import com.cayot.flyingmore.data.local.model.FlightEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -26,6 +26,10 @@ interface FlightDao {
 	@Transaction
 	@Query("SELECT * FROM flights WHERE id = :flightId")
 	fun getFlightDetails(flightId: Int): Flow<FlightDetailsPOJO>
+
+	@Transaction
+	@Query("SELECT * FROM flights WHERE departureTime BETWEEN :startTime AND :endTime")
+	fun getAllFlightForDepartureTimeRange(startTime: Long, endTime: Long) : List<FlightDetailsPOJO>
 
 	@Transaction
 	@Query("SELECT * FROM flights ORDER BY departureTime DESC")

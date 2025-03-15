@@ -18,6 +18,15 @@ class OfflineFlightsRepository(private val flightDao: FlightDao) : FlightsReposi
 		})
 	}
 
+	override fun getAllFlightForDepartureTimeRange(
+		startTime: Long,
+		endTime: Long
+	): List<Flight> {
+		return (flightDao.getAllFlightForDepartureTimeRange(startTime, endTime).map {
+			it.toFlightDetails()
+		})
+	}
+
 	override fun getFlight(id: Int): Flow<Flight> {
 		return (flightDao.getFlightDetails(id).filterNotNull().map { it.toFlightDetails() })
 	}
