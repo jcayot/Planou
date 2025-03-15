@@ -18,7 +18,7 @@ abstract class YearTemporalStatistic<T>(
     val allowedDisplayResolutions: List<Resolution>,
     val data: List<T>,
     val chartType: ChartType,
-    val unit: String
+    val unit: String?
 ) {
     init {
         if (dataResolution == Resolution.DAILY) {

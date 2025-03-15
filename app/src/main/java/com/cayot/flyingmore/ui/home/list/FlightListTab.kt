@@ -143,7 +143,7 @@ fun FlightListItemComposable(
     ) {
         Row (modifier = Modifier
             .fillMaxWidth()
-            .size(dimensionResource(R.dimen.flight_item_height))
+            .size(dimensionResource(R.dimen.list_item_height))
             .padding(dimensionResource(R.dimen.padding_small))
         ) {
             FlightItemMap(

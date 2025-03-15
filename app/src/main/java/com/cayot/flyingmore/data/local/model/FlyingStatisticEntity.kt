@@ -16,5 +16,5 @@ data class FlyingStatisticEntity(
     val dataJson: String,
     val dataTypeInt: Int,
     val chartTypeInt: Int,
-    val unit: String
+    val unit: String?
 )

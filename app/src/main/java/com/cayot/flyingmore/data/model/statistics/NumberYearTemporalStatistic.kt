@@ -15,7 +15,7 @@ class NumberYearTemporalStatistic(
     allowedDisplayResolutions: List<Resolution>,
     data: List<Int>,
     chartType: ChartType,
-    unit: String
+    unit: String?
 ) : YearTemporalStatistic<Int>(
     id = id,
     name = name,
