@@ -7,7 +7,7 @@ data class TemporalStatisticBrief(
     val id: Int = 0,
     val name: String,
     val year: Year,
-    val unit: String,
+    val unit: String? = null,
     val data: List<Int>,
     val chartType: ChartType,
     val dataText: String? = null

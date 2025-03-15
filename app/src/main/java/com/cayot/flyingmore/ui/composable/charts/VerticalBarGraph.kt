@@ -11,7 +11,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 
 @Composable
-fun ColumnChart(
+fun VerticalBarGraph(
     renderData: List<Int>,
     modifier: Modifier = Modifier
 ) {

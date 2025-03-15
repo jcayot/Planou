@@ -16,7 +16,7 @@ class MapStringNumberTemporalStatistic(
     allowedDisplayResolutions: List<Resolution>,
     data: List<Map<String, Int>>,
     chartType: ChartType,
-    unit: String
+    unit: String?
 ) : YearTemporalStatistic<Map<String, Int>>(
     id = id,
     name = name,
