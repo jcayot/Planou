@@ -1,27 +1,21 @@
 package com.cayot.flyingmore.data.model.statistics
 
 import com.cayot.flyingmore.data.local.model.FlyingStatisticEntity
-import com.cayot.flyingmore.data.model.statistics.enums.ChartType
+import com.cayot.flyingmore.data.model.statistics.enums.FlyingStatistic
 import com.cayot.flyingmore.data.model.statistics.enums.ListDataType
 import com.cayot.flyingmore.data.model.statistics.enums.Resolution
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import java.time.Year
 import kotlin.math.min
 
 abstract class YearTemporalStatistic<T>(
     val id: Int = 0,
-    val name: String,
     val year: Year,
-    val dataResolution: Resolution,
-    val defaultDisplayResolution: Resolution,
-    val allowedDisplayResolutions: List<Resolution>,
     val data: List<T>,
-    val chartType: ChartType,
-    val unit: String?
-) {
+    val statisticType: FlyingStatistic,
+    ) {
     init {
-        if (dataResolution == Resolution.DAILY) {
+        if (statisticType.dataResolution == Resolution.DAILY) {
             if (data.size != (if (year.isLeap) 366 else 365))
                 throw IllegalArgumentException("Invalid data")
         }
@@ -36,11 +30,11 @@ abstract class YearTemporalStatistic<T>(
     abstract fun toTemporalStatisticBrief(resolution: Resolution = Resolution.MONTHLY) : TemporalStatisticBrief
 }
 
-fun <T> YearTemporalStatistic<T>.getResolution(resolution: Resolution = this.dataResolution) : List<T> {
-    if (resolution < this.dataResolution)
+fun <T> YearTemporalStatistic<T>.getResolution(resolution: Resolution = statisticType.dataResolution) : List<T> {
+    if (resolution < statisticType.dataResolution)
         throw IllegalArgumentException("Cannot lower data resolution")
 
-    if (this.dataResolution == Resolution.DAILY) {
+    if (statisticType.dataResolution == Resolution.DAILY) {
         return (when (resolution) {
             Resolution.DAILY -> data
             Resolution.WEEKLY -> dailyToWeekly()
@@ -89,32 +83,21 @@ object GsonProvider {
 }
 
 fun <T> FlyingStatisticEntity.toTemporalStatistic() : YearTemporalStatistic<T>{
-    val allowedDisplayTemporalitiesJsonType = object : TypeToken<List<Resolution>>() {}.type
-    val listDataType = ListDataType.entries[dataTypeInt]
-    val dataJsonType = ListDataType.getType(listDataType)
+    val statisticType = FlyingStatistic.entries[statisticTypeInt]
+    val dataJsonType = ListDataType.getType(statisticType.dataType)
     @Suppress("UNCHECKED_CAST")
-    return (when (listDataType) {
+    return (when (statisticType.dataType) {
         ListDataType.INT -> NumberYearTemporalStatistic(
             id = id,
-            name = name,
             year = Year.of(year),
-            dataResolution = Resolution.entries[dataResolutionInt],
-            defaultDisplayResolution = Resolution.entries[defaultDisplayResolutionInt],
-            allowedDisplayResolutions = GsonProvider.gson.fromJson(allowedDisplayResolutionsJson, allowedDisplayTemporalitiesJsonType),
             data = GsonProvider.gson.fromJson(dataJson, dataJsonType),
-            chartType = ChartType.entries[chartTypeInt],
-            unit = unit
+            statisticType = statisticType
         )
         ListDataType.MAP_STRING_INT -> MapStringNumberTemporalStatistic(
             id = id,
-            name = name,
             year = Year.of(year),
-            dataResolution = Resolution.entries[dataResolutionInt],
-            defaultDisplayResolution = Resolution.entries[defaultDisplayResolutionInt],
-            allowedDisplayResolutions = GsonProvider.gson.fromJson(allowedDisplayResolutionsJson, allowedDisplayTemporalitiesJsonType),
             data = GsonProvider.gson.fromJson(dataJson, dataJsonType),
-            chartType = ChartType.entries[chartTypeInt],
-            unit = unit
+            statisticType = statisticType
         )
     } as YearTemporalStatistic<T>)
 }

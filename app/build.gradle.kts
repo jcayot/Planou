@@ -80,6 +80,9 @@ dependencies {
 	//Vico (charts)
 	implementation(libs.vico.compose.m3)
 
+	//Work Manager
+	implementation(libs.androidx.work.runtime.ktx)
+
 	testImplementation(libs.junit)
 	androidTestImplementation(libs.androidx.junit)
 	androidTestImplementation(libs.androidx.espresso.core)
