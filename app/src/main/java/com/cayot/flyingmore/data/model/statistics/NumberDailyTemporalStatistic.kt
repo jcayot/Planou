@@ -2,17 +2,20 @@ package com.cayot.flyingmore.data.model.statistics
 
 import com.cayot.flyingmore.data.local.model.FlyingStatisticEntity
 import com.cayot.flyingmore.data.model.statistics.enums.FlyingStatistic
-import com.cayot.flyingmore.data.model.statistics.enums.Resolution
-import java.time.Year
+import com.cayot.flyingmore.data.model.statistics.enums.TimeFrame
+import java.time.LocalDate
+import java.time.ZoneOffset
 
-class NumberYearTemporalStatistic(
+class NumberDailyTemporalStatistic(
     id: Int = 0,
-    year: Year,
+    timeFrameStart: LocalDate,
+    timeFrameEnd: LocalDate,
     data: List<Int>,
     statisticType: FlyingStatistic,
-) : YearTemporalStatistic<Int>(
+) : DailyTemporalStatistic<Int>(
     id = id,
-    year = year,
+    timeFrameStart = timeFrameStart,
+    timeFrameEnd = timeFrameEnd,
     data = data,
     statisticType = statisticType
 ) {
@@ -23,27 +26,29 @@ class NumberYearTemporalStatistic(
     override fun toFlyingStatisticEntity(): FlyingStatisticEntity {
         return(FlyingStatisticEntity(
             id = id,
-            year = year.value,
+            timeFrameStartLong = timeFrameStart.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
+            timeFrameEndLong = timeFrameEnd.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
             dataJson = GsonProvider.gson.toJson(data),
             statisticTypeInt = statisticType.ordinal
         ))
     }
 
-    override fun toTemporalStatisticBrief(resolution: Resolution): TemporalStatisticBrief {
+    override fun toTemporalStatisticBrief(resolution: TimeFrame): TemporalStatisticBrief {
         return (TemporalStatisticBrief(
             id = id,
-            year = year,
             data = this.getResolution(resolution),
             displayNameRes = statisticType.displayNameResource,
             unitRes = statisticType.unitResource,
+            timeFrameName = this.getTimeFrameName(),
             chartType = statisticType.chartType
         ))
     }
 
-    fun copy(data: List<Int> = this.data): NumberYearTemporalStatistic {
-        return (NumberYearTemporalStatistic(
+    fun copy(data: List<Int> = this.data): NumberDailyTemporalStatistic {
+        return (NumberDailyTemporalStatistic(
             id = id,
-            year = year,
+            timeFrameStart = timeFrameStart,
+            timeFrameEnd = timeFrameEnd,
             data = data,
             statisticType = statisticType
         ))

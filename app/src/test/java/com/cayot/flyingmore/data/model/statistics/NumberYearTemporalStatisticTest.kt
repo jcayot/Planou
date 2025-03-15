@@ -1,31 +1,27 @@
 package com.cayot.flyingmore.data.model.statistics
 
-import com.cayot.flyingmore.data.model.statistics.enums.ChartType
-import com.cayot.flyingmore.data.model.statistics.enums.Resolution
+import com.cayot.flyingmore.data.model.statistics.enums.FlyingStatistic
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
-import java.time.Year
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 
 class NumberYearTemporalStatisticTest {
 
-    private val testStatistic: NumberYearTemporalStatistic = NumberYearTemporalStatistic(
-        name = "Test Statistic 1",
-        year = Year.of(2023),
-        dataResolution = Resolution.DAILY,
-        defaultDisplayResolution = Resolution.MONTHLY,
-        allowedDisplayResolutions = listOf(Resolution.DAILY, Resolution.WEEKLY, Resolution.MONTHLY),
+    private val testStatistic: NumberDailyTemporalStatistic = NumberDailyTemporalStatistic(
+        timeFrameStart = LocalDate.of(2023, 1, 1),
+        timeFrameEnd = LocalDate.of(2024, 1, 1),
         data = List(
             365,
             init = {1}
         ),
-        chartType = ChartType.BAR_GRAPH,
-        unit = "meters"
+        statisticType = FlyingStatistic.NUMBER_OF_FLIGHT
     )
 
     //Trivial here but useful for other statistics class
     @Test
     fun sumDate_test() {
         val summedData = testStatistic.sumData(testStatistic.data)
-        assertEquals(summedData, if (testStatistic.year.isLeap) 366 else 365)
+        assertEquals(summedData, ChronoUnit.DAYS.between(testStatistic.timeFrameStart, testStatistic.timeFrameEnd).toInt())
     }
 }

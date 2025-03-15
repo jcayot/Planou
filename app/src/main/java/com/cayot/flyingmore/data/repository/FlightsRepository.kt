@@ -8,6 +8,8 @@ interface FlightsRepository {
 
 	fun getAllFlightBriefsStream() : Flow<List<FlightBrief>>
 
+	fun getAllFlightForDepartureTimeRange(startTime: Long, endTime: Long) : List<Flight>
+
 	fun getFlight(id: Int): Flow<Flight>
 
 	suspend fun insertFlight(flight: Flight)

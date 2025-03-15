@@ -2,17 +2,20 @@ package com.cayot.flyingmore.data.model.statistics
 
 import com.cayot.flyingmore.data.local.model.FlyingStatisticEntity
 import com.cayot.flyingmore.data.model.statistics.enums.FlyingStatistic
-import com.cayot.flyingmore.data.model.statistics.enums.Resolution
-import java.time.Year
+import com.cayot.flyingmore.data.model.statistics.enums.TimeFrame
+import java.time.LocalDate
+import java.time.ZoneOffset
 
-class MapStringNumberTemporalStatistic(
+class MapStringNumberDailyTemporalStatistic(
     id: Int = 0,
-    year: Year,
+    timeFrameStart: LocalDate,
+    timeFrameEnd: LocalDate,
     data: List<Map<String, Int>>,
     statisticType: FlyingStatistic
-) : YearTemporalStatistic<Map<String, Int>>(
+) : DailyTemporalStatistic<Map<String, Int>>(
     id = id,
-    year = year,
+    timeFrameStart = timeFrameStart,
+    timeFrameEnd = timeFrameEnd,
     data = data,
     statisticType = statisticType
 ) {
@@ -29,32 +32,34 @@ class MapStringNumberTemporalStatistic(
     override fun toFlyingStatisticEntity(): FlyingStatisticEntity {
         return(FlyingStatisticEntity(
             id = id,
-            year = year.value,
+            timeFrameStartLong = timeFrameStart.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
+            timeFrameEndLong = timeFrameEnd.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
             dataJson = GsonProvider.gson.toJson(data),
             statisticTypeInt = statisticType.ordinal
         ))
     }
 
-    override fun toTemporalStatisticBrief(resolution: Resolution): TemporalStatisticBrief {
+    override fun toTemporalStatisticBrief(resolution: TimeFrame): TemporalStatisticBrief {
         val rawData = getResolution(resolution)[0]
         val sortedValues = rawData.values.sortedDescending()
         val listOfBiggest = sortedValues.take(10)
         val keyWithMaxValue = rawData.maxByOrNull { it.value }?.key
         return TemporalStatisticBrief(
             id = id,
-            year = year,
             data = listOfBiggest,
             displayNameRes = statisticType.displayNameResource,
             unitRes = statisticType.unitResource,
+            timeFrameName = this.getTimeFrameName(),
             chartType = statisticType.chartType,
             dataText = keyWithMaxValue
         )
     }
 
-    fun copy(data: List<Map<String, Int>> = this.data): MapStringNumberTemporalStatistic {
-        return (MapStringNumberTemporalStatistic(
+    fun copy(data: List<Map<String, Int>> = this.data): MapStringNumberDailyTemporalStatistic {
+        return (MapStringNumberDailyTemporalStatistic(
             id = id,
-            year = year,
+            timeFrameStart = timeFrameStart,
+            timeFrameEnd = timeFrameEnd,
             data = data,
             statisticType = statisticType
         ))

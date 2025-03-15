@@ -7,7 +7,8 @@ import androidx.room.PrimaryKey
 data class FlyingStatisticEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val year: Int,
+    val timeFrameStartLong: Long,
+    val timeFrameEndLong: Long,
     val dataJson: String,
     val statisticTypeInt: Int
 )
