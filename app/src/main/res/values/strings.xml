@@ -43,4 +43,9 @@
     <string name="list">List</string>
     <string name="statistics">Statistics</string>
     <string name="all_statistics">All Statistics</string>
+
+    <string name="statistic_name">Statistic name</string>
+    <string name="number_of_flights">Number of flights</string>
+    <string name="flown_distance">Distance flown</string>
+    <string name="airports_visits">Visits at airport</string>
 </resources>

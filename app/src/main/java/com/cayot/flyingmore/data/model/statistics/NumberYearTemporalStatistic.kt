@@ -1,31 +1,20 @@
 package com.cayot.flyingmore.data.model.statistics
 
 import com.cayot.flyingmore.data.local.model.FlyingStatisticEntity
-import com.cayot.flyingmore.data.model.statistics.enums.ChartType
-import com.cayot.flyingmore.data.model.statistics.enums.ListDataType
+import com.cayot.flyingmore.data.model.statistics.enums.FlyingStatistic
 import com.cayot.flyingmore.data.model.statistics.enums.Resolution
 import java.time.Year
 
 class NumberYearTemporalStatistic(
     id: Int = 0,
-    name: String,
     year: Year,
-    dataResolution: Resolution,
-    defaultDisplayResolution: Resolution,
-    allowedDisplayResolutions: List<Resolution>,
     data: List<Int>,
-    chartType: ChartType,
-    unit: String?
+    statisticType: FlyingStatistic,
 ) : YearTemporalStatistic<Int>(
     id = id,
-    name = name,
     year = year,
-    dataResolution = dataResolution,
-    defaultDisplayResolution = defaultDisplayResolution,
-    allowedDisplayResolutions = allowedDisplayResolutions,
     data = data,
-    chartType = chartType,
-    unit = unit
+    statisticType = statisticType
 ) {
     override fun sumData(data : List<Int>): Int {
         return (data.sum())
@@ -34,40 +23,29 @@ class NumberYearTemporalStatistic(
     override fun toFlyingStatisticEntity(): FlyingStatisticEntity {
         return(FlyingStatisticEntity(
             id = id,
-            name = name,
             year = year.value,
-            dataResolutionInt = dataResolution.ordinal,
-            defaultDisplayResolutionInt = defaultDisplayResolution.ordinal,
-            allowedDisplayResolutionsJson = GsonProvider.gson.toJson(allowedDisplayResolutions),
             dataJson = GsonProvider.gson.toJson(data),
-            dataTypeInt = ListDataType.INT.ordinal,
-            chartTypeInt = chartType.ordinal,
-            unit = unit
+            statisticTypeInt = statisticType.ordinal
         ))
     }
 
     override fun toTemporalStatisticBrief(resolution: Resolution): TemporalStatisticBrief {
         return (TemporalStatisticBrief(
             id = id,
-            name = name,
             year = year,
-            unit = unit,
             data = this.getResolution(resolution),
-            chartType = chartType
+            displayNameRes = statisticType.displayNameResource,
+            unitRes = statisticType.unitResource,
+            chartType = statisticType.chartType
         ))
     }
 
     fun copy(data: List<Int> = this.data): NumberYearTemporalStatistic {
         return (NumberYearTemporalStatistic(
             id = id,
-            name = name,
             year = year,
-            dataResolution = dataResolution,
-            defaultDisplayResolution = defaultDisplayResolution,
-            allowedDisplayResolutions = allowedDisplayResolutions,
             data = data,
-            chartType = chartType,
-            unit = unit
+            statisticType = statisticType
         ))
     }
 }

@@ -141,7 +141,7 @@ fun StatisticItemBriefComposable(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = statisticBriefItem.name,
+                        text = stringResource(statisticBriefItem.displayNameRes),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -159,7 +159,7 @@ fun StatisticItemBriefComposable(
                 DataUnitField(
                     data = statisticBriefItem.dataText ?:
                     (statisticBriefItem.data.last().toString()),
-                    unit = statisticBriefItem.unit,
+                    unit = statisticBriefItem.unitRes?.let { stringResource(it) },
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -191,9 +191,9 @@ fun StatisticItemChart(
 fun StatisticItemBriefComposablePreview() {
     StatisticItemBriefComposable(
         statisticBriefItem = TemporalStatisticBrief(
-            name = "Distance",
+            displayNameRes = R.string.statistic_name,
             year = Year.of(2024),
-            unit = "km",
+            unitRes = null,
             data = listOf(1634, 1234, 2435, 0, 134, 9823, 12345, 450, 987, 456, 325, 943),
             chartType = ChartType.BAR_GRAPH,
             dataText = null
