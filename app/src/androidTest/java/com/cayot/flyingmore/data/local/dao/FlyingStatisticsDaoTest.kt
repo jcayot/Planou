@@ -17,27 +17,17 @@ class FlyingStatisticsDaoTest : DaoTestBase() {
     }
 
     val flyingStatistic1 = FlyingStatisticEntity(
-        name = "Statistic 1",
-        year = 2022,
-        dataResolutionInt = 1080,
-        defaultDisplayResolutionInt = 720,
-        allowedDisplayResolutionsJson = """["1080", "720", "480"]""",
+        timeFrameStartLong = System.nanoTime(),
+        timeFrameEndLong = System.nanoTime(),
         dataJson = """{"data": [1, 2, 3]}""",
-        dataTypeInt = 1,
-        chartTypeInt = 2,
-        unit = "meters"
+        statisticTypeInt = 1
     )
 
     val flyingStatistic2 = FlyingStatisticEntity(
-        name = "Statistic 2",
-        year = 2023,
-        dataResolutionInt = 1440,
-        defaultDisplayResolutionInt = 1080,
-        allowedDisplayResolutionsJson = """["1440", "1080", "720"]""",
-        dataJson = """{"data": [4, 5, 6, 7]}""",
-        dataTypeInt = 2,
-        chartTypeInt = 1,
-        unit = "kilometers"
+        timeFrameStartLong = System.nanoTime(),
+        timeFrameEndLong = System.nanoTime(),
+        dataJson = """{"data": [1, 2, 3]}""",
+        statisticTypeInt = 2
     )
 
     private fun addTwoEntity() {
@@ -57,12 +47,12 @@ class FlyingStatisticsDaoTest : DaoTestBase() {
     @Test
     fun update_flyingStatistic_updatesSuccessfully() = runBlocking {
         addTwoEntity()
-        val updatedFlyingStatistic = flyingStatisticsDao.getFlyingStatistic(1).first().copy(year = 2024)
+        val updatedFlyingStatistic = flyingStatisticsDao.getFlyingStatistic(1).first().copy(dataJson = flyingStatistic2.dataJson)
 
         flyingStatisticsDao.update(updatedFlyingStatistic)
 
         val retrievedFlyingStatistic = flyingStatisticsDao.getFlyingStatistic(updatedFlyingStatistic.id).first()
-        assertEquals(updatedFlyingStatistic.year, retrievedFlyingStatistic.year)
+        assertEquals(updatedFlyingStatistic, retrievedFlyingStatistic)
     }
 
     @Test
