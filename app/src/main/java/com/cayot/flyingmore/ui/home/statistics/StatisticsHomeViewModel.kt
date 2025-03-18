@@ -16,7 +16,7 @@ class StatisticsHomeViewModel(
 
     init {
         viewModelScope.launch {
-            flyingStatisticsRepository.getAllFlyingStatistics<Object>().collect { statistics ->
+            flyingStatisticsRepository.getAllFlyingStatistics().collect { statistics ->
                 _uiState.update {
                     it.copy(statisticsList = statistics.map { it -> it.toTemporalStatisticBrief() })
                 }

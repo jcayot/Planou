@@ -55,7 +55,7 @@ class MapStringNumberDailyTemporalStatistic(
         )
     }
 
-    fun copy(data: List<Map<String, Int>> = this.data): MapStringNumberDailyTemporalStatistic {
+    override fun copy(data: List<Map<String, Int>>): MapStringNumberDailyTemporalStatistic {
         return (MapStringNumberDailyTemporalStatistic(
             id = id,
             timeFrameStart = timeFrameStart,
