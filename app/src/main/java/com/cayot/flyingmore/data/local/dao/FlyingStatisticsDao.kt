@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface FlyingStatisticsDao {
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(flyingStatistic: FlyingStatisticEntity)
 
     @Update
@@ -22,4 +22,11 @@ interface FlyingStatisticsDao {
 
     @Query("SELECT * FROM `flying-statistics` WHERE id = :id")
     fun getFlyingStatistic(id: Int) : Flow<FlyingStatisticEntity>
+
+    @Query("SELECT * FROM 'flying-statistics' WHERE statisticTypeInt = :statisticTypeInt AND" +
+            " timeFrameStartLong = :timeFrameStartLong AND" +
+            " timeFrameEndLong = :timeFrameEndLong")
+    fun getFlyingStatisticEntity(statisticTypeInt: Int,
+                                 timeFrameStartLong: Long,
+                                 timeFrameEndLong: Long) : FlyingStatisticEntity?
 }

@@ -44,7 +44,7 @@ class NumberDailyTemporalStatistic(
         ))
     }
 
-    fun copy(data: List<Int> = this.data): NumberDailyTemporalStatistic {
+    override fun copy(data: List<Int>): NumberDailyTemporalStatistic {
         return (NumberDailyTemporalStatistic(
             id = id,
             timeFrameStart = timeFrameStart,

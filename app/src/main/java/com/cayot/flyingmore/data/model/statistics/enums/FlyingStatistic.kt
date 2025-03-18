@@ -2,6 +2,8 @@ package com.cayot.flyingmore.data.model.statistics.enums
 
 import androidx.annotation.StringRes
 import com.cayot.flyingmore.R
+import com.cayot.flyingmore.data.model.Flight
+import kotlin.math.roundToInt
 
 enum class FlyingStatistic(
     @StringRes val displayNameResource: Int = R.string.statistic_name,
@@ -23,4 +25,32 @@ enum class FlyingStatistic(
         displayNameResource = R.string.airports_visits,
         dataType = ListDataType.MAP_STRING_INT
     );
+
+    companion object {
+        fun flightAggregator(flyingStatistic: FlyingStatistic) : (Any, Flight) -> Any {
+            return when (flyingStatistic) {
+                NUMBER_OF_FLIGHT -> { currentNumber: Any, flight: Flight ->
+                    (currentNumber as Int + 1)
+                }
+                FLOWN_DISTANCE -> { currentDistance: Any, flight: Flight ->
+                    (currentDistance as Int + flight.distance.roundToInt())
+                }
+                AIRPORT_VISIT_NUMBER -> { currentCodeVisitMap: Any, flight: Flight ->
+                    (currentCodeVisitMap as MutableMap<String, Int>)
+                        .merge(flight.originAirport.iataCode, 1) { previous, new -> previous + new }
+                    currentCodeVisitMap
+                }
+            }
+        }
+
+        fun initialValueFactory(flyingStatistic: FlyingStatistic) : () -> Any {
+            return {
+                when (flyingStatistic) {
+                    NUMBER_OF_FLIGHT -> { 0 }
+                    FLOWN_DISTANCE -> { 0 }
+                    AIRPORT_VISIT_NUMBER -> { mutableMapOf<String, Int>() }
+                }
+            }
+        }
+    }
 }

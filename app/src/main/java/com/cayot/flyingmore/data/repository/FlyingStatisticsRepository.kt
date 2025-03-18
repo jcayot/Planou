@@ -2,12 +2,19 @@ package com.cayot.flyingmore.data.repository
 
 import com.cayot.flyingmore.data.model.statistics.DailyTemporalStatistic
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDate
 
 interface FlyingStatisticsRepository {
 
-    fun <T> getAllFlyingStatistics() : Flow<List<DailyTemporalStatistic<T>>>
+    fun getAllFlyingStatistics() : Flow<List<DailyTemporalStatistic<Any>>>
 
-    fun <T> getFlyingStatistic(id: Int) : Flow<DailyTemporalStatistic<T>>
+    fun getFlyingStatistic(id: Int) : Flow<DailyTemporalStatistic<Any>>
+
+    suspend fun getFlyingStatistic(
+        statisticTypeInt: Int,
+        timeFrameStart: LocalDate,
+        timeFrameEnd: LocalDate
+    ) : DailyTemporalStatistic<Any>?
 
     suspend fun <T> insertFlyingStatistic(dailyTemporalStatistic: DailyTemporalStatistic<T>)
 

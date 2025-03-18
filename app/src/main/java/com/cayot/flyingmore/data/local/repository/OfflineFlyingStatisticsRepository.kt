@@ -6,16 +6,29 @@ import com.cayot.flyingmore.data.model.statistics.toTemporalStatistic
 import com.cayot.flyingmore.data.repository.FlyingStatisticsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.time.LocalDate
+import java.time.ZoneOffset
 
 class OfflineFlyingStatisticsRepository(private val flyingStatisticsDao: FlyingStatisticsDao) : FlyingStatisticsRepository {
-    override fun <T> getAllFlyingStatistics(): Flow<List<DailyTemporalStatistic<T>>> {
+    override fun getAllFlyingStatistics(): Flow<List<DailyTemporalStatistic<Any>>> {
         return (flyingStatisticsDao.getAllFlyingStatistics().map { flyingStatisticsList ->
             flyingStatisticsList.map { it.toTemporalStatistic() }
         })
     }
 
-    override fun <T> getFlyingStatistic(id: Int): Flow<DailyTemporalStatistic<T>> {
+    override fun getFlyingStatistic(id: Int): Flow<DailyTemporalStatistic<Any>> {
         return (flyingStatisticsDao.getFlyingStatistic(id).map { it.toTemporalStatistic() })
+    }
+
+    override suspend fun getFlyingStatistic(
+        statisticTypeInt: Int,
+        timeFrameStart: LocalDate,
+        timeFrameEnd: LocalDate
+    ): DailyTemporalStatistic<Any>? {
+        return (flyingStatisticsDao.getFlyingStatisticEntity(statisticTypeInt,
+            timeFrameStart.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
+            timeFrameEnd.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
+        )?.toTemporalStatistic())
     }
 
     override suspend fun <T> insertFlyingStatistic(dailyTemporalStatistic: DailyTemporalStatistic<T>) {

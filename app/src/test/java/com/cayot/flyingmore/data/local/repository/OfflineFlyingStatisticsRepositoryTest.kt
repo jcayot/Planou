@@ -39,7 +39,7 @@ class OfflineFlyingStatisticsRepositoryTest {
     fun insertFlyingStatistic_insertsSuccessfully() = runBlocking {
         repository.insertFlyingStatistic(temporalStatistic1)
 
-        val allStatistics = repository.getAllFlyingStatistics<Int>().first()
+        val allStatistics = repository.getAllFlyingStatistics().first()
         assertEquals(1, allStatistics.size)
     }
 
@@ -47,14 +47,14 @@ class OfflineFlyingStatisticsRepositoryTest {
     fun updateFlyingStatistic_updatesSuccessfully() = runBlocking {
         repository.insertFlyingStatistic(temporalStatistic1)
         val updatedTemporalStatistic: NumberDailyTemporalStatistic =
-            (repository.getFlyingStatistic<Int>(1).first() as NumberDailyTemporalStatistic)
+            (repository.getFlyingStatistic(1).first() as NumberDailyTemporalStatistic)
                 .copy(data = List(
                     365, {5}
                 ))
 
         repository.updateFlyingStatistic(updatedTemporalStatistic)
 
-        val retrievedStatistic = repository.getFlyingStatistic<Int>(1).first() as NumberDailyTemporalStatistic
+        val retrievedStatistic = repository.getFlyingStatistic(1).first() as NumberDailyTemporalStatistic
         assertEquals(updatedTemporalStatistic.data, retrievedStatistic.data)
     }
 
@@ -63,7 +63,7 @@ class OfflineFlyingStatisticsRepositoryTest {
         repository.insertFlyingStatistic(temporalStatistic1)
         repository.insertFlyingStatistic(temporalStatistic2)
 
-        val allStatistics = repository.getAllFlyingStatistics<Int>().first()
+        val allStatistics = repository.getAllFlyingStatistics().first()
 
         assertEquals(2, allStatistics.size)
         assertEquals(temporalStatistic1.timeFrameStart, allStatistics[0].timeFrameStart)
@@ -74,7 +74,7 @@ class OfflineFlyingStatisticsRepositoryTest {
     fun getFlyingStatistic_withExistingId_returnsStatistic() = runBlocking {
         repository.insertFlyingStatistic(temporalStatistic1)
 
-        val retrievedStatistic = repository.getFlyingStatistic<Int>(1).first()
+        val retrievedStatistic = repository.getFlyingStatistic(1).first()
 
         assertEquals(temporalStatistic1.timeFrameStart, retrievedStatistic.timeFrameStart)
     }

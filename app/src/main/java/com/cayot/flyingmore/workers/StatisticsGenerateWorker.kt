@@ -3,9 +3,10 @@ package com.cayot.flyingmore.workers
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.cayot.flyingmore.data.model.Flight
+import com.cayot.flyingmore.data.model.statistics.DailyTemporalStatistic
 import com.cayot.flyingmore.data.model.statistics.enums.FlyingStatistic
 import com.cayot.flyingmore.data.model.statistics.enums.TimeFrame
+import com.cayot.flyingmore.data.model.statistics.generator.FlightStatisticDataGenerator.generateFlightStatisticData
 import com.cayot.flyingmore.data.repository.FlightsRepository
 import com.cayot.flyingmore.data.repository.FlyingStatisticsRepository
 import kotlinx.coroutines.Dispatchers
@@ -15,11 +16,9 @@ import java.time.Year
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
-import java.util.Calendar.DAY_OF_YEAR
-import kotlin.math.roundToInt
 
 
-const val STATISTIC_TO_GENERATE_KEY = "STATISTIC_TO_GENERATE"
+const val STATISTICS_TO_GENERATE_KEY = "STATISTICS_TO_GENERATE"
 const val YEAR_KEY = "YEAR"
 
 //TODO Really Bad
@@ -31,19 +30,26 @@ class StatisticsGenerateWorker(
 ) : CoroutineWorker(ctx, params) {
 
     override suspend fun doWork(): Result {
-        val statisticToCalculate: FlyingStatistic = FlyingStatistic.entries[inputData.getInt(STATISTIC_TO_GENERATE_KEY, 0)]
+        val statisticsToGenerateIntArray = inputData.getIntArray(STATISTICS_TO_GENERATE_KEY) ?: return Result.failure()
+        val statisticsToGenerateList: List<FlyingStatistic> = statisticsToGenerateIntArray.map { FlyingStatistic.entries[it] }
+        val dataTimeFrame = statisticsToGenerateList[0].dataTimeFrame
 
+        for (statisticToGenerate: FlyingStatistic in statisticsToGenerateList) {
+            if (statisticToGenerate.dataTimeFrame != dataTimeFrame)
+                return Result.failure()
+        }
         val minDepartureTime: LocalDate
         val maxDepartureTime: LocalDate
 
-        when (statisticToCalculate.dataTimeFrame) {
+        //TODO Extract
+        when (dataTimeFrame) {
             TimeFrame.DAY -> throw NotImplementedError()
             TimeFrame.WEEK -> throw NotImplementedError()
             TimeFrame.MONTH -> throw NotImplementedError()
             TimeFrame.YEAR -> {
                 val statisticYearInt = inputData.getInt(YEAR_KEY, -1)
                 if (statisticYearInt == -1)
-                    throw RuntimeException()
+                    return Result.failure()
                 minDepartureTime = Year.of(statisticYearInt).atMonth(1).atDay(1)
                 maxDepartureTime = Year.of(statisticYearInt).plusYears(1).atMonth(1).atDay(1)
             }
@@ -57,67 +63,33 @@ class StatisticsGenerateWorker(
 
                 require(flightsData.isNotEmpty())
 
-                //TODO Extract Aggregator
-                val generatedData = when (statisticToCalculate) {
-                    FlyingStatistic.NUMBER_OF_FLIGHT -> {
-                        generateFlightStatisticData(
-                            flightsData = flightsData,
-                            sizeToGenerate = ChronoUnit.DAYS.between(minDepartureTime, maxDepartureTime).toInt(),
-                            perFlightAggregator = { currentNumber: Int, flight: Flight ->
-                                (currentNumber + 1)
-                            },
-                            initialValueFactory = { 0 }
+                for (statisticToGenerate: FlyingStatistic in statisticsToGenerateList) {
+                    val generatedData = generateFlightStatisticData(
+                        flightsData = flightsData,
+                        sizeToGenerate = ChronoUnit.DAYS.between(minDepartureTime, maxDepartureTime).toInt(),
+                        statisticToGenerate = statisticToGenerate
+                    )
+
+                    val currentStatistic = flyingStatisticsRepository.getFlyingStatistic(
+                        statisticTypeInt = statisticToGenerate.ordinal,
+                        timeFrameStart = minDepartureTime,
+                        timeFrameEnd = maxDepartureTime
+                    )
+
+                    val statisticToAdd = currentStatistic?.copy(data = generatedData)
+                        ?: DailyTemporalStatistic.makeDailyTemporalStatistic(
+                            timeFrameStart = minDepartureTime,
+                            timeFrameEnd = maxDepartureTime,
+                            data = generatedData,
+                            statisticType = statisticToGenerate
                         )
-                    }
-                    FlyingStatistic.FLOWN_DISTANCE -> {
-                        generateFlightStatisticData(
-                            flightsData = flightsData,
-                            sizeToGenerate = ChronoUnit.DAYS.between(minDepartureTime, maxDepartureTime).toInt(),
-                            perFlightAggregator = { currentDistance: Int, flight: Flight ->
-                                (currentDistance + flight.distance.roundToInt())
-                            },
-                            initialValueFactory = { 0 }
-                        )
-                    }
-                    FlyingStatistic.AIRPORT_VISIT_NUMBER -> {
-                        generateFlightStatisticData(
-                            flightsData = flightsData,
-                            sizeToGenerate = ChronoUnit.DAYS.between(
-                                minDepartureTime,
-                                maxDepartureTime
-                            ).toInt(),
-                            perFlightAggregator = { currentCodeVisitMap: MutableMap<String, Int>, flight: Flight ->
-                                currentCodeVisitMap.merge(flight.originAirport.iataCode, 1) { previous, new -> previous + new }
-                                currentCodeVisitMap
-                            },
-                            initialValueFactory = { mutableMapOf() },
-                        )
-                    }
+                    flyingStatisticsRepository.insertFlyingStatistic(statisticToAdd)
                 }
-
-                //TODO Insert to repository and avoid duplicate sir :P
-
 
                 Result.success()
             } catch (_: Exception) {
                 Result.failure()
             }
         }
-    }
-
-    private fun <T> generateFlightStatisticData(
-        flightsData: List<Flight>,
-        sizeToGenerate: Int,
-        perFlightAggregator: (T, Flight) -> T,
-        initialValueFactory: () -> T
-    ) : List<T> {
-        var statisticData: MutableList<T> =
-            MutableList(size = sizeToGenerate, init = { initialValueFactory() })
-
-        for (flight in flightsData) {
-            statisticData[flight.departureTime.get(DAY_OF_YEAR) - 1] =
-                perFlightAggregator(statisticData[flight.departureTime.get(DAY_OF_YEAR) - 1], flight)
-        }
-        return (statisticData)
     }
 }

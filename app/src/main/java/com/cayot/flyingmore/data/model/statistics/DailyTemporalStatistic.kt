@@ -67,6 +67,8 @@ abstract class DailyTemporalStatistic<T>(
     abstract fun toFlyingStatisticEntity() : FlyingStatisticEntity
 
     abstract fun toTemporalStatisticBrief(resolution: TimeFrame = TimeFrame.MONTH) : TemporalStatisticBrief
+
+    abstract fun copy(data: List<T> = this.data) : DailyTemporalStatistic<T>
 }
 
 fun <T> DailyTemporalStatistic<T>.getResolution(resolution: TimeFrame = statisticType.dataResolution) : List<T> {
