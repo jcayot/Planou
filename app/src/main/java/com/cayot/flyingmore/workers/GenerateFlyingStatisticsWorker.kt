@@ -22,7 +22,7 @@ const val STATISTICS_TO_GENERATE_KEY = "STATISTICS_TO_GENERATE"
 const val YEAR_KEY = "YEAR"
 
 //TODO Really Bad
-class StatisticsGenerateWorker(
+class GenerateFlyingStatisticsWorker(
     ctx: Context,
     params: WorkerParameters,
     private val flyingStatisticsRepository: FlyingStatisticsRepository,
@@ -70,19 +70,13 @@ class StatisticsGenerateWorker(
                         statisticToGenerate = statisticToGenerate
                     )
 
-                    val currentStatistic = flyingStatisticsRepository.getFlyingStatistic(
-                        statisticTypeInt = statisticToGenerate.ordinal,
-                        timeFrameStart = minDepartureTime,
-                        timeFrameEnd = maxDepartureTime
-                    )
-
-                    val statisticToAdd = currentStatistic?.copy(data = generatedData)
-                        ?: DailyTemporalStatistic.makeDailyTemporalStatistic(
+                    val statisticToAdd = DailyTemporalStatistic.makeDailyTemporalStatistic(
                             timeFrameStart = minDepartureTime,
                             timeFrameEnd = maxDepartureTime,
                             data = generatedData,
                             statisticType = statisticToGenerate
-                        )
+                    )
+
                     flyingStatisticsRepository.insertFlyingStatistic(statisticToAdd)
                 }
 

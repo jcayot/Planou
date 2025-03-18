@@ -31,8 +31,17 @@ class OfflineFlyingStatisticsRepository(private val flyingStatisticsDao: FlyingS
         )?.toTemporalStatistic())
     }
 
+    //TODO Potential cast problems ???
     override suspend fun <T> insertFlyingStatistic(dailyTemporalStatistic: DailyTemporalStatistic<T>) {
-        flyingStatisticsDao.insert(dailyTemporalStatistic.toFlyingStatisticEntity())
+        val alreadyExisting = getFlyingStatistic(
+            statisticTypeInt = dailyTemporalStatistic.statisticType.ordinal,
+            timeFrameStart = dailyTemporalStatistic.timeFrameStart,
+            timeFrameEnd = dailyTemporalStatistic.timeFrameEnd
+        ) as DailyTemporalStatistic<T>?
+        if (alreadyExisting == null)
+            flyingStatisticsDao.insert(dailyTemporalStatistic.toFlyingStatisticEntity())
+        else
+            updateFlyingStatistic(alreadyExisting.copy(data = dailyTemporalStatistic.data))
     }
 
     override suspend fun <T> updateFlyingStatistic(dailyTemporalStatistic: DailyTemporalStatistic<T>) {

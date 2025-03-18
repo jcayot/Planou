@@ -44,6 +44,16 @@ class OfflineFlyingStatisticsRepositoryTest {
     }
 
     @Test
+    fun insertFlyingStatistic_insertUpdateForExisting() = runBlocking {
+        repository.insertFlyingStatistic(temporalStatistic1)
+
+        val changed1 = temporalStatistic1.copy(data = List(365, {5}))
+        repository.insertFlyingStatistic(changed1)
+        val allStatistics = repository.getAllFlyingStatistics().first()
+        assertEquals(1, allStatistics.size)
+    }
+
+    @Test
     fun updateFlyingStatistic_updatesSuccessfully() = runBlocking {
         repository.insertFlyingStatistic(temporalStatistic1)
         val updatedTemporalStatistic: NumberDailyTemporalStatistic =
