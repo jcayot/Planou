@@ -2,18 +2,14 @@ package com.cayot.flyingmore.workers
 
 import android.content.Context
 import androidx.work.CoroutineWorker
-import androidx.work.Data
 import androidx.work.WorkerParameters
 import com.cayot.flyingmore.data.model.statistics.DailyTemporalStatistic
 import com.cayot.flyingmore.data.model.statistics.enums.FlyingStatistic
-import com.cayot.flyingmore.data.model.statistics.enums.TimeFrame
 import com.cayot.flyingmore.data.model.statistics.generator.FlightStatisticDataGenerator.generateFlightStatisticData
 import com.cayot.flyingmore.data.repository.FlightsRepository
 import com.cayot.flyingmore.data.repository.FlyingStatisticsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.time.LocalDate
-import java.time.Year
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
@@ -74,45 +70,9 @@ class GenerateFlyingStatisticsWorker(
                 Result.success()
             }
 
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            e.printStackTrace() //TODO Remove
             return (Result.failure())
         }
-    }
-
-    //TODO Create getOrThrow
-    private fun getDateRange(inputData: Data, dataTimeFrame: TimeFrame) : Pair<LocalDate, LocalDate> {
-        var minDepartureTime: LocalDate
-        var maxDepartureTime: LocalDate
-
-        //Extract year for all time frame
-        val statisticYearInt = inputData.getIntOrThrow(YEAR_KEY)
-
-        minDepartureTime = Year.of(statisticYearInt).atMonth(1).atDay(1)
-        maxDepartureTime = Year.of(statisticYearInt).plusYears(1).atMonth(1).atDay(1)
-
-        //Handle weekly time frame
-        if (dataTimeFrame == TimeFrame.WEEK) {
-            val statisticWeekInt = inputData.getIntOrThrow(WEEK_KEY)
-
-            minDepartureTime = minDepartureTime.plusWeeks(statisticWeekInt.toLong())
-            minDepartureTime = minDepartureTime.minusDays((minDepartureTime.dayOfWeek.value - 1).toLong())
-            maxDepartureTime = minDepartureTime.plusWeeks(1L)
-            return minDepartureTime to maxDepartureTime
-        }
-
-        //Handle more specific time frame
-        if (dataTimeFrame <= TimeFrame.MONTH) {
-            val statisticMonthInt = inputData.getIntOrThrow(MONTH_KEY)
-
-            minDepartureTime = minDepartureTime.withMonth(statisticMonthInt)
-            maxDepartureTime = minDepartureTime.plusMonths(1)
-        }
-        if (dataTimeFrame <= TimeFrame.DAY) {
-            val statisticDayInt = inputData.getIntOrThrow(DAY_KEY)
-
-            minDepartureTime = minDepartureTime.withDayOfMonth(statisticDayInt)
-            maxDepartureTime = minDepartureTime.plusDays(1)
-        }
-        return minDepartureTime to maxDepartureTime
     }
 }
