@@ -4,13 +4,14 @@ import android.content.Context
 import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
-import com.cayot.flyingmore.data.local.repository.OfflineFlightsRepository
-import com.cayot.flyingmore.data.local.repository.OfflineFlyingStatisticsRepository
-import com.cayot.flyingmore.fake.data.local.dao.FakeFlightDao
-import com.cayot.flyingmore.fake.data.local.dao.FakeFlyingStatisticsDao
+import com.cayot.flyingmore.data.repository.FlightsRepository
+import com.cayot.flyingmore.data.repository.FlyingStatisticsRepository
 import com.cayot.flyingmore.workers.GenerateFlyingStatisticsWorker
 
-object FakeAppWorkerProvider {
+class FakeAppWorkerProvider(
+    flyingStatisticsRepository: FlyingStatisticsRepository,
+    flightsRepository: FlightsRepository
+) {
     val fakeFactory = object : WorkerFactory() {
         override fun createWorker(
             appContext: Context,
@@ -22,12 +23,8 @@ object FakeAppWorkerProvider {
                     GenerateFlyingStatisticsWorker(
                         ctx = appContext,
                         params = workerParameters,
-                        flyingStatisticsRepository = OfflineFlyingStatisticsRepository(
-                            flyingStatisticsDao = FakeFlyingStatisticsDao()
-                        ),
-                        flightsRepository = OfflineFlightsRepository(
-                            flightDao = FakeFlightDao()
-                        ),
+                        flyingStatisticsRepository = flyingStatisticsRepository,
+                        flightsRepository = flightsRepository,
                     )
                 }
 
