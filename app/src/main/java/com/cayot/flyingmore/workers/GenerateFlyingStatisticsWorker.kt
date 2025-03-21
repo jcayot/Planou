@@ -2,6 +2,7 @@ package com.cayot.flyingmore.workers
 
 import android.content.Context
 import androidx.work.CoroutineWorker
+import androidx.work.Data
 import androidx.work.WorkerParameters
 import com.cayot.flyingmore.data.model.statistics.DailyTemporalStatistic
 import com.cayot.flyingmore.data.model.statistics.enums.FlyingStatistic
@@ -20,6 +21,9 @@ import java.time.temporal.ChronoUnit
 
 const val STATISTICS_TO_GENERATE_KEY = "STATISTICS_TO_GENERATE"
 const val YEAR_KEY = "YEAR"
+const val MONTH_KEY = "MONTH"
+const val WEEK_KEY = "WEEK"
+const val DAY_KEY = "DAY"
 
 //TODO Really Bad
 class GenerateFlyingStatisticsWorker(
@@ -38,52 +42,77 @@ class GenerateFlyingStatisticsWorker(
             if (statisticToGenerate.dataTimeFrame != dataTimeFrame)
                 return Result.failure()
         }
-        val minDepartureTime: LocalDate
-        val maxDepartureTime: LocalDate
 
-        //TODO Extract
-        when (dataTimeFrame) {
-            TimeFrame.DAY -> throw NotImplementedError()
-            TimeFrame.WEEK -> throw NotImplementedError()
-            TimeFrame.MONTH -> throw NotImplementedError()
-            TimeFrame.YEAR -> {
-                val statisticYearInt = inputData.getInt(YEAR_KEY, -1)
-                if (statisticYearInt == -1)
-                    return Result.failure()
-                minDepartureTime = Year.of(statisticYearInt).atMonth(1).atDay(1)
-                maxDepartureTime = Year.of(statisticYearInt).plusYears(1).atMonth(1).atDay(1)
-            }
-        }
+        try {
+            val dateTimeRange = getDateRange(inputData, dataTimeFrame)
 
-        return withContext(Dispatchers.IO) {
-            try {
+            return withContext(Dispatchers.IO) {
                 val flightsData = flightsRepository.getAllFlightForDepartureTimeRange(
-                    startTime = minDepartureTime.atStartOfDay(ZoneId.from(ZoneOffset.UTC)).toInstant().toEpochMilli(),
-                    endTime = maxDepartureTime.atStartOfDay(ZoneId.from(ZoneOffset.UTC)).toInstant().toEpochMilli())
+                    startTime = dateTimeRange.first.atStartOfDay(ZoneId.from(ZoneOffset.UTC)).toInstant().toEpochMilli(),
+                    endTime = dateTimeRange.second.atStartOfDay(ZoneId.from(ZoneOffset.UTC)).toInstant().toEpochMilli()
+                )
 
                 require(flightsData.isNotEmpty())
 
                 for (statisticToGenerate: FlyingStatistic in statisticsToGenerateList) {
                     val generatedData = generateFlightStatisticData(
                         flightsData = flightsData,
-                        sizeToGenerate = ChronoUnit.DAYS.between(minDepartureTime, maxDepartureTime).toInt(),
+                        sizeToGenerate = ChronoUnit.DAYS.between(dateTimeRange.first, dateTimeRange.second).toInt(),
                         statisticToGenerate = statisticToGenerate
                     )
 
                     val statisticToAdd = DailyTemporalStatistic.makeDailyTemporalStatistic(
-                            timeFrameStart = minDepartureTime,
-                            timeFrameEnd = maxDepartureTime,
-                            data = generatedData,
-                            statisticType = statisticToGenerate
+                        timeFrameStart = dateTimeRange.first,
+                        timeFrameEnd = dateTimeRange.second,
+                        data = generatedData,
+                        statisticType = statisticToGenerate
                     )
 
                     flyingStatisticsRepository.insertFlyingStatistic(statisticToAdd)
                 }
 
                 Result.success()
-            } catch (_: Exception) {
-                Result.failure()
             }
+
+        } catch (_: Exception) {
+            return (Result.failure())
         }
+    }
+
+    //TODO Create getOrThrow
+    private fun getDateRange(inputData: Data, dataTimeFrame: TimeFrame) : Pair<LocalDate, LocalDate> {
+        var minDepartureTime: LocalDate
+        var maxDepartureTime: LocalDate
+
+        //Extract year for all time frame
+        val statisticYearInt = inputData.getIntOrThrow(YEAR_KEY)
+
+        minDepartureTime = Year.of(statisticYearInt).atMonth(1).atDay(1)
+        maxDepartureTime = Year.of(statisticYearInt).plusYears(1).atMonth(1).atDay(1)
+
+        //Handle weekly time frame
+        if (dataTimeFrame == TimeFrame.WEEK) {
+            val statisticWeekInt = inputData.getIntOrThrow(WEEK_KEY)
+
+            minDepartureTime = minDepartureTime.plusWeeks(statisticWeekInt.toLong())
+            minDepartureTime = minDepartureTime.minusDays((minDepartureTime.dayOfWeek.value - 1).toLong())
+            maxDepartureTime = minDepartureTime.plusWeeks(1L)
+            return minDepartureTime to maxDepartureTime
+        }
+
+        //Handle more specific time frame
+        if (dataTimeFrame <= TimeFrame.MONTH) {
+            val statisticMonthInt = inputData.getIntOrThrow(MONTH_KEY)
+
+            minDepartureTime = minDepartureTime.withMonth(statisticMonthInt)
+            maxDepartureTime = minDepartureTime.plusMonths(1)
+        }
+        if (dataTimeFrame <= TimeFrame.DAY) {
+            val statisticDayInt = inputData.getIntOrThrow(DAY_KEY)
+
+            minDepartureTime = minDepartureTime.withDayOfMonth(statisticDayInt)
+            maxDepartureTime = minDepartureTime.plusDays(1)
+        }
+        return minDepartureTime to maxDepartureTime
     }
 }

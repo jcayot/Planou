@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
+import kotlin.collections.plus
 
 class FakeFlyingStatisticsDao : FlyingStatisticsDao {
     private val _statistics = MutableStateFlow<List<FlyingStatisticEntity>>(emptyList())

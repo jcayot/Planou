@@ -44,18 +44,22 @@ android {
 		buildConfig = true
 	}
 	composeOptions {
-		kotlinCompilerExtensionVersion = "1.5.5"
+		kotlinCompilerExtensionVersion = "1.5.15"
 	}
 	packaging {
 		resources {
 			excludes += "/META-INF/{AL2.0,LGPL2.1}"
 		}
 	}
+	testFixtures {
+		enable = true
+	}
 }
 
 dependencies {
 
 	implementation(libs.androidx.core.ktx)
+	implementation(libs.androidx.runtime)
 	implementation(libs.androidx.lifecycle.runtime.ktx)
 	implementation(libs.androidx.activity.compose)
 	implementation(platform(libs.androidx.compose.bom))
@@ -89,8 +93,17 @@ dependencies {
 	androidTestImplementation(platform(libs.androidx.compose.bom))
 	androidTestImplementation(libs.androidx.ui.test.junit4)
 
+	//Work Manager
+	androidTestImplementation(libs.androidx.work.testing)
+
 	debugImplementation(libs.androidx.ui.tooling)
 	debugImplementation(libs.androidx.ui.test.manifest)
+
+	testFixturesCompileOnly(libs.kotlin.stdlib)
+	testFixturesImplementation(libs.androidx.core.ktx)
+	testFixturesImplementation(libs.androidx.work.runtime.ktx)
+	testFixturesImplementation(platform(libs.androidx.compose.bom))
+	testFixturesImplementation(libs.androidx.runtime)
 }
 java {
 	toolchain {
