@@ -27,30 +27,20 @@ enum class FlyingStatistic(
     );
 
     companion object {
-        fun flightAggregator(flyingStatistic: FlyingStatistic) : (Any, Flight) -> Any {
+        fun <T> flightAggregator(flyingStatistic: FlyingStatistic) : (T, Flight) -> T {
             return when (flyingStatistic) {
-                NUMBER_OF_FLIGHT -> { currentNumber: Any, flight: Flight ->
-                    (currentNumber as Int + 1)
+                NUMBER_OF_FLIGHT -> { currentNumber: Int, flight: Flight ->
+                    (currentNumber + 1)
                 }
-                FLOWN_DISTANCE -> { currentDistance: Any, flight: Flight ->
-                    (currentDistance as Int + flight.distance.roundToInt())
+                FLOWN_DISTANCE -> { currentDistance: Int, flight: Flight ->
+                    (currentDistance + flight.distance.roundToInt())
                 }
-                AIRPORT_VISIT_NUMBER -> { currentCodeVisitMap: Any, flight: Flight ->
-                    (currentCodeVisitMap as MutableMap<String, Int>)
+                AIRPORT_VISIT_NUMBER -> {
+                    currentCodeVisitMap: MutableMap<String, Int>, flight: Flight -> currentCodeVisitMap
                         .merge(flight.originAirport.iataCode, 1) { previous, new -> previous + new }
                     currentCodeVisitMap
                 }
-            }
-        }
-
-        fun initialValueFactory(flyingStatistic: FlyingStatistic) : () -> Any {
-            return {
-                when (flyingStatistic) {
-                    NUMBER_OF_FLIGHT -> { 0 }
-                    FLOWN_DISTANCE -> { 0 }
-                    AIRPORT_VISIT_NUMBER -> { mutableMapOf<String, Int>() }
-                }
-            }
+            } as (T, Flight) -> T
         }
     }
 }
