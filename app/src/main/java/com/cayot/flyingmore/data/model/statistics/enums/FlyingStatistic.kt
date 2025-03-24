@@ -35,9 +35,13 @@ enum class FlyingStatistic(
                 FLOWN_DISTANCE -> { currentDistance: Int, flight: Flight ->
                     (currentDistance + flight.distance.roundToInt())
                 }
-                AIRPORT_VISIT_NUMBER -> {
-                    currentCodeVisitMap: MutableMap<String, Int>, flight: Flight -> currentCodeVisitMap
-                        .merge(flight.originAirport.iataCode, 1) { previous, new -> previous + new }
+                AIRPORT_VISIT_NUMBER -> { currentCodeVisitMap: MutableMap<String, Int>, flight: Flight ->
+                    currentCodeVisitMap.merge(flight.originAirport.iataCode, 1) {
+                        previous, new -> previous + new
+                    }
+                    currentCodeVisitMap.merge(flight.destinationAirport.iataCode, 1) {
+                        previous, new -> previous + new
+                    }
                     currentCodeVisitMap
                 }
             } as (T, Flight) -> T
