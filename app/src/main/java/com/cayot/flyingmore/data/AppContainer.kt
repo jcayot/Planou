@@ -10,7 +10,9 @@ import com.cayot.flyingmore.data.repository.FlightNotesRepository
 import com.cayot.flyingmore.data.local.repository.OfflineFlightNotesRepository
 import com.cayot.flyingmore.data.local.repository.OfflineFlyingStatisticsRepository
 import com.cayot.flyingmore.data.repository.FlyingStatisticsRepository
+import com.cayot.flyingmore.data.repository.GenerateFlyingStatisticRepository
 import com.cayot.flyingmore.data.repository.ImageRepository
+import com.cayot.flyingmore.data.repository.WorkManagerGenerateFlyingStatisticRepository
 
 interface AppContainer {
 	val flightsRepository: FlightsRepository
@@ -18,6 +20,7 @@ interface AppContainer {
 	val flightNotesRepository: FlightNotesRepository
 	val flyingStatisticsRepository: FlyingStatisticsRepository
 	val imageRepository: ImageRepository
+	val generateFlyingStatisticRepository: GenerateFlyingStatisticRepository
 }
 
 class AppDataContainer(private val context: Context) : AppContainer {
@@ -35,5 +38,8 @@ class AppDataContainer(private val context: Context) : AppContainer {
 	}
 	override val imageRepository: ImageRepository by lazy {
         ImageRepository(context)
+	}
+	override val generateFlyingStatisticRepository: GenerateFlyingStatisticRepository by lazy {
+		WorkManagerGenerateFlyingStatisticRepository(context)
 	}
 }

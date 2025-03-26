@@ -37,6 +37,7 @@ enum class HomeScreenContent(@StringRes val title: Int, val icon: ImageVector, @
 @Composable
 fun HomeScreen(
     onFlightPressed: (Int) -> Unit,
+    onStatisticPressed: (Int) -> Unit,
     onAddFlightPressed: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -72,6 +73,7 @@ fun HomeScreen(
                 )
             HomeScreenContent.Statistics ->
                 HomeStatisticsTab(
+                    onStatisticItemPressed = onStatisticPressed,
                     modifier = modifier.fillMaxSize(),
                     contentPadding = innerPadding
                 )
