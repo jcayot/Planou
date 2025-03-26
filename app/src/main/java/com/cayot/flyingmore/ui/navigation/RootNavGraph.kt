@@ -35,6 +35,7 @@ fun FlyingMoreNavHost(
 				onFlightPressed = {
 					navController.navigate(FlyingMoreScreen.Details.name + "/" + it)
 				},
+				onStatisticPressed = {},
 				onAddFlightPressed = { navController.navigate(FlyingMoreScreen.Add.name) }
 			)
 		}

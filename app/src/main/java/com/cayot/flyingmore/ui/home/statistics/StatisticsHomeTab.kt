@@ -25,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,6 +36,7 @@ import com.cayot.flyingmore.data.model.statistics.TemporalStatisticBrief
 import com.cayot.flyingmore.data.model.statistics.enums.ChartType
 import com.cayot.flyingmore.ui.AppViewModelProvider
 import com.cayot.flyingmore.ui.composable.DataUnitField
+import com.cayot.flyingmore.ui.composable.EmptyPlaceholder
 import com.cayot.flyingmore.ui.composable.charts.LineGraph
 import com.cayot.flyingmore.ui.composable.charts.PieChart
 import com.cayot.flyingmore.ui.composable.charts.VerticalBarGraph
@@ -42,6 +44,7 @@ import java.time.Year
 
 @Composable
 fun HomeStatisticsTab(
+    onStatisticItemPressed: (Int) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
@@ -50,7 +53,7 @@ fun HomeStatisticsTab(
 
     HomeStatisticsScreenContent(
         uiState = uiState,
-        onStatisticItemPressed = {},
+        onStatisticItemPressed = onStatisticItemPressed,
         modifier = modifier.fillMaxSize(),
         contentPadding = contentPadding
     )
@@ -64,7 +67,14 @@ fun HomeStatisticsScreenContent(
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
     if (uiState.statisticsList.isEmpty()) {
-        //TODO General empty placeholder composable
+        EmptyPlaceholder(
+            painter = painterResource(R.drawable.bar_chart_off_24dp_999999_fill0_wght400_grad0_opsz24),
+            contentDescription = stringResource(R.string.no_statistics_image),
+            text = stringResource(R.string.no_statistics_yet),
+            modifier = Modifier
+                .padding(contentPadding)
+                .fillMaxSize()
+        )
     } else {
         Column(
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_smadium)),
