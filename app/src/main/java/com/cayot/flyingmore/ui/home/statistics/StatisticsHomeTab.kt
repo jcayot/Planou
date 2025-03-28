@@ -76,17 +76,12 @@ fun HomeStatisticsScreenContent(
                 .fillMaxSize()
         )
     } else {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_smadium)),
-            modifier = modifier.padding(dimensionResource(id = R.dimen.padding_smadium))
-        ) {
-            HomeStatisticsAllStatisticsList(
-                allStatistics = uiState.statisticsList,
-                onStatisticItemPressed = onStatisticItemPressed,
-                modifier = modifier,
-                contentPadding = contentPadding
-            )
-        }
+        HomeStatisticsAllStatisticsList(
+            allStatistics = uiState.statisticsList,
+            onStatisticItemPressed = onStatisticItemPressed,
+            contentPadding = contentPadding,
+            modifier = modifier
+        )
     }
 }
 
@@ -97,23 +92,26 @@ fun HomeStatisticsAllStatisticsList(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
-    Text(
-        text = stringResource(R.string.all_statistics),
-        style = MaterialTheme.typography.headlineLarge,
-        fontWeight = FontWeight.SemiBold,
-        modifier = Modifier.padding(start = dimensionResource(R.dimen.padding_large))
-            .padding(bottom = dimensionResource(R.dimen.padding_small))
-    )
-    LazyColumn (
-        contentPadding = contentPadding,
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_smadium)),
-        modifier = modifier.padding(dimensionResource(id = R.dimen.padding_smadium)),
+    Column(
+        modifier = modifier
     ) {
-        items(allStatistics) {
-            StatisticItemBriefComposable(
-                statisticBriefItem = it,
-                onStatisticItemPressed = onStatisticItemPressed
-            )
+        Text(
+            text = stringResource(R.string.all_statistics),
+            style = MaterialTheme.typography.headlineLarge,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.padding(start = dimensionResource(R.dimen.padding_large))
+                .padding(bottom = dimensionResource(R.dimen.padding_small))
+        )
+        LazyColumn (
+            contentPadding = contentPadding,
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_smadium)),
+        ) {
+            items(allStatistics) {
+                StatisticItemBriefComposable(
+                    statisticBriefItem = it,
+                    onStatisticItemPressed = onStatisticItemPressed
+                )
+            }
         }
     }
 }
@@ -194,6 +192,32 @@ fun StatisticItemChart(
             ChartType.PIE_CHART -> PieChart(renderData = chartData)
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HomeStatisticsAllStatisticsListPreview() {
+    HomeStatisticsAllStatisticsList(
+        allStatistics = listOf(
+            TemporalStatisticBrief(
+                displayNameRes = R.string.statistic_name,
+                timeFrameName = Year.of(2024).toString(),
+                unitRes = null,
+                data = listOf(1634, 1234, 2435, 0, 134, 9823, 12345, 450, 987, 456, 325, 943),
+                chartType = ChartType.BAR_GRAPH,
+                dataText = null
+            ),
+            TemporalStatisticBrief(
+                displayNameRes = R.string.statistic_name,
+                timeFrameName = Year.of(2024).toString(),
+                unitRes = null,
+                data = listOf(1634, 1234, 2435, 0, 134, 9823, 12345, 450, 987, 456, 325, 943),
+                chartType = ChartType.BAR_GRAPH,
+                dataText = null
+            )
+        ),
+        onStatisticItemPressed = {}
+    )
 }
 
 @Preview

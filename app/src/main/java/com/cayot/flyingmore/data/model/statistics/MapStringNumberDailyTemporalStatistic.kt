@@ -40,7 +40,7 @@ class MapStringNumberDailyTemporalStatistic(
     }
 
     override fun toTemporalStatisticBrief(resolution: TimeFrame): TemporalStatisticBrief {
-        val rawData = getResolution(resolution)[0]
+        val rawData = getResolution(TimeFrame.YEAR)[0]
         val sortedValues = rawData.values.sortedDescending()
         val listOfBiggest = sortedValues.take(10)
         val keyWithMaxValue = rawData.maxByOrNull { it.value }?.key
