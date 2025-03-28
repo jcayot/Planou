@@ -70,7 +70,8 @@ class GenerateFlyingStatisticsWorker(
                 Result.success()
             }
 
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            e.printStackTrace()
             return (Result.failure())
         }
     }

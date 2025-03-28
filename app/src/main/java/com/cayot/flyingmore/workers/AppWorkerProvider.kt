@@ -18,8 +18,8 @@ object AppWorkerProvider {
                     GenerateFlyingStatisticsWorker(
                         ctx = appContext,
                         params = workerParameters,
-                        flyingStatisticsRepository = appContext.planouApplication().container.flyingStatisticsRepository,
-                        flightsRepository = appContext.planouApplication().container.flightsRepository,
+                        flyingStatisticsRepository = appContext.flyingMoreApplication().container.flyingStatisticsRepository,
+                        flightsRepository = appContext.flyingMoreApplication().container.flightsRepository,
                     )
                 }
 
@@ -30,5 +30,5 @@ object AppWorkerProvider {
     }
 }
 
-fun Context.planouApplication(): FlyingMoreApplication =
+fun Context.flyingMoreApplication(): FlyingMoreApplication =
     this.applicationContext as FlyingMoreApplication

@@ -50,4 +50,5 @@
     <string name="airports_visits">Visits at airport</string>
     <string name="no_statistics_yet">No statistics yet</string>
     <string name="no_statistics_image">No statistics image</string>
+    <string name="km">km</string>
 </resources>

@@ -19,7 +19,8 @@ enum class FlyingStatistic(
         displayNameResource = R.string.number_of_flights
     ),
     FLOWN_DISTANCE(
-        displayNameResource = R.string.flown_distance
+        displayNameResource = R.string.flown_distance,
+        unitResource = R.string.km
     ),
     AIRPORT_VISIT_NUMBER(
         displayNameResource = R.string.airports_visits,
