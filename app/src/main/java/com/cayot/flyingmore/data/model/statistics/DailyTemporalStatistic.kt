@@ -86,12 +86,13 @@ fun <T> DailyTemporalStatistic<T>.getData(resolution: TimeFrame = statisticType.
     throw IllegalStateException("Unimplemented data resolution. Shouldn't be constructable")
 }
 
-internal fun <T> DailyTemporalStatistic<T>.getTimeFrameString(resolution: TimeFrame) : String {
+internal fun <T> DailyTemporalStatistic<T>.getTimeFrameString(resolution: TimeFrame, shift: Int = 0) : String {
     return when (resolution) {
-        TimeFrame.DAY -> timeFrameStart.dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault())
-        TimeFrame.WEEK -> "${formatWeekDate(timeFrameStart)} - ${formatWeekDate(timeFrameEnd)}"
-        TimeFrame.MONTH -> timeFrameStart.month.getDisplayName(TextStyle.FULL, Locale.getDefault())
+        TimeFrame.MONTH -> timeFrameStart.plusMonths(shift.toLong() - 1)
+            .month.getDisplayName(TextStyle.FULL, Locale.getDefault())
         TimeFrame.YEAR -> timeFrameStart.year.toString()
+        TimeFrame.DAY -> throw NotImplementedError()
+        TimeFrame.WEEK -> throw NotImplementedError()
     }
 }
 
