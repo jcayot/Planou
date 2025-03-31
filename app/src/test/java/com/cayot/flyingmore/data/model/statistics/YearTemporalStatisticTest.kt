@@ -21,7 +21,7 @@ class YearTemporalStatisticTest {
 
     @Test
     fun getResolution_dailyToWeekly() {
-        val weekly = testStatistic.getResolution(resolution = TimeFrame.WEEK)
+        val weekly = testStatistic.getData(resolution = TimeFrame.WEEK)
         assertEquals(53, weekly.size)
         assertEquals(1, weekly[0])
         for (i in 1..51)
@@ -32,7 +32,7 @@ class YearTemporalStatisticTest {
     @Test
     fun getResolution_dailyToMonthly() {
         val year = Year.from(testStatistic.timeFrameStart)
-        val monthly = testStatistic.getResolution(resolution = TimeFrame.MONTH)
+        val monthly = testStatistic.getData(resolution = TimeFrame.MONTH)
         assertEquals(12, monthly.size)
         for (currentMonth in 1..12)
             assertEquals(year.atMonth(currentMonth).lengthOfMonth(), monthly[currentMonth - 1])
@@ -41,7 +41,7 @@ class YearTemporalStatisticTest {
     @Test
     fun getResolution_dailyToYearly() {
         val year = Year.from(testStatistic.timeFrameStart)
-        val yearly = testStatistic.getResolution(resolution = TimeFrame.YEAR)
+        val yearly = testStatistic.getData(resolution = TimeFrame.YEAR)
         assertEquals(1, yearly.size)
         assertEquals(yearly[0], if (year.isLeap) 366 else 365 )
     }

@@ -9,6 +9,7 @@ enum class FlyingStatistic(
     @StringRes val displayNameResource: Int = R.string.statistic_name,
     val dataTimeFrame: TimeFrame = TimeFrame.YEAR,
     val dataResolution: TimeFrame = TimeFrame.DAY,
+    val briefDisplayResolution: TimeFrame = TimeFrame.MONTH,
     val defaultDisplayResolution: TimeFrame = TimeFrame.DAY,
     val allowedDisplayResolutions: List<TimeFrame> = TimeFrame.entries,
     val dataType: ListDataType = ListDataType.INT,
@@ -24,7 +25,9 @@ enum class FlyingStatistic(
     ),
     AIRPORT_VISIT_NUMBER(
         displayNameResource = R.string.airports_visits,
-        dataType = ListDataType.MAP_STRING_INT
+        briefDisplayResolution = TimeFrame.YEAR,
+        dataType = ListDataType.MAP_STRING_INT,
+        unitResource = R.string.visits
     );
 
     companion object {

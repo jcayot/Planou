@@ -2,7 +2,6 @@ package com.cayot.flyingmore.data.model.statistics
 
 import com.cayot.flyingmore.data.local.model.FlyingStatisticEntity
 import com.cayot.flyingmore.data.model.statistics.enums.FlyingStatistic
-import com.cayot.flyingmore.data.model.statistics.enums.TimeFrame
 import java.time.LocalDate
 import java.time.ZoneOffset
 
@@ -39,8 +38,8 @@ class MapStringNumberDailyTemporalStatistic(
         ))
     }
 
-    override fun toTemporalStatisticBrief(resolution: TimeFrame): TemporalStatisticBrief {
-        val rawData = getResolution(TimeFrame.YEAR)[0]
+    override fun toTemporalStatisticBrief(): TemporalStatisticBrief {
+        val rawData = getData(statisticType.briefDisplayResolution)[0]
         val sortedValues = rawData.values.sortedDescending()
         val listOfBiggest = sortedValues.take(10)
         val keyWithMaxValue = rawData.maxByOrNull { it.value }?.key
@@ -49,9 +48,9 @@ class MapStringNumberDailyTemporalStatistic(
             data = listOfBiggest,
             displayNameRes = statisticType.displayNameResource,
             unitRes = statisticType.unitResource,
-            timeFrameName = this.getTimeFrameName(),
+            timeFrameName = this.getTimeFrameString(statisticType.briefDisplayResolution),
             chartType = statisticType.chartType,
-            dataText = keyWithMaxValue
+            dataText = keyWithMaxValue + " " + listOfBiggest[0],
         )
     }
 
