@@ -42,7 +42,7 @@ class NumberDailyTemporalStatistic(
             data = data,
             displayNameRes = statisticType.displayNameResource,
             unitRes = statisticType.unitResource,
-            timeFrameName = this.getTimeFrameString(statisticType.briefDisplayResolution, data.size),
+            timeFrameString = this.getTimeFrameString(statisticType.briefDisplayResolution, data.size),
             chartType = statisticType.chartType,
             dataText = data.last().toString(),
             trend = getTrend(dataToDisplay)

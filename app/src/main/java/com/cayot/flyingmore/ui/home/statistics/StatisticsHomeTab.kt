@@ -59,7 +59,7 @@ fun HomeStatisticsTab(
     HomeStatisticsScreenContent(
         uiState = uiState,
         onStatisticItemPressed = onStatisticItemPressed,
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier,
         contentPadding = contentPadding
     )
 }
@@ -76,9 +76,7 @@ fun HomeStatisticsScreenContent(
             painter = painterResource(R.drawable.bar_chart_off_24dp_999999_fill0_wght400_grad0_opsz24),
             contentDescription = stringResource(R.string.no_statistics_image),
             text = stringResource(R.string.no_statistics_yet),
-            modifier = Modifier
-                .padding(contentPadding)
-                .fillMaxSize()
+            modifier = modifier.padding(contentPadding)
         )
     } else {
         HomeStatisticsAllStatisticsList(
@@ -98,18 +96,18 @@ fun HomeStatisticsAllStatisticsList(
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
     Column(
-        modifier = modifier.padding(dimensionResource(R.dimen.padding_smadium)),
+        modifier = modifier.padding(contentPadding),
     ) {
         Text(
             text = stringResource(R.string.all_statistics),
-            style = MaterialTheme.typography.headlineLarge,
+            style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(start = dimensionResource(R.dimen.padding_large))
-                .padding(bottom = dimensionResource(R.dimen.padding_small))
+                .padding(vertical = dimensionResource(R.dimen.padding_small))
         )
         LazyColumn (
-            contentPadding = contentPadding,
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_smadium)),
+            modifier = modifier.padding(dimensionResource(id = R.dimen.padding_smadium)),
         ) {
             items(allStatistics) {
                 StatisticItemBriefComposable(
@@ -162,7 +160,7 @@ fun StatisticItemBriefComposable(
                         modifier = Modifier.weight(1f)
                     )
                     Text(
-                        text = statisticBriefItem.timeFrameName,
+                        text = statisticBriefItem.timeFrameString,
                         fontWeight = FontWeight.Light
                     )
                 }
@@ -224,7 +222,7 @@ fun HomeStatisticsAllStatisticsListPreview() {
         allStatistics = listOf(
             TemporalStatisticBrief(
                 displayNameRes = R.string.statistic_name,
-                timeFrameName = Year.of(2024).toString(),
+                timeFrameString = Year.of(2024).toString(),
                 unitRes = null,
                 data = listOf(1634, 1234, 2435, 0, 134, 9823, 12345, 450, 987, 456, 325, 943),
                 chartType = ChartType.BAR_GRAPH,
@@ -233,7 +231,7 @@ fun HomeStatisticsAllStatisticsListPreview() {
             ),
             TemporalStatisticBrief(
                 displayNameRes = R.string.statistic_name,
-                timeFrameName = Year.of(2024).toString(),
+                timeFrameString = Year.of(2024).toString(),
                 unitRes = null,
                 data = listOf(1634, 1234, 2435, 0, 134, 9823, 12345, 450, 987, 456, 325, 943),
                 chartType = ChartType.BAR_GRAPH,
@@ -251,7 +249,7 @@ fun StatisticItemBriefComposablePreview() {
     StatisticItemBriefComposable(
         statisticBriefItem = TemporalStatisticBrief(
             displayNameRes = R.string.statistic_name,
-            timeFrameName = Year.of(2024).toString(),
+            timeFrameString = Year.of(2024).toString(),
             unitRes = null,
             data = listOf(1634, 1234, 2435, 0, 134, 9823, 12345, 450, 987, 456, 325, 943),
             chartType = ChartType.BAR_GRAPH,
