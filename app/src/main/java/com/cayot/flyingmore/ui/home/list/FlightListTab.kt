@@ -158,7 +158,7 @@ fun FlightListItemComposable(
                 Row (
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Badge(containerColor = colorResource(R.color.flight_distance_green),
+                    Badge(containerColor = colorResource(R.color.good_green),
                         contentColor = Color.White) {
                         Text(
                             text = "+ " + flight.getDistanceString(),

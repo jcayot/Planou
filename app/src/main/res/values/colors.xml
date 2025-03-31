@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="flight_distance_green">#4fcc6e</color>
+    <color name="good_green">#4fcc6e</color>
+    <color name="bad_red">#ff4d4d</color>
+    <color name="stable_grey">#999999</color>
 </resources>
