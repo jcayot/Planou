@@ -93,7 +93,7 @@ fun HomeStatisticsAllStatisticsList(
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
     Column(
-        modifier = modifier
+        modifier = modifier.padding(dimensionResource(R.dimen.padding_smadium)),
     ) {
         Text(
             text = stringResource(R.string.all_statistics),
@@ -169,6 +169,8 @@ fun StatisticItemBriefComposable(
                     (statisticBriefItem.data.last().toString()),
                     unit = statisticBriefItem.unitRes?.let { stringResource(it) },
                     modifier = Modifier.fillMaxWidth()
+                        .padding(bottom = dimensionResource(R.dimen.padding_small))
+                        .padding(start = dimensionResource(R.dimen.padding_small))
                 )
             }
         }

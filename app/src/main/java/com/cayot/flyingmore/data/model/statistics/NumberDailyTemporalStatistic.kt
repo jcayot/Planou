@@ -2,7 +2,6 @@ package com.cayot.flyingmore.data.model.statistics
 
 import com.cayot.flyingmore.data.local.model.FlyingStatisticEntity
 import com.cayot.flyingmore.data.model.statistics.enums.FlyingStatistic
-import com.cayot.flyingmore.data.model.statistics.enums.TimeFrame
 import java.time.LocalDate
 import java.time.ZoneOffset
 
@@ -33,13 +32,13 @@ class NumberDailyTemporalStatistic(
         ))
     }
 
-    override fun toTemporalStatisticBrief(resolution: TimeFrame): TemporalStatisticBrief {
+    override fun toTemporalStatisticBrief(): TemporalStatisticBrief {
         return (TemporalStatisticBrief(
             id = id,
-            data = this.getResolution(resolution),
+            data = this.getData(statisticType.briefDisplayResolution),
             displayNameRes = statisticType.displayNameResource,
             unitRes = statisticType.unitResource,
-            timeFrameName = this.getTimeFrameName(),
+            timeFrameName = this.getTimeFrameString(statisticType.briefDisplayResolution),
             chartType = statisticType.chartType
         ))
     }

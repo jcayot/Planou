@@ -66,12 +66,12 @@ abstract class DailyTemporalStatistic<T>(
 
     abstract fun toFlyingStatisticEntity() : FlyingStatisticEntity
 
-    abstract fun toTemporalStatisticBrief(resolution: TimeFrame = TimeFrame.MONTH) : TemporalStatisticBrief
+    abstract fun toTemporalStatisticBrief() : TemporalStatisticBrief
 
     abstract fun copy(data: List<T> = this.data) : DailyTemporalStatistic<T>
 }
 
-fun <T> DailyTemporalStatistic<T>.getResolution(resolution: TimeFrame = statisticType.dataResolution) : List<T> {
+fun <T> DailyTemporalStatistic<T>.getData(resolution: TimeFrame = statisticType.dataResolution) : List<T> {
     if (resolution < statisticType.dataResolution)
         throw IllegalArgumentException("Cannot lower data resolution")
 
@@ -86,8 +86,8 @@ fun <T> DailyTemporalStatistic<T>.getResolution(resolution: TimeFrame = statisti
     throw IllegalStateException("Unimplemented data resolution. Shouldn't be constructable")
 }
 
-fun <T> DailyTemporalStatistic<T>.getTimeFrameName() : String {
-    return when (statisticType.dataTimeFrame) {
+internal fun <T> DailyTemporalStatistic<T>.getTimeFrameString(resolution: TimeFrame) : String {
+    return when (resolution) {
         TimeFrame.DAY -> timeFrameStart.dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault())
         TimeFrame.WEEK -> "${formatWeekDate(timeFrameStart)} - ${formatWeekDate(timeFrameEnd)}"
         TimeFrame.MONTH -> timeFrameStart.month.getDisplayName(TextStyle.FULL, Locale.getDefault())
@@ -95,7 +95,8 @@ fun <T> DailyTemporalStatistic<T>.getTimeFrameName() : String {
     }
 }
 
-private fun <T> DailyTemporalStatistic<T>.formatWeekDate(date: LocalDate): String {
+
+internal fun <T> DailyTemporalStatistic<T>.formatWeekDate(date: LocalDate): String {
     val formatter = DateTimeFormatter.ofPattern("dd MMM", Locale.getDefault())
     return date.format(formatter)
 }
