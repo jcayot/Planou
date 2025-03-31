@@ -2,6 +2,7 @@ package com.cayot.flyingmore.data.model.statistics
 
 import com.cayot.flyingmore.data.local.model.FlyingStatisticEntity
 import com.cayot.flyingmore.data.model.statistics.enums.FlyingStatistic
+import com.cayot.flyingmore.data.model.statistics.enums.TimeFrame
 import java.time.LocalDate
 import java.time.ZoneOffset
 
@@ -33,13 +34,17 @@ class NumberDailyTemporalStatistic(
     }
 
     override fun toTemporalStatisticBrief(): TemporalStatisticBrief {
+        val data = this.getData(statisticType.briefDisplayResolution)
+
         return (TemporalStatisticBrief(
             id = id,
-            data = this.getData(statisticType.briefDisplayResolution),
+            data = data,
             displayNameRes = statisticType.displayNameResource,
             unitRes = statisticType.unitResource,
             timeFrameName = this.getTimeFrameString(statisticType.briefDisplayResolution),
-            chartType = statisticType.chartType
+            chartType = statisticType.chartType,
+            dataText = data.last().toString(),
+            trend = getTrend()
         ))
     }
 
@@ -52,4 +57,14 @@ class NumberDailyTemporalStatistic(
             statisticType = statisticType
         ))
     }
+}
+
+private fun NumberDailyTemporalStatistic.getTrend() : Trend? {
+    if (statisticType.briefDisplayResolution == TimeFrame.YEAR)
+        return null
+    if (data.last() > data[data.size - 2])
+        return Trend.INCREASING
+    if (data.last() < data[data.size - 2])
+        return Trend.DECREASING
+    return Trend.STABLE
 }

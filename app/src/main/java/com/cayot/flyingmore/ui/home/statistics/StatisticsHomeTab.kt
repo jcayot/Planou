@@ -15,8 +15,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Badge
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,6 +26,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -33,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cayot.flyingmore.R
 import com.cayot.flyingmore.data.model.statistics.TemporalStatisticBrief
+import com.cayot.flyingmore.data.model.statistics.Trend
 import com.cayot.flyingmore.data.model.statistics.enums.ChartType
 import com.cayot.flyingmore.ui.AppViewModelProvider
 import com.cayot.flyingmore.ui.composable.DataUnitField
@@ -130,7 +135,7 @@ fun StatisticItemBriefComposable(
     ) {
         Row(modifier = Modifier
             .fillMaxWidth()
-            .size(dimensionResource(R.dimen.list_item_height))
+            .size(dimensionResource(R.dimen.statistic_list_item_heigth))
             .padding(dimensionResource(R.dimen.padding_small))
         ) {
             StatisticItemChart(
@@ -164,14 +169,30 @@ fun StatisticItemBriefComposable(
                 Spacer(
                     modifier = Modifier.weight(1f)
                 )
-                DataUnitField(
-                    data = statisticBriefItem.dataText ?:
-                    (statisticBriefItem.data.last().toString()),
-                    unit = statisticBriefItem.unitRes?.let { stringResource(it) },
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                         .padding(bottom = dimensionResource(R.dimen.padding_small))
                         .padding(start = dimensionResource(R.dimen.padding_small))
-                )
+                ) {
+                    DataUnitField(
+                        data = statisticBriefItem.dataText,
+                        unit = statisticBriefItem.unitRes?.let { stringResource(it) },
+                    )
+                    if (statisticBriefItem.trend != null) {
+                        Badge(
+                            containerColor = colorResource(statisticBriefItem.trend.colorRes),
+                            contentColor = Color.White,
+                            modifier = Modifier.padding(start = dimensionResource(R.dimen.padding_small))
+                                .size(dimensionResource(R.dimen.badge_size))
+                        ) {
+                            Icon(
+                                imageVector = statisticBriefItem.trend.icon,
+                                contentDescription = statisticBriefItem.trend.icon.name
+                            )
+                        }
+                    }
+                }
             }
         }
     }
@@ -207,7 +228,8 @@ fun HomeStatisticsAllStatisticsListPreview() {
                 unitRes = null,
                 data = listOf(1634, 1234, 2435, 0, 134, 9823, 12345, 450, 987, 456, 325, 943),
                 chartType = ChartType.BAR_GRAPH,
-                dataText = null
+                dataText = "1634",
+                trend = Trend.INCREASING
             ),
             TemporalStatisticBrief(
                 displayNameRes = R.string.statistic_name,
@@ -215,7 +237,8 @@ fun HomeStatisticsAllStatisticsListPreview() {
                 unitRes = null,
                 data = listOf(1634, 1234, 2435, 0, 134, 9823, 12345, 450, 987, 456, 325, 943),
                 chartType = ChartType.BAR_GRAPH,
-                dataText = null
+                dataText = "1634",
+                trend = Trend.INCREASING
             )
         ),
         onStatisticItemPressed = {}
@@ -232,7 +255,8 @@ fun StatisticItemBriefComposablePreview() {
             unitRes = null,
             data = listOf(1634, 1234, 2435, 0, 134, 9823, 12345, 450, 987, 456, 325, 943),
             chartType = ChartType.BAR_GRAPH,
-            dataText = null
+            dataText = "1634",
+            trend = Trend.INCREASING
         ),
         onStatisticItemPressed = {}
     )

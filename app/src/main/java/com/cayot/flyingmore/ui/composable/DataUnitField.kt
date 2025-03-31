@@ -25,7 +25,7 @@ fun DataUnitField(
     ) {
         Text(
             text = data,
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleMedium,
             fontWeight = SemiBold
         )
         if (unit != null) {

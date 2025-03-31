@@ -10,5 +10,6 @@ data class TemporalStatisticBrief(
     @StringRes val unitRes: Int? = null,
     val timeFrameName: String,
     val chartType: ChartType,
-    val dataText: String? = null
+    val dataText: String,
+    val trend: Trend? = null
 )
