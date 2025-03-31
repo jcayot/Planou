@@ -86,7 +86,7 @@ fun <T> DailyTemporalStatistic<T>.getData(resolution: TimeFrame = statisticType.
     throw IllegalStateException("Unimplemented data resolution. Shouldn't be constructable")
 }
 
-internal fun <T> DailyTemporalStatistic<T>.getTimeFrameString(resolution: TimeFrame, shift: Int = 0) : String {
+internal fun <T> DailyTemporalStatistic<T>.getTimeFrameString(resolution: TimeFrame, shift: Int = 1) : String {
     return when (resolution) {
         TimeFrame.MONTH -> timeFrameStart.plusMonths(shift.toLong() - 1)
             .month.getDisplayName(TextStyle.FULL, Locale.getDefault())

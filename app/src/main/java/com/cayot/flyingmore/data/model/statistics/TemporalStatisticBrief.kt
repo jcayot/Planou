@@ -8,7 +8,7 @@ data class TemporalStatisticBrief(
     val data: List<Int>,
     @StringRes val displayNameRes: Int,
     @StringRes val unitRes: Int? = null,
-    val timeFrameName: String,
+    val timeFrameString: String,
     val chartType: ChartType,
     val dataText: String,
     val trend: Trend? = null

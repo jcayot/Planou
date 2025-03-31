@@ -48,7 +48,7 @@ class MapStringNumberDailyTemporalStatistic(
             data = listOfBiggest,
             displayNameRes = statisticType.displayNameResource,
             unitRes = statisticType.unitResource,
-            timeFrameName = this.getTimeFrameString(statisticType.briefDisplayResolution),
+            timeFrameString = this.getTimeFrameString(statisticType.briefDisplayResolution),
             chartType = statisticType.chartType,
             dataText = keyWithMaxValue + " " + listOfBiggest[0],
         )
