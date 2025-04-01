@@ -75,21 +75,16 @@ fun HomeStatisticScreenContent(
             )
         },
         modifier = modifier,
-        emptyPlaceholder = {EmptyStatisticPlaceholder()},
+        emptyPlaceholder = {
+            EmptyPlaceholder(
+                painter = painterResource(R.drawable.bar_chart_off_24dp_999999_fill0_wght400_grad0_opsz24),
+                contentDescription = stringResource(R.string.no_statistics_image),
+                text = stringResource(R.string.no_statistics_yet),
+                modifier = modifier
+            )
+        },
         title = {StatisticListTitle()},
         listItemVerticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_smadium))
-    )
-}
-
-@Composable
-fun EmptyStatisticPlaceholder(
-    modifier: Modifier = Modifier
-) {
-    EmptyPlaceholder(
-        painter = painterResource(R.drawable.bar_chart_off_24dp_999999_fill0_wght400_grad0_opsz24),
-        contentDescription = stringResource(R.string.no_statistics_image),
-        text = stringResource(R.string.no_statistics_yet),
-        modifier = modifier
     )
 }
 

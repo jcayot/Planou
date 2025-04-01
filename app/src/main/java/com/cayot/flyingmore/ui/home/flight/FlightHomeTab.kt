@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Badge
 import androidx.compose.material3.Card
@@ -42,6 +40,7 @@ import com.cayot.flyingmore.data.model.getDistanceString
 import com.cayot.flyingmore.ui.AppViewModelProvider
 import com.cayot.flyingmore.ui.composable.EmptyPlaceholder
 import com.cayot.flyingmore.ui.composable.FlightMap
+import com.cayot.flyingmore.ui.composable.ListComposable
 
 @Composable
 fun HomeListTab(
@@ -64,35 +63,10 @@ fun FlightListScreenContent(
     onFlightPressed: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (uiState.flightList != null) {
-        if (uiState.flightList.isEmpty()) {
-            EmptyPlaceholder(
-                painter = painterResource(R.drawable.airplanemode_inactive_40px),
-                contentDescription = stringResource(R.string.list_empty_sad_plane),
-                text = stringResource(R.string.flight_list_empty),
-                modifier = modifier
-            )
-        } else {
-            FlightListList(
-                flightList = uiState.flightList,
-                onFlightPressed = onFlightPressed,
-                modifier = modifier,
-            )
-        }
-    }
-}
-
-@Composable
-fun FlightListList(
-    flightList: List<FlightItem>,
-    onFlightPressed: (Int) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    LazyColumn (
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_smadium)),
-        modifier = modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_smadium)),
-    ) {
-        items(flightList) { flightItem: FlightItem ->
+    ListComposable(
+        list = uiState.flightList,
+        onItemPressed = onFlightPressed,
+        itemComposable = { flightItem, onFlightPressed ->
             if (flightItem.year != null) {
                 Text(
                     text = flightItem.year.toString(),
@@ -107,8 +81,18 @@ fun FlightListList(
                     onFlightPressed = onFlightPressed
                 )
             }
-        }
-    }
+        },
+        modifier = modifier,
+        emptyPlaceholder = {
+            EmptyPlaceholder(
+                painter = painterResource(R.drawable.airplanemode_inactive_40px),
+                contentDescription = stringResource(R.string.list_empty_sad_plane),
+                text = stringResource(R.string.flight_list_empty),
+                modifier = modifier
+            )
+        },
+        listItemVerticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_smadium))
+    )
 }
 
 @Composable
@@ -202,12 +186,14 @@ fun FlightItemMap(
 @Preview (showBackground = true)
 @Composable
 fun	FlightListScreenContentPreview() {
-    FlightListList(
-        flightList = makeFlightItemsList(
-            listOf(
-                FlightBrief.getPlaceholder1(),
-                FlightBrief.getPlaceholder1(),
-            )
+    FlightListScreenContent(
+        uiState = FlightListUIState(
+            flightList = makeFlightItemsList(
+                listOf(
+                    FlightBrief.getPlaceholder1(),
+                    FlightBrief.getPlaceholder1()
+                )
+            ),
         ),
         onFlightPressed = {},
     )

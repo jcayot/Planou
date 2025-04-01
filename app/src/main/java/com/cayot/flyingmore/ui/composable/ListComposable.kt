@@ -12,15 +12,18 @@ import com.cayot.flyingmore.R
 
 @Composable
 fun <T> ListComposable(
-    list: List<T>,
+    list: List<T>?,
     onItemPressed: (Int) -> Unit,
     itemComposable: @Composable (T, (Int) -> Unit) -> Unit,
     modifier: Modifier = Modifier,
+    nullPlaceholder: @Composable () -> Unit = {},
     emptyPlaceholder: @Composable () -> Unit = {},
     title: @Composable () -> Unit = {},
     listItemVerticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(dimensionResource(R.dimen.padding_smadium)),
 ) {
-    if (list.isEmpty()) {
+    if (list == null) {
+        nullPlaceholder()
+    } else if (list.isEmpty()) {
         emptyPlaceholder()
     } else {
         ListComposableList(
