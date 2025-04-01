@@ -5,7 +5,6 @@ import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cayot.flyingmore.data.model.FlightMapState
 import com.cayot.flyingmore.data.repository.ImageRepository
 import com.cayot.flyingmore.data.model.Flight
 import com.cayot.flyingmore.data.repository.FlightsRepository
@@ -102,12 +101,7 @@ class FlightDetailsViewModel(
 	}
 
 	private	fun onFlightRetrieved(flight: Flight) {
-		val flightMapState = FlightMapState.fromAirports(flight.originAirport, flight.destinationAirport)
-
-		_uiState.update {
-			it.copy(flight = flight,
-				flightMapState = flightMapState)
-		}
+		_uiState.update { it.copy(flight = flight) }
 	}
 
 	private fun createFlightNotesDatabase()  = viewModelScope.launch {

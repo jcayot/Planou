@@ -2,8 +2,6 @@ package com.cayot.flyingmore.ui.home.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cayot.flyingmore.data.model.FlightMapState
-import com.cayot.flyingmore.data.model.FlightBrief
 import com.cayot.flyingmore.data.repository.FlightsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,19 +19,6 @@ class FlightListViewModel(
 		viewModelScope.launch {
 			flightsRepository.getAllFlightBriefsStream().collect { flights ->
 				_uiState.update { it.copy(flightList = makeFlightItemsList(flights)) }
-			}
-		}
-	}
-
-	fun updateFlightMap(flight: FlightBrief) {
-		if (!_uiState.value.flightMapStateMap.containsKey(flight.id)) {
-			viewModelScope.launch {
-
-				val mapState = FlightMapState.fromAirports(flight.originAirport, flight.destinationAirport)
-				val updatedFlightMapStateMap = _uiState.value.flightMapStateMap.toMutableMap()
-				updatedFlightMapStateMap[flight.id] = mapState
-
-				_uiState.update { it.copy(flightMapStateMap = updatedFlightMapStateMap.toMap()) }
 			}
 		}
 	}

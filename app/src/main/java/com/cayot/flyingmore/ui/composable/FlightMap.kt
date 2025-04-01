@@ -4,26 +4,43 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import com.cayot.flyingmore.data.model.FlightMapState
+import com.cayot.flyingmore.data.local.model.Airport
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.maps.android.compose.rememberUpdatedMarkerState
 
 @Composable
 fun FlightMap(
-	flightMapState: FlightMapState,
-	padding: Int,
-	modifier: Modifier = Modifier
+	originAirport: Airport,
+	destinationAirport: Airport,
+	modifier: Modifier = Modifier,
+	padding: Int = 0
 ) {
-	LaunchedEffect(flightMapState.mapBounds) {
-		flightMapState.cameraPositionState.animate(
-			CameraUpdateFactory.newLatLngBounds(flightMapState.mapBounds, padding)
+	val originLatLng = LatLng(originAirport.latitude, originAirport.longitude)
+	val destLatLng = LatLng(destinationAirport.latitude, destinationAirport.longitude)
+	val mapBounds = LatLngBounds.builder().include(originLatLng).include(destLatLng).build()
+
+	val cameraPositionState = rememberCameraPositionState {
+		position = CameraPosition.fromLatLngZoom(mapBounds.center, 1f)
+	}
+	val originMarkerState = rememberUpdatedMarkerState(position = originLatLng)
+	val destinationMarkerState = rememberUpdatedMarkerState(position = destLatLng)
+
+	LaunchedEffect(mapBounds) {
+		cameraPositionState.animate(
+			CameraUpdateFactory.newLatLngBounds(mapBounds, padding)
 		)
 	}
+
 	GoogleMap(
-		cameraPositionState = flightMapState.cameraPositionState,
+		cameraPositionState = cameraPositionState,
 		properties = MapProperties(
 			minZoomPreference = 1.0f
 		),
@@ -40,12 +57,12 @@ fun FlightMap(
 			zoomGesturesEnabled = false
 		),
 		modifier = modifier.fillMaxSize(),
-		) {
+	) {
 		Marker(
-			state = flightMapState.originMarkerState
+			state = originMarkerState
 		)
 		Marker(
-			state = flightMapState.destinationMarkerState
+			state = destinationMarkerState
 		)
 	}
 }

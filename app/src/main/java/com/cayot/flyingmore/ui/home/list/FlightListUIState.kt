@@ -1,12 +1,10 @@
 package com.cayot.flyingmore.ui.home.list
 
-import com.cayot.flyingmore.data.model.FlightMapState
 import com.cayot.flyingmore.data.model.FlightBrief
 import java.util.Calendar
 
 data class FlightListUIState(
 	val flightList: List<FlightItem>? = null,
-	val flightMapStateMap: Map<Int, FlightMapState?> = emptyMap()
 )
 
 data class FlightItem(

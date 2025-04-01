@@ -35,8 +35,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cayot.flyingmore.R
+import com.cayot.flyingmore.data.local.model.Airport
 import com.cayot.flyingmore.data.model.FlightBrief
-import com.cayot.flyingmore.data.model.FlightMapState
 import com.cayot.flyingmore.data.model.getDepartureDateString
 import com.cayot.flyingmore.data.model.getDistanceString
 import com.cayot.flyingmore.ui.AppViewModelProvider
@@ -54,7 +54,6 @@ fun HomeListTab(
     FlightListScreenContent(
         uiState = uiState,
         onFlightPressed = onFlightPressed,
-        onItemVisible = viewModel::updateFlightMap,
         modifier = modifier.fillMaxSize(),
     )
 }
@@ -63,7 +62,6 @@ fun HomeListTab(
 fun FlightListScreenContent(
     uiState: FlightListUIState,
     onFlightPressed: (Int) -> Unit,
-    onItemVisible: (FlightBrief) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (uiState.flightList != null) {
@@ -77,9 +75,7 @@ fun FlightListScreenContent(
         } else {
             FlightListList(
                 flightList = uiState.flightList,
-                flightMapStateMap = uiState.flightMapStateMap,
                 onFlightPressed = onFlightPressed,
-                onItemVisible = onItemVisible,
                 modifier = modifier,
             )
         }
@@ -89,9 +85,7 @@ fun FlightListScreenContent(
 @Composable
 fun FlightListList(
     flightList: List<FlightItem>,
-    flightMapStateMap: Map<Int, FlightMapState?>,
     onFlightPressed: (Int) -> Unit,
-    onItemVisible: (FlightBrief) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn (
@@ -108,11 +102,8 @@ fun FlightListList(
                         .padding(bottom = dimensionResource(R.dimen.padding_small))
                 )
             } else if (flightItem.flight != null) {
-                onItemVisible(flightItem.flight)
-
                 FlightListItemComposable(
                     flight = flightItem.flight,
-                    flightMapState = flightMapStateMap[flightItem.flight.id],
                     onFlightPressed = onFlightPressed
                 )
             }
@@ -123,7 +114,6 @@ fun FlightListList(
 @Composable
 fun FlightListItemComposable(
     flight : FlightBrief,
-    flightMapState: FlightMapState?,
     onFlightPressed: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -138,7 +128,8 @@ fun FlightListItemComposable(
             .padding(dimensionResource(R.dimen.padding_small))
         ) {
             FlightItemMap(
-                flightMapState = flightMapState,
+                originAirport = flight.originAirport,
+                destinationAirport = flight.destinationAirport,
                 modifier = Modifier.fillMaxHeight()
                     .aspectRatio(1f)
             )
@@ -190,7 +181,8 @@ fun FlightListItemComposable(
 
 @Composable
 fun FlightItemMap(
-    flightMapState: FlightMapState?,
+    originAirport: Airport,
+    destinationAirport: Airport,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -199,12 +191,11 @@ fun FlightItemMap(
             .fillMaxSize()
             .clip(RoundedCornerShape(8.dp))
     ) {
-        if (flightMapState != null) {
-            FlightMap(
-                flightMapState = flightMapState,
-                padding = 10
-            )
-        }
+        FlightMap(
+            originAirport = originAirport,
+            destinationAirport = destinationAirport,
+            padding = 10
+        )
     }
 }
 
@@ -218,9 +209,7 @@ fun	FlightListScreenContentPreview() {
                 FlightBrief.getPlaceholder1(),
             )
         ),
-        flightMapStateMap = emptyMap(),
         onFlightPressed = {},
-        onItemVisible = {}
     )
 }
 
@@ -230,6 +219,5 @@ fun FlightListItemPreview() {
     FlightListItemComposable(
         flight = FlightBrief.getPlaceholder1(),
         onFlightPressed = {},
-        flightMapState = null,
     )
 }

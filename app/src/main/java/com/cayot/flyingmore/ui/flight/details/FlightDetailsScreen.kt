@@ -74,13 +74,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cayot.flyingmore.R
-import com.cayot.flyingmore.data.model.FlightMapState
+import com.cayot.flyingmore.data.local.model.FlightNotes
 import com.cayot.flyingmore.data.model.Flight
 import com.cayot.flyingmore.data.model.getArrivalTimeString
 import com.cayot.flyingmore.data.model.getDepartureDateString
 import com.cayot.flyingmore.data.model.getDepartureTimeString
 import com.cayot.flyingmore.data.model.getDistanceString
-import com.cayot.flyingmore.data.local.model.FlightNotes
 import com.cayot.flyingmore.ui.AppViewModelProvider
 import com.cayot.flyingmore.ui.PlanouTopBar
 import com.cayot.flyingmore.ui.composable.FlightMap
@@ -217,7 +216,6 @@ fun FlightDetails(
 	) {
 		val flightCard = composableBitmap { FlightCard(
 			flight = uiState.flight!!,
-			flightMapState = uiState.flightMapState,
 		) }
 		FlightNotesComposable(
 			flightNotes = uiState.flight!!.flightNotes,
@@ -242,7 +240,6 @@ fun FlightDetails(
 @Composable
 fun FlightCard(
 	flight: Flight,
-	flightMapState: FlightMapState? = null,
 	modifier: Modifier = Modifier,
 	elevation: CardElevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
 ) {
@@ -261,12 +258,11 @@ fun FlightCard(
 					.aspectRatio(1.33f)
 					.clip(RoundedCornerShape(8.dp))
 			) {
-				if (flightMapState != null) {
-					FlightMap(
-						flightMapState = flightMapState,
-						padding = 50
-					)
-				}
+				FlightMap(
+					originAirport = flight.originAirport,
+					destinationAirport = flight.destinationAirport,
+					padding = 50
+				)
 			}
 			Row (
 				modifier = Modifier.fillMaxWidth()
