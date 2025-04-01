@@ -1,4 +1,4 @@
-package com.cayot.flyingmore.ui.home.statistics
+package com.cayot.flyingmore.ui.home.statistic
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -45,14 +45,14 @@ import com.cayot.flyingmore.ui.composable.ListComposable
 import java.time.Year
 
 @Composable
-fun HomeStatisticsTab(
+fun HomeStatisticTab(
     onStatisticItemPressed: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val viewModel: StatisticsHomeViewModel = viewModel(factory = AppViewModelProvider.factory)
+    val viewModel: StatisticHomeViewModel = viewModel(factory = AppViewModelProvider.factory)
     val uiState by viewModel.uiState.collectAsState()
 
-    HomeStatisticsScreenContent(
+    HomeStatisticScreenContent(
         uiState = uiState,
         onStatisticItemPressed = onStatisticItemPressed,
         modifier = modifier,
@@ -60,8 +60,8 @@ fun HomeStatisticsTab(
 }
 
 @Composable
-fun HomeStatisticsScreenContent(
-    uiState: StatisticsHomeUIState,
+fun HomeStatisticScreenContent(
+    uiState: StatisticHomeUIState,
     onStatisticItemPressed: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -75,14 +75,14 @@ fun HomeStatisticsScreenContent(
             )
         },
         modifier = modifier,
-        emptyPlaceholder = {EmptyStatisticsPlaceholder()},
+        emptyPlaceholder = {EmptyStatisticPlaceholder()},
         title = {StatisticListTitle()},
         listItemVerticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_smadium))
     )
 }
 
 @Composable
-fun EmptyStatisticsPlaceholder(
+fun EmptyStatisticPlaceholder(
     modifier: Modifier = Modifier
 ) {
     EmptyPlaceholder(
@@ -202,9 +202,9 @@ fun StatisticItemChart(
 
 @Preview(showBackground = true)
 @Composable
-fun HomeStatisticsScreenContentPreview() {
-    HomeStatisticsScreenContent(
-        uiState = StatisticsHomeUIState(listOf(
+fun HomeStatisticScreenContentPreview() {
+    HomeStatisticScreenContent(
+        uiState = StatisticHomeUIState(listOf(
             TemporalStatisticBrief(
                 displayNameRes = R.string.statistic_name,
                 timeFrameString = Year.of(2024).toString(),

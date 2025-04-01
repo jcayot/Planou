@@ -1,4 +1,4 @@
-package com.cayot.flyingmore.ui.composable
+package com.cayot.flyingmore.ui.composable.form
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box

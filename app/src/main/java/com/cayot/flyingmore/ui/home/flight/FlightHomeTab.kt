@@ -1,4 +1,4 @@
-package com.cayot.flyingmore.ui.home.list
+package com.cayot.flyingmore.ui.home.flight
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

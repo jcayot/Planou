@@ -1,4 +1,4 @@
-package com.cayot.flyingmore.ui.home.statistics
+package com.cayot.flyingmore.ui.home.statistic
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,11 +9,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.Year
 
-class StatisticsHomeViewModel(
+class StatisticHomeViewModel(
     private val generateAndGetAllFlyingStatisticsUseCase: GenerateAndGetAllFlyingStatisticsUseCase,
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(StatisticsHomeUIState())
-    val uiState : StateFlow<StatisticsHomeUIState> = _uiState
+    private val _uiState = MutableStateFlow(StatisticHomeUIState())
+    val uiState : StateFlow<StatisticHomeUIState> = _uiState
 
     init {
         viewModelScope.launch {

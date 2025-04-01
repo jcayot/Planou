@@ -1,4 +1,4 @@
-package com.cayot.flyingmore.ui.composable
+package com.cayot.flyingmore.ui.composable.form
 
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -10,7 +10,6 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import java.text.SimpleDateFormat
-import java.time.Instant
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)

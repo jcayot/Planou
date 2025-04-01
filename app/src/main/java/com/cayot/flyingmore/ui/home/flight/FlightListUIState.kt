@@ -1,4 +1,4 @@
-package com.cayot.flyingmore.ui.home.list
+package com.cayot.flyingmore.ui.home.flight
 
 import com.cayot.flyingmore.data.model.FlightBrief
 import java.util.Calendar

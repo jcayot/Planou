@@ -49,10 +49,10 @@ import com.cayot.flyingmore.data.model.TravelClass
 import com.cayot.flyingmore.data.local.model.Airport
 import com.cayot.flyingmore.ui.AppViewModelProvider
 import com.cayot.flyingmore.ui.PlanouTopBar
-import com.cayot.flyingmore.ui.composable.OutlinedDatePicker
-import com.cayot.flyingmore.ui.composable.OutlinedTimePicker
-import com.cayot.flyingmore.ui.composable.SearchTextField
-import com.cayot.flyingmore.ui.composable.SelectDropdown
+import com.cayot.flyingmore.ui.composable.form.OutlinedDatePicker
+import com.cayot.flyingmore.ui.composable.form.OutlinedTimePicker
+import com.cayot.flyingmore.ui.composable.form.SearchTextField
+import com.cayot.flyingmore.ui.composable.form.SelectDropdown
 import com.cayot.flyingmore.ui.theme.Typography
 import com.cayot.flyingmore.utils.SelectableDatesTo
 import java.time.Instant

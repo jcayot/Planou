@@ -1,4 +1,4 @@
-package com.cayot.flyingmore.ui.home.list
+package com.cayot.flyingmore.ui.home.flight
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

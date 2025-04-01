@@ -12,8 +12,8 @@ import com.cayot.flyingmore.domain.DeleteFlightWithNoteUseCase
 import com.cayot.flyingmore.domain.GenerateAndGetAllFlyingStatisticsUseCase
 import com.cayot.flyingmore.ui.flight.edit.FlightEditViewModel
 import com.cayot.flyingmore.ui.flight.details.FlightDetailsViewModel
-import com.cayot.flyingmore.ui.home.list.FlightListViewModel
-import com.cayot.flyingmore.ui.home.statistics.StatisticsHomeViewModel
+import com.cayot.flyingmore.ui.home.flight.FlightListViewModel
+import com.cayot.flyingmore.ui.home.statistic.StatisticHomeViewModel
 
 object AppViewModelProvider {
 	val factory = viewModelFactory {
@@ -45,7 +45,7 @@ object AppViewModelProvider {
 		}
 
 		initializer {
-			StatisticsHomeViewModel(
+			StatisticHomeViewModel(
 				generateAndGetAllFlyingStatisticsUseCase = GenerateAndGetAllFlyingStatisticsUseCase(
 					flyingStatisticsRepository = planouApplication().container.flyingStatisticsRepository,
 					generateFlyingStatisticRepository = planouApplication().container.generateFlyingStatisticRepository

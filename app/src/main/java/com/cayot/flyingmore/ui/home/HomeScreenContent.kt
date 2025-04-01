@@ -26,8 +26,8 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import com.cayot.flyingmore.R
 import com.cayot.flyingmore.ui.PlanouTopBar
-import com.cayot.flyingmore.ui.home.list.HomeListTab
-import com.cayot.flyingmore.ui.home.statistics.HomeStatisticsTab
+import com.cayot.flyingmore.ui.home.flight.HomeListTab
+import com.cayot.flyingmore.ui.home.statistic.HomeStatisticTab
 
 enum class HomeScreenContent(@StringRes val title: Int, val icon: ImageVector, @StringRes val longTitle: Int) {
     List(R.string.list, Icons.AutoMirrored.Filled.List, R.string.flight_list),
@@ -74,7 +74,7 @@ fun HomeScreen(
                         .padding(innerPadding),
                 )
             HomeScreenContent.Statistics ->
-                HomeStatisticsTab(
+                HomeStatisticTab(
                     onStatisticItemPressed = onStatisticPressed,
                     modifier = modifier.fillMaxSize()
                         .padding(innerPadding),
