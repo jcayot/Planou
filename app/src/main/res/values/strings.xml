@@ -53,4 +53,9 @@
     <string name="km">km</string>
     <string name="visits">visits</string>
     <string name="flights">flights</string>
+    <string name="statistic">Statistic details</string>
+    <string name="time_frame_day">day</string>
+    <string name="time_frame_week">week</string>
+    <string name="time_frame_month">month</string>
+    <string name="time_frame_year">year</string>
 </resources>

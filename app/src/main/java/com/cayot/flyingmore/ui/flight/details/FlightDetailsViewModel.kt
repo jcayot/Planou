@@ -29,7 +29,7 @@ class FlightDetailsViewModel(
 	private val flightId: Int = checkNotNull(savedStateHandle[FlyingMoreScreen.Details.argName])
 
 	private val _uiState = MutableStateFlow(FlightDetailsUIState())
-	val uiState :StateFlow<FlightDetailsUIState> = _uiState
+	val uiState: StateFlow<FlightDetailsUIState> = _uiState
 
 	private val _shareCard = MutableSharedFlow<Uri>()
 	val shareCard: SharedFlow<Uri> = _shareCard

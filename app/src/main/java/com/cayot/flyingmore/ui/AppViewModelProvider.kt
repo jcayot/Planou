@@ -14,6 +14,7 @@ import com.cayot.flyingmore.ui.flight.edit.FlightEditViewModel
 import com.cayot.flyingmore.ui.flight.details.FlightDetailsViewModel
 import com.cayot.flyingmore.ui.home.flight.FlightListViewModel
 import com.cayot.flyingmore.ui.home.statistic.StatisticHomeViewModel
+import com.cayot.flyingmore.ui.statistic.FlyingStatisticViewModel
 
 object AppViewModelProvider {
 	val factory = viewModelFactory {
@@ -50,6 +51,13 @@ object AppViewModelProvider {
 					flyingStatisticsRepository = planouApplication().container.flyingStatisticsRepository,
 					generateFlyingStatisticRepository = planouApplication().container.generateFlyingStatisticRepository
 				)
+			)
+		}
+
+		initializer {
+			FlyingStatisticViewModel(
+				flyingStatisticsRepository = planouApplication().container.flyingStatisticsRepository,
+				savedStateHandle = this.createSavedStateHandle()
 			)
 		}
 	}
