@@ -17,7 +17,8 @@ enum class FlyingStatistic(
     @StringRes val unitResource: Int? = null
 ) {
     NUMBER_OF_FLIGHT(
-        displayNameResource = R.string.number_of_flights
+        displayNameResource = R.string.number_of_flights,
+        unitResource = R.string.flights
     ),
     FLOWN_DISTANCE(
         displayNameResource = R.string.flown_distance,
