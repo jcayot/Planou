@@ -12,12 +12,14 @@ import com.cayot.flyingmore.R
 import com.cayot.flyingmore.ui.flight.details.FlightDetailsScreen
 import com.cayot.flyingmore.ui.flight.edit.FlightEditScreen
 import com.cayot.flyingmore.ui.home.HomeScreen
+import com.cayot.flyingmore.ui.statistic.FlyingStatisticScreen
 
 enum class FlyingMoreScreen(@StringRes val title: Int, val argName : String) {
 	Home(R.string.home, ""),
 	Add(R.string.add_flight, ""),
 	Edit(R.string.edit_flight, "flightId"),
 	Details(R.string.flight_details, "flightId"),
+	Statistic(R.string.statistic, "statisticId"),
 }
 
 @Composable
@@ -70,6 +72,16 @@ fun FlyingMoreNavHost(
 				editFlight = {
 					navController.navigate(FlyingMoreScreen.Edit.name + "/" + it)
 				},
+				onNavigateUp = { navController.navigateUp() }
+			)
+		}
+		composable(
+			route = "${FlyingMoreScreen.Statistic.name}/{${FlyingMoreScreen.Statistic.argName}}",
+			arguments = listOf(navArgument(FlyingMoreScreen.Statistic.argName) {
+				type = NavType.IntType
+			})
+		) {
+			FlyingStatisticScreen(
 				onNavigateUp = { navController.navigateUp() }
 			)
 		}
