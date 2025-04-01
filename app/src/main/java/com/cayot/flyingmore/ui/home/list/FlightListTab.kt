@@ -3,7 +3,6 @@ package com.cayot.flyingmore.ui.home.list
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -48,7 +47,6 @@ import com.cayot.flyingmore.ui.composable.FlightMap
 fun HomeListTab(
     onFlightPressed: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
     val viewModel: FlightListViewModel = viewModel(factory = AppViewModelProvider.factory)
     val uiState by viewModel.uiState.collectAsState()
@@ -58,7 +56,6 @@ fun HomeListTab(
         onFlightPressed = onFlightPressed,
         onItemVisible = viewModel::updateFlightMap,
         modifier = modifier.fillMaxSize(),
-        contentPadding = contentPadding
     )
 }
 
@@ -68,7 +65,6 @@ fun FlightListScreenContent(
     onFlightPressed: (Int) -> Unit,
     onItemVisible: (FlightBrief) -> Unit,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
     if (uiState.flightList != null) {
         if (uiState.flightList.isEmpty()) {
@@ -76,9 +72,7 @@ fun FlightListScreenContent(
                 painter = painterResource(R.drawable.airplanemode_inactive_40px),
                 contentDescription = stringResource(R.string.list_empty_sad_plane),
                 text = stringResource(R.string.flight_list_empty),
-                modifier = Modifier
-                    .padding(contentPadding)
-                    .fillMaxSize()
+                modifier = modifier
             )
         } else {
             FlightListList(
@@ -87,7 +81,6 @@ fun FlightListScreenContent(
                 onFlightPressed = onFlightPressed,
                 onItemVisible = onItemVisible,
                 modifier = modifier,
-                contentPadding = contentPadding
             )
         }
     }
@@ -100,12 +93,10 @@ fun FlightListList(
     onFlightPressed: (Int) -> Unit,
     onItemVisible: (FlightBrief) -> Unit,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
     LazyColumn (
-        contentPadding = contentPadding,
         verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_smadium)),
-        modifier = modifier.padding(dimensionResource(id = R.dimen.padding_smadium)),
+        modifier = modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_smadium)),
     ) {
         items(flightList) { flightItem: FlightItem ->
             if (flightItem.year != null) {

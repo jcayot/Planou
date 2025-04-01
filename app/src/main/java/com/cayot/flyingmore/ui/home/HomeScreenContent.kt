@@ -2,6 +2,7 @@ package com.cayot.flyingmore.ui.home
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.automirrored.filled.MultilineChart
@@ -52,7 +53,8 @@ fun HomeScreen(
                 actions = {
                     if (currentScreen == HomeScreenContent.List)
                         AddFlightAction(onClicked =  onAddFlightPressed)
-                }
+                },
+                scrollBehavior = scrollBehavior
             )
         },
         bottomBar = {
@@ -68,14 +70,14 @@ fun HomeScreen(
             HomeScreenContent.List ->
                 HomeListTab(
                     onFlightPressed = onFlightPressed,
-                    modifier = modifier.fillMaxSize(),
-                    contentPadding = innerPadding
+                    modifier = modifier.fillMaxSize()
+                        .padding(innerPadding),
                 )
             HomeScreenContent.Statistics ->
                 HomeStatisticsTab(
                     onStatisticItemPressed = onStatisticPressed,
-                    modifier = modifier.fillMaxSize(),
-                    contentPadding = innerPadding
+                    modifier = modifier.fillMaxSize()
+                        .padding(innerPadding),
                 )
         }
     }

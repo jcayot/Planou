@@ -3,7 +3,6 @@ package com.cayot.flyingmore.ui.home.statistics
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -33,7 +32,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cayot.flyingmore.R
 import com.cayot.flyingmore.data.model.statistics.TemporalStatisticBrief
@@ -51,7 +49,6 @@ import java.time.Year
 fun HomeStatisticsTab(
     onStatisticItemPressed: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
     val viewModel: StatisticsHomeViewModel = viewModel(factory = AppViewModelProvider.factory)
     val uiState by viewModel.uiState.collectAsState()
@@ -60,7 +57,6 @@ fun HomeStatisticsTab(
         uiState = uiState,
         onStatisticItemPressed = onStatisticItemPressed,
         modifier = modifier,
-        contentPadding = contentPadding
     )
 }
 
@@ -69,20 +65,18 @@ fun HomeStatisticsScreenContent(
     uiState: StatisticsHomeUIState,
     onStatisticItemPressed: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
     if (uiState.statisticsList.isEmpty()) {
         EmptyPlaceholder(
             painter = painterResource(R.drawable.bar_chart_off_24dp_999999_fill0_wght400_grad0_opsz24),
             contentDescription = stringResource(R.string.no_statistics_image),
             text = stringResource(R.string.no_statistics_yet),
-            modifier = modifier.padding(contentPadding)
+            modifier = modifier
         )
     } else {
         HomeStatisticsAllStatisticsList(
             allStatistics = uiState.statisticsList,
             onStatisticItemPressed = onStatisticItemPressed,
-            contentPadding = contentPadding,
             modifier = modifier
         )
     }
@@ -93,10 +87,9 @@ fun HomeStatisticsAllStatisticsList(
     allStatistics: List<TemporalStatisticBrief>,
     onStatisticItemPressed: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
     Column(
-        modifier = modifier.padding(contentPadding),
+        modifier = modifier,
     ) {
         Text(
             text = stringResource(R.string.all_statistics),
@@ -107,7 +100,7 @@ fun HomeStatisticsAllStatisticsList(
         )
         LazyColumn (
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_smadium)),
-            modifier = modifier.padding(dimensionResource(id = R.dimen.padding_smadium)),
+            modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_smadium)),
         ) {
             items(allStatistics) {
                 StatisticItemBriefComposable(
