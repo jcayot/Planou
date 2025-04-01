@@ -81,9 +81,6 @@ dependencies {
 	//Gson
 	implementation (libs.gson)
 
-	//Vico (charts)
-	implementation(libs.vico.compose.m3)
-
 	//Work Manager
 	implementation(libs.androidx.work.runtime.ktx)
 

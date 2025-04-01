@@ -17,7 +17,6 @@ roomKtx = "2.6.1"
 roomRuntime = "2.6.1"
 runtime = "1.7.8"
 secretsGradlePlugin = "2.0.1"
-vico = "2.0.3"
 workRuntimeKtx = "2.10.0"
 
 [libraries]
@@ -48,7 +47,6 @@ kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "
 maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "mapsCompose" }
 secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
 androidx-material-icons-extended = {  group = "androidx.compose.material", name = "material-icons-extended"}
-vico-compose-m3 = { group = "com.patrykandpatrick.vico", name = "compose-m3", version.ref = "vico" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
