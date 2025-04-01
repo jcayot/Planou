@@ -1,7 +1,9 @@
 package com.cayot.flyingmore.domain
 
 import java.time.Instant
+import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.util.Calendar
 import java.util.TimeZone
@@ -9,17 +11,15 @@ import java.util.TimeZone
 class ConvertLocalTimeToCalendarUseCase {
 
     operator fun invoke(date: Long, hour: Int, minute: Int, timeZone: String): Calendar {
-        val instant = Instant.ofEpochMilli(date)
-        val zoneId = ZoneId.of(timeZone)
-        val zonedDateTime = ZonedDateTime.ofInstant(instant, zoneId)
+        val dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(date), ZoneOffset.UTC)
             .withHour(hour)
             .withMinute(minute)
-            .withSecond(0)
-            .withNano(0)
 
-        val utcZonedDateTime = zonedDateTime.withZoneSameInstant(ZoneId.of("UTC"))
+        val zonedDateTime = ZonedDateTime.of(dateTime.year, dateTime.monthValue, dateTime.dayOfMonth,
+            dateTime.hour, dateTime.minute, 0, 0, ZoneId.of(timeZone))
+
         val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-        calendar.timeInMillis = utcZonedDateTime.toInstant().toEpochMilli()
+        calendar.timeInMillis = zonedDateTime.toInstant().toEpochMilli()
 
         return (calendar)
     }
