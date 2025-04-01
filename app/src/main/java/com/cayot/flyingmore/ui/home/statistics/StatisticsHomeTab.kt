@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Badge
 import androidx.compose.material3.Card
@@ -43,6 +41,7 @@ import com.cayot.flyingmore.ui.composable.EmptyPlaceholder
 import com.cayot.flyingmore.ui.composable.charts.LineGraph
 import com.cayot.flyingmore.ui.composable.charts.PieChart
 import com.cayot.flyingmore.ui.composable.charts.VerticalBarGraph
+import com.cayot.flyingmore.ui.composable.ListComposable
 import java.time.Year
 
 @Composable
@@ -66,50 +65,43 @@ fun HomeStatisticsScreenContent(
     onStatisticItemPressed: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (uiState.statisticsList.isEmpty()) {
-        EmptyPlaceholder(
-            painter = painterResource(R.drawable.bar_chart_off_24dp_999999_fill0_wght400_grad0_opsz24),
-            contentDescription = stringResource(R.string.no_statistics_image),
-            text = stringResource(R.string.no_statistics_yet),
-            modifier = modifier
-        )
-    } else {
-        HomeStatisticsAllStatisticsList(
-            allStatistics = uiState.statisticsList,
-            onStatisticItemPressed = onStatisticItemPressed,
-            modifier = modifier
-        )
-    }
+    ListComposable(
+        uiState.statisticsList,
+        onItemPressed = onStatisticItemPressed,
+        itemComposable = { statisticBriefItem, onStatisticItemPressed ->
+            StatisticItemBriefComposable(
+                statisticBriefItem = statisticBriefItem,
+                onStatisticItemPressed = onStatisticItemPressed
+            )
+        },
+        modifier = modifier,
+        emptyPlaceholder = {EmptyStatisticsPlaceholder()},
+        title = {StatisticListTitle()},
+        listItemVerticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_smadium))
+    )
 }
 
 @Composable
-fun HomeStatisticsAllStatisticsList(
-    allStatistics: List<TemporalStatisticBrief>,
-    onStatisticItemPressed: (Int) -> Unit,
-    modifier: Modifier = Modifier,
+fun EmptyStatisticsPlaceholder(
+    modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier,
-    ) {
-        Text(
-            text = stringResource(R.string.all_statistics),
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(start = dimensionResource(R.dimen.padding_large))
-                .padding(vertical = dimensionResource(R.dimen.padding_small))
-        )
-        LazyColumn (
-            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_smadium)),
-            modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_smadium)),
-        ) {
-            items(allStatistics) {
-                StatisticItemBriefComposable(
-                    statisticBriefItem = it,
-                    onStatisticItemPressed = onStatisticItemPressed
-                )
-            }
-        }
-    }
+    EmptyPlaceholder(
+        painter = painterResource(R.drawable.bar_chart_off_24dp_999999_fill0_wght400_grad0_opsz24),
+        contentDescription = stringResource(R.string.no_statistics_image),
+        text = stringResource(R.string.no_statistics_yet),
+        modifier = modifier
+    )
+}
+
+@Composable
+fun StatisticListTitle() {
+    Text(
+        text = stringResource(R.string.all_statistics),
+        style = MaterialTheme.typography.headlineMedium,
+        fontWeight = FontWeight.SemiBold,
+        modifier = Modifier.padding(start = dimensionResource(R.dimen.padding_large))
+            .padding(vertical = dimensionResource(R.dimen.padding_small))
+    )
 }
 
 @Composable
@@ -210,9 +202,9 @@ fun StatisticItemChart(
 
 @Preview(showBackground = true)
 @Composable
-fun HomeStatisticsAllStatisticsListPreview() {
-    HomeStatisticsAllStatisticsList(
-        allStatistics = listOf(
+fun HomeStatisticsScreenContentPreview() {
+    HomeStatisticsScreenContent(
+        uiState = StatisticsHomeUIState(listOf(
             TemporalStatisticBrief(
                 displayNameRes = R.string.statistic_name,
                 timeFrameString = Year.of(2024).toString(),
@@ -231,7 +223,7 @@ fun HomeStatisticsAllStatisticsListPreview() {
                 dataText = "1634",
                 trend = Trend.INCREASING
             )
-        ),
+        )),
         onStatisticItemPressed = {}
     )
 }
