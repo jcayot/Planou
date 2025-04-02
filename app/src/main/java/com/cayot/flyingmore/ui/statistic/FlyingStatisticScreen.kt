@@ -18,11 +18,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cayot.flyingmore.R
+import com.cayot.flyingmore.data.model.statistics.MapStringNumberDailyTemporalStatistic
+import com.cayot.flyingmore.data.model.statistics.NumberDailyTemporalStatistic
+import com.cayot.flyingmore.data.model.statistics.enums.FlyingStatistic
+import com.cayot.flyingmore.data.model.statistics.enums.TimeFrame
 import com.cayot.flyingmore.ui.AppViewModelProvider
 import com.cayot.flyingmore.ui.PlanouTopBar
 import com.cayot.flyingmore.ui.navigation.FlyingMoreScreen
+import java.time.Year
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,7 +45,7 @@ fun FlyingStatisticScreen(
             PlanouTopBar(
                 title = stringResource(
                     if (uiState.statisticData != null)
-                        uiState.statisticData!!.statisticType.displayNameResource
+                        uiState.getStatisticType().displayNameResource
                     else
                         FlyingMoreScreen.Statistic.title
                 ),
@@ -73,18 +79,63 @@ fun FlyingStatisticScreenContent(
             SingleChoiceSegmentedButtonRow(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                uiState.statisticData.statisticType.allowedDisplayResolutions.forEachIndexed { index, resolution ->
+                uiState.getStatisticType().allowedDisplayResolutions.forEachIndexed { index, resolution ->
                     SegmentedButton(
                         label = { Text(stringResource(resolution.displayNameResource)) },
                         selected = uiState.displayResolution == resolution,
                         onClick = { updateUiState(uiState.copy(displayResolution = resolution)) },
                         shape = SegmentedButtonDefaults.itemShape(
                             index = index,
-                            count = uiState.statisticData.statisticType.allowedDisplayResolutions.size
+                            count = uiState.getStatisticType().allowedDisplayResolutions.size
                         )
                     )
                 }
             }
+            when (uiState.statisticData) {
+                is StatisticData.MapStringNumber ->
+                    MapStringNumberStatisticDisplay(
+                        statisticData = uiState.statisticData.mapStringNumberTemporalStatistic,
+                        displayResolution = uiState.displayResolution,
+                    )
+                is StatisticData.Number ->
+                    NumberStatisticDisplay(
+                        statisticData = uiState.statisticData.numberYearTemporalStatistic,
+                        displayResolution = uiState.displayResolution,
+                    )
+            }
         }
     }
+}
+
+@Composable
+fun NumberStatisticDisplay(
+    statisticData: NumberDailyTemporalStatistic,
+    displayResolution: TimeFrame
+) {
+
+}
+
+@Composable
+fun MapStringNumberStatisticDisplay(
+    statisticData: MapStringNumberDailyTemporalStatistic,
+    displayResolution: TimeFrame
+) {
+
+}
+
+@Preview(showBackground = true)
+@Composable
+fun FlyingStatisticScreenContentPreview() {
+    FlyingStatisticScreenContent(
+        uiState = FlyingStatisticUIState(
+            StatisticData.Number(NumberDailyTemporalStatistic(
+                timeFrameStart = Year.of(2024).atDay(1).atStartOfDay().toLocalDate(),
+                timeFrameEnd = Year.of(2025).atDay(1).atStartOfDay().toLocalDate(),
+                data = List(366, { 1 }),
+                statisticType = FlyingStatistic.NUMBER_OF_FLIGHT
+            )),
+            displayResolution = TimeFrame.MONTH,
+        ),
+        updateUiState = {}
+    )
 }
