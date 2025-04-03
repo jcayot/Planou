@@ -58,4 +58,7 @@
     <string name="time_frame_week">week</string>
     <string name="time_frame_month">month</string>
     <string name="time_frame_year">year</string>
+    <string name="average">Average</string>
+    <string name="per">per</string>
+    <string name="unit">unit</string>
 </resources>
