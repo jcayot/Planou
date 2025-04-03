@@ -24,3 +24,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Flying More"
 include(":app")
+include(":FlyingChart")
