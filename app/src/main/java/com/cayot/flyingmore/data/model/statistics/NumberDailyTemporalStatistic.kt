@@ -58,14 +58,14 @@ class NumberDailyTemporalStatistic(
             statisticType = statisticType
         ))
     }
-}
 
-private fun NumberDailyTemporalStatistic.getTrend(data : List<Int>) : Trend? {
-    if (data.size < 2)
-        return null
-    if (data.last() > data[data.size - 2])
-        return Trend.INCREASING
-    if (data.last() < data[data.size - 2])
-        return Trend.DECREASING
-    return Trend.STABLE
+    private fun getTrend(data : List<Int>) : Trend? {
+        if (data.size < 2)
+            return null
+        if (data.last() > data[data.size - 2])
+            return Trend.INCREASING
+        if (data.last() < data[data.size - 2])
+            return Trend.DECREASING
+        return Trend.STABLE
+    }
 }

@@ -10,11 +10,11 @@ enum class FlyingStatistic(
     val dataTimeFrame: TimeFrame = TimeFrame.YEAR,
     val dataResolution: TimeFrame = TimeFrame.DAY,
     val briefDisplayResolution: TimeFrame = TimeFrame.MONTH,
-    val defaultDisplayResolution: TimeFrame = TimeFrame.DAY,
+    val defaultDisplayResolution: TimeFrame = TimeFrame.MONTH,
     val allowedDisplayResolutions: List<TimeFrame> = TimeFrame.entries,
     val dataType: ListDataType = ListDataType.INT,
     val chartType: ChartType = ChartType.BAR_GRAPH,
-    @StringRes val unitResource: Int? = null
+    @StringRes val unitResource: Int = R.string.unit
 ) {
     NUMBER_OF_FLIGHT(
         displayNameResource = R.string.number_of_flights,
