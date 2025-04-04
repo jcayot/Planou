@@ -4,13 +4,13 @@ import android.content.Context
 import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
-import com.cayot.flyingmore.data.repository.FlightsRepository
+import com.cayot.flyingmore.data.repository.FlightRepository
 import com.cayot.flyingmore.data.repository.FlyingStatisticsRepository
 import com.cayot.flyingmore.workers.GenerateFlyingStatisticsWorker
 
 class FakeAppWorkerProvider(
     flyingStatisticsRepository: FlyingStatisticsRepository,
-    flightsRepository: FlightsRepository
+    flightRepository: FlightRepository
 ) {
     val fakeFactory = object : WorkerFactory() {
         override fun createWorker(
@@ -24,7 +24,7 @@ class FakeAppWorkerProvider(
                         ctx = appContext,
                         params = workerParameters,
                         flyingStatisticsRepository = flyingStatisticsRepository,
-                        flightsRepository = flightsRepository,
+                        flightRepository = flightRepository,
                     )
                 }
 

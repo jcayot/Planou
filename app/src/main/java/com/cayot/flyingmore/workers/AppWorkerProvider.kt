@@ -19,7 +19,7 @@ object AppWorkerProvider {
                         ctx = appContext,
                         params = workerParameters,
                         flyingStatisticsRepository = appContext.flyingMoreApplication().container.flyingStatisticsRepository,
-                        flightsRepository = appContext.flyingMoreApplication().container.flightsRepository,
+                        flightRepository = appContext.flyingMoreApplication().container.flightRepository,
                     )
                 }
 

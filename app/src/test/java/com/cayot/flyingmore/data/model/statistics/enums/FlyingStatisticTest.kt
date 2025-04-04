@@ -21,9 +21,9 @@ class FlyingStatisticTest {
         val aggregator = FlyingStatistic.flightAggregator<Int>(FlyingStatistic.FLOWN_DISTANCE)
         val flight = generateFakeFlight(1).first()
 
-        assertEquals(flight.distance.toInt(), aggregator(0, flight))
-        assertEquals(1000 + flight.distance.toInt(), aggregator(1000, flight))
-        assertEquals(9000 + flight.distance.toInt(), aggregator(9000, flight))
+        assertEquals(flight.distance.toInt() / 1000, aggregator(0, flight))
+        assertEquals(1000 + (flight.distance.toInt() / 1000), aggregator(1000, flight))
+        assertEquals(9000 + (flight.distance.toInt() / 1000), aggregator(9000, flight))
     }
 
     @Test

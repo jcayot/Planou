@@ -4,8 +4,8 @@ import android.content.Context
 import com.cayot.flyingmore.data.local.FlyingMoreDatabase
 import com.cayot.flyingmore.data.repository.AirportsRepository
 import com.cayot.flyingmore.data.local.repository.OfflineAirportsRepository
-import com.cayot.flyingmore.data.repository.FlightsRepository
-import com.cayot.flyingmore.data.local.repository.OfflineFlightsRepository
+import com.cayot.flyingmore.data.repository.FlightRepository
+import com.cayot.flyingmore.data.local.repository.OfflineFlightRepository
 import com.cayot.flyingmore.data.repository.FlightNotesRepository
 import com.cayot.flyingmore.data.local.repository.OfflineFlightNotesRepository
 import com.cayot.flyingmore.data.local.repository.OfflineFlyingStatisticsRepository
@@ -15,7 +15,7 @@ import com.cayot.flyingmore.data.repository.ImageRepository
 import com.cayot.flyingmore.data.repository.WorkManagerGenerateFlyingStatisticRepository
 
 interface AppContainer {
-	val flightsRepository: FlightsRepository
+	val flightRepository: FlightRepository
 	val airportsRepository: AirportsRepository
 	val flightNotesRepository: FlightNotesRepository
 	val flyingStatisticsRepository: FlyingStatisticsRepository
@@ -24,8 +24,8 @@ interface AppContainer {
 }
 
 class AppDataContainer(private val context: Context) : AppContainer {
-	override val flightsRepository: FlightsRepository by lazy {
-		OfflineFlightsRepository(FlyingMoreDatabase.getDatabase(context).flightDao())
+	override val flightRepository: FlightRepository by lazy {
+		OfflineFlightRepository(FlyingMoreDatabase.getDatabase(context).flightDao())
 	}
 	override val airportsRepository: AirportsRepository by lazy {
 		OfflineAirportsRepository(FlyingMoreDatabase.getDatabase(context).airportDao())

@@ -6,7 +6,7 @@ import com.cayot.flyingmore.data.local.model.Airport
 import com.cayot.flyingmore.data.local.model.distanceToAirport
 import com.cayot.flyingmore.data.model.Flight
 import com.cayot.flyingmore.domain.CalendarFromDayDifferenceHourMinuteUseCase
-import com.cayot.flyingmore.domain.ConvertLocalTimeToCalendarUseCase
+import com.cayot.flyingmore.domain.ConvertLocalTimeToUtcCalendarUseCase
 import java.time.LocalDate
 import java.time.ZoneId
 import java.util.Calendar
@@ -71,10 +71,10 @@ fun FlightForm.isPlaneModelValid() : Boolean {
 }
 
 fun FlightForm.dateValid(
-	timeToUtcUseCase: ConvertLocalTimeToCalendarUseCase,
-	calendarFromDifference: CalendarFromDayDifferenceHourMinuteUseCase,
-	originTimeZone: String,
-	destinationTimeZone: String
+    timeToUtcUseCase: ConvertLocalTimeToUtcCalendarUseCase,
+    calendarFromDifference: CalendarFromDayDifferenceHourMinuteUseCase,
+    originTimeZone: String,
+    destinationTimeZone: String
 ) : Boolean {
 	val departureUtcCalendar = timeToUtcUseCase(departureDate, departureHour, departureMinute, originTimeZone)
 
@@ -92,10 +92,10 @@ fun FlightForm.seatNumberValid() : Boolean {
 }
 
 fun FlightForm.toFlightDetails(
-	originAirport: Airport,
-	destinationAirport: Airport,
-	timeToUtcUseCase: ConvertLocalTimeToCalendarUseCase,
-	calendarFromDifference: CalendarFromDayDifferenceHourMinuteUseCase
+    originAirport: Airport,
+    destinationAirport: Airport,
+    timeToUtcUseCase: ConvertLocalTimeToUtcCalendarUseCase,
+    calendarFromDifference: CalendarFromDayDifferenceHourMinuteUseCase
 ): Flight {
 	val departureTime = timeToUtcUseCase(departureDate, departureHour, departureMinute, originAirport.timezone)
 	val arrivalTime: Calendar? = if (arrivalHour != null && arrivalMinute != null)

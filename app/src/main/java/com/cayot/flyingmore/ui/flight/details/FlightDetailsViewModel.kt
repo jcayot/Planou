@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cayot.flyingmore.data.repository.ImageRepository
 import com.cayot.flyingmore.data.model.Flight
-import com.cayot.flyingmore.data.repository.FlightsRepository
+import com.cayot.flyingmore.data.repository.FlightRepository
 import com.cayot.flyingmore.data.local.model.FlightNotes
 import com.cayot.flyingmore.data.repository.FlightNotesRepository
 import com.cayot.flyingmore.ui.navigation.FlyingMoreScreen
@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class FlightDetailsViewModel(
-	private val flightsRepository: FlightsRepository,
+	private val flightRepository: FlightRepository,
 	private val flightNotesRepository: FlightNotesRepository,
 	private val imageRepository: ImageRepository,
 	savedStateHandle: SavedStateHandle
@@ -38,7 +38,7 @@ class FlightDetailsViewModel(
 
 	init {
 		viewModelScope.launch {
-			flightsRepository.getFlight(flightId).collect { flight ->
+			flightRepository.getFlight(flightId).collect { flight ->
 				onFlightRetrieved(flight = flight)
 			}
 		}

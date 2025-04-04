@@ -7,10 +7,10 @@ import androidx.work.Data
 import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.testing.TestListenableWorkerBuilder
-import com.cayot.flyingmore.data.local.repository.OfflineFlightsRepository
+import com.cayot.flyingmore.data.local.repository.OfflineFlightRepository
 import com.cayot.flyingmore.data.local.repository.OfflineFlyingStatisticsRepository
 import com.cayot.flyingmore.data.model.statistics.enums.FlyingStatistic
-import com.cayot.flyingmore.data.repository.FlightsRepository
+import com.cayot.flyingmore.data.repository.FlightRepository
 import com.cayot.flyingmore.data.repository.FlyingStatisticsRepository
 import com.cayot.flyingmore.fake.worker.FakeAppWorkerProvider
 import com.cayot.flyingmore.fake.data.local.dao.FakeFlightDao
@@ -32,15 +32,15 @@ import java.time.ZoneOffset
 class GenerateFlyingStatisticsWorkerTest {
     private lateinit var context: Context
     private lateinit var flyingStatisticsRepository: FlyingStatisticsRepository
-    private lateinit var flightsRepository: FlightsRepository
+    private lateinit var flightRepository: FlightRepository
     private lateinit var fakeWorkerFactory: WorkerFactory
 
     @Before
     fun setUp() {
         context = ApplicationProvider.getApplicationContext()
-        flightsRepository = OfflineFlightsRepository(FakeFlightDao())
+        flightRepository = OfflineFlightRepository(FakeFlightDao())
         flyingStatisticsRepository = OfflineFlyingStatisticsRepository(FakeFlyingStatisticsDao())
-        fakeWorkerFactory = FakeAppWorkerProvider(flyingStatisticsRepository, flightsRepository).fakeFactory
+        fakeWorkerFactory = FakeAppWorkerProvider(flyingStatisticsRepository, flightRepository).fakeFactory
     }
 
     fun addFlights(number: Int) {
@@ -50,7 +50,7 @@ class GenerateFlyingStatisticsWorkerTest {
                 departureTimeRange = Year.of(2023).atDay(1).atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
                         to Year.of(2024).atDay(1).atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
             )
-            flights.forEach { flightsRepository.insertFlight(it) }
+            flights.forEach { flightRepository.insertFlight(it) }
         }
     }
 

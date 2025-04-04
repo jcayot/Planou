@@ -6,12 +6,12 @@ import com.cayot.flyingmore.data.model.Flight
 import com.cayot.flyingmore.data.model.toFlightEntity
 import com.cayot.flyingmore.data.model.toFlightBrief
 import com.cayot.flyingmore.data.model.toFlightDetails
-import com.cayot.flyingmore.data.repository.FlightsRepository
+import com.cayot.flyingmore.data.repository.FlightRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 
-class OfflineFlightsRepository(private val flightDao: FlightDao) : FlightsRepository {
+class OfflineFlightRepository(private val flightDao: FlightDao) : FlightRepository {
 	override fun getAllFlightBriefsStream(): Flow<List<FlightBrief>> {
 		return (flightDao.getAllFlightBriefs().map { pojoList ->
 			pojoList.map { item -> item.toFlightBrief() }

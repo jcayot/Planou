@@ -6,7 +6,7 @@ import androidx.work.WorkerParameters
 import com.cayot.flyingmore.data.model.statistics.DailyTemporalStatistic
 import com.cayot.flyingmore.data.model.statistics.enums.FlyingStatistic
 import com.cayot.flyingmore.data.model.statistics.generator.FlightStatisticDataGenerator.generateFlightStatisticData
-import com.cayot.flyingmore.data.repository.FlightsRepository
+import com.cayot.flyingmore.data.repository.FlightRepository
 import com.cayot.flyingmore.data.repository.FlyingStatisticsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -26,7 +26,7 @@ class GenerateFlyingStatisticsWorker(
     ctx: Context,
     params: WorkerParameters,
     private val flyingStatisticsRepository: FlyingStatisticsRepository,
-    private val flightsRepository: FlightsRepository
+    private val flightRepository: FlightRepository
 ) : CoroutineWorker(ctx, params) {
 
     override suspend fun doWork(): Result {
@@ -43,7 +43,7 @@ class GenerateFlyingStatisticsWorker(
             val dateTimeRange = getDateRange(inputData, dataTimeFrame)
 
             return withContext(Dispatchers.IO) {
-                val flightsData = flightsRepository.getAllFlightForDepartureTimeRange(
+                val flightsData = flightRepository.getAllFlightForDepartureTimeRange(
                     startTime = dateTimeRange.first.atStartOfDay(ZoneId.from(ZoneOffset.UTC)).toInstant().toEpochMilli(),
                     endTime = dateTimeRange.second.atStartOfDay(ZoneId.from(ZoneOffset.UTC)).toInstant().toEpochMilli()
                 )

@@ -7,7 +7,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.cayot.flyingmore.FlyingMoreApplication
 import com.cayot.flyingmore.domain.CalendarFromDayDifferenceHourMinuteUseCase
-import com.cayot.flyingmore.domain.ConvertLocalTimeToCalendarUseCase
+import com.cayot.flyingmore.domain.ConvertLocalTimeToUtcCalendarUseCase
 import com.cayot.flyingmore.domain.DeleteFlightWithNoteUseCase
 import com.cayot.flyingmore.domain.GenerateAndGetAllFlyingStatisticsUseCase
 import com.cayot.flyingmore.ui.flight.edit.FlightEditViewModel
@@ -18,18 +18,18 @@ import com.cayot.flyingmore.ui.home.statistic.StatisticHomeViewModel
 object AppViewModelProvider {
 	val factory = viewModelFactory {
 		initializer {
-			FlightListViewModel(flightsRepository = planouApplication().container.flightsRepository)
+			FlightListViewModel(flightRepository = planouApplication().container.flightRepository)
 		}
 
 		initializer {
 			FlightEditViewModel(
-				flightsRepository = planouApplication().container.flightsRepository,
+				flightRepository = planouApplication().container.flightRepository,
 				airportsRepository = planouApplication().container.airportsRepository,
 				deleteFlightWithNoteUseCase = DeleteFlightWithNoteUseCase(
-					planouApplication().container.flightsRepository,
+					planouApplication().container.flightRepository,
 					planouApplication().container.flightNotesRepository
 				),
-				convertLocalTimeToCalendarUseCase = ConvertLocalTimeToCalendarUseCase(),
+				convertLocalTimeToUtcCalendarUseCase = ConvertLocalTimeToUtcCalendarUseCase(),
 				calendarFromDifference = CalendarFromDayDifferenceHourMinuteUseCase(),
 				savedStateHandle = this.createSavedStateHandle()
 			)
@@ -37,7 +37,7 @@ object AppViewModelProvider {
 
 		initializer {
 			FlightDetailsViewModel(
-				flightsRepository = planouApplication().container.flightsRepository,
+				flightRepository = planouApplication().container.flightRepository,
 				flightNotesRepository = planouApplication().container.flightNotesRepository,
 				imageRepository = planouApplication().container.imageRepository,
 				savedStateHandle = this.createSavedStateHandle()

@@ -8,6 +8,7 @@ import com.cayot.flyingmore.data.local.model.FlightEntity
 import com.cayot.flyingmore.data.local.model.FlightNotes
 import com.cayot.flyingmore.domain.ConvertUtcTimeToLocalCalendarUseCase
 import com.cayot.flyingmore.ui.flight.edit.FlightForm
+import java.io.InvalidObjectException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -43,27 +44,45 @@ data class Flight(
                 seatNumber = "33D"
             ))
         }
+
+        fun getPlaceholder2() : Flight {
+            return (Flight(
+                id = 0,
+                flightNumber = "AF1071",
+                airline = "Air France",
+                originAirport = Airport.getHEL(),
+                destinationAirport = Airport.getCDG(),
+                distance = 1900000f,
+                travelClass = TravelClass.ECONOMY,
+                planeModel = "Airbus A2200",
+                departureTime = Calendar.getInstance(),
+                arrivalTime = Calendar.getInstance(),
+                seatNumber = "29A"
+            ))
+        }
     }
 
     //TODO FUCKING RETARDED
     fun getDepartureArrivalDayDifference() : Int {
-        if (arrivalTime == null) {
+        if (arrivalTime == null)
             return 0
-        }
-        val departureYear = departureTime.get(Calendar.YEAR)
-        val departureMonth = departureTime.get(Calendar.MONTH)
-        val departureDay = departureTime.get(Calendar.DAY_OF_MONTH)
-
-        val arrivalYear = arrivalTime.get(Calendar.YEAR)
-        val arrivalMonth = arrivalTime.get(Calendar.MONTH)
-        val arrivalDay = arrivalTime.get(Calendar.DAY_OF_MONTH)
+        if (arrivalTime.before(departureTime))
+            throw InvalidObjectException("Flight arriving in the past")
 
         var dayDifference = 0
         val departureCalendar = Calendar.getInstance().apply {
-            set(departureYear, departureMonth, departureDay)
+            set(
+                departureTime.get(Calendar.YEAR),
+                departureTime.get(Calendar.MONTH),
+                departureTime.get(Calendar.DAY_OF_MONTH)
+            )
         }
         val arrivalCalendar = Calendar.getInstance().apply {
-            set(arrivalYear, arrivalMonth, arrivalDay)
+            set(
+                arrivalTime.get(Calendar.YEAR),
+                arrivalTime.get(Calendar.MONTH),
+                arrivalTime.get(Calendar.DAY_OF_MONTH)
+            )
         }
 
         while (departureCalendar.before(arrivalCalendar)) {

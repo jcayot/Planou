@@ -4,7 +4,7 @@ import com.cayot.flyingmore.data.model.FlightBrief
 import com.cayot.flyingmore.data.model.Flight
 import kotlinx.coroutines.flow.Flow
 
-interface FlightsRepository {
+interface FlightRepository {
 
 	fun getAllFlightBriefsStream() : Flow<List<FlightBrief>>
 

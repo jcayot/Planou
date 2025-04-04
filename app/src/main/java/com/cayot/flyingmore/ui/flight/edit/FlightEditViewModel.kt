@@ -5,10 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cayot.flyingmore.data.local.model.Airport
 import com.cayot.flyingmore.data.repository.AirportsRepository
-import com.cayot.flyingmore.data.repository.FlightsRepository
+import com.cayot.flyingmore.data.repository.FlightRepository
 import com.cayot.flyingmore.data.model.toFlightForm
 import com.cayot.flyingmore.domain.CalendarFromDayDifferenceHourMinuteUseCase
-import com.cayot.flyingmore.domain.ConvertLocalTimeToCalendarUseCase
+import com.cayot.flyingmore.domain.ConvertLocalTimeToUtcCalendarUseCase
 import com.cayot.flyingmore.domain.DeleteFlightWithNoteUseCase
 import com.cayot.flyingmore.ui.navigation.FlyingMoreScreen
 import kotlinx.coroutines.Job
@@ -21,10 +21,10 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class FlightEditViewModel(
-	private val flightsRepository: FlightsRepository,
+	private val flightRepository: FlightRepository,
 	private val airportsRepository: AirportsRepository,
 	private val deleteFlightWithNoteUseCase: DeleteFlightWithNoteUseCase,
-	private val convertLocalTimeToCalendarUseCase: ConvertLocalTimeToCalendarUseCase,
+	private val convertLocalTimeToUtcCalendarUseCase: ConvertLocalTimeToUtcCalendarUseCase,
 	private val calendarFromDifference: CalendarFromDayDifferenceHourMinuteUseCase,
 	savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -132,12 +132,12 @@ class FlightEditViewModel(
 				val flightDetails = _uiState.value.flightForm.toFlightDetails(
 					originAirport = originAirport!!,
 					destinationAirport = destinationAirport!!,
-					convertLocalTimeToCalendarUseCase,
+					convertLocalTimeToUtcCalendarUseCase,
 					calendarFromDifference)
 				if (flightId == null)
-					flightsRepository.insertFlight(flightDetails)
+					flightRepository.insertFlight(flightDetails)
 				else
-					flightsRepository.updateFlight(flightDetails)
+					flightRepository.updateFlight(flightDetails)
 				_navigateBack.emit(Unit)
 			}
 		}
@@ -159,7 +159,7 @@ class FlightEditViewModel(
 				flightForm.isAirlineValid() &&
 				flightForm.isPlaneModelValid() &&
 				flightForm.dateValid(
-					convertLocalTimeToCalendarUseCase,
+					convertLocalTimeToUtcCalendarUseCase,
 					calendarFromDifference,
 					originAirport!!.timezone,
 					destinationAirport!!.timezone))
@@ -178,7 +178,7 @@ class FlightEditViewModel(
 	}
 
 	private fun getFlight(flightId: Int)  = viewModelScope.launch {
-		val flight = flightsRepository.getFlight(flightId).first()
+		val flight = flightRepository.getFlight(flightId).first()
 
 		originAirport = flight.originAirport
 		destinationAirport = flight.destinationAirport

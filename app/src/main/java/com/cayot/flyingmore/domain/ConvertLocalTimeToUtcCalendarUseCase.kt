@@ -8,7 +8,7 @@ import java.time.ZonedDateTime
 import java.util.Calendar
 import java.util.TimeZone
 
-class ConvertLocalTimeToCalendarUseCase {
+class ConvertLocalTimeToUtcCalendarUseCase {
 
     operator fun invoke(date: Long, hour: Int, minute: Int, timeZone: String): Calendar {
         val dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(date), ZoneOffset.UTC)
