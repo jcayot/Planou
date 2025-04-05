@@ -10,6 +10,8 @@ interface FlyingStatisticsRepository {
 
     fun getFlyingStatistic(id: Int) : Flow<DailyTemporalStatistic<Any>>
 
+    suspend fun getFlyingStatisticContainingTime(time: Long) : List<DailyTemporalStatistic<Any>>
+
     suspend fun getFlyingStatistic(
         statisticTypeInt: Int,
         timeFrameStart: LocalDate,
@@ -19,4 +21,5 @@ interface FlyingStatisticsRepository {
     suspend fun <T> insertFlyingStatistic(dailyTemporalStatistic: DailyTemporalStatistic<T>)
 
     suspend fun <T> updateFlyingStatistic(dailyTemporalStatistic: DailyTemporalStatistic<T>)
+
 }

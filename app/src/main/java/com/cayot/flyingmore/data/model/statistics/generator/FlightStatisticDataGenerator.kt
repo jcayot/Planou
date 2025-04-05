@@ -37,4 +37,31 @@ object FlightStatisticDataGenerator {
             }
         }
     }
+
+    fun addFlightToStatisticData(
+        newFlight: Flight,
+        currentData: List<Any>,
+        statisticToGenerate: FlyingStatistic
+    ) : List<Any> {
+        return when (statisticToGenerate.dataType) {
+            ListDataType.INT -> {
+                val newData = (currentData as List<Int>).toMutableList()
+                val perFlightAggregator = FlyingStatistic.flightAggregator<Int>(statisticToGenerate)
+
+                newData[newFlight.departureTime.get(DAY_OF_YEAR) - 1] =
+                    perFlightAggregator(newData[newFlight.departureTime.get(DAY_OF_YEAR) - 1], newFlight)
+
+                (newData)
+            }
+            ListDataType.MAP_STRING_INT -> {
+                val newData = (currentData as List<MutableMap<String, Int>>).toMutableList()
+                val perFlightAggregator = FlyingStatistic.flightAggregator<MutableMap<String, Int>>(statisticToGenerate)
+
+                newData[newFlight.departureTime.get(DAY_OF_YEAR) - 1] =
+                    perFlightAggregator(newData[newFlight.departureTime.get(DAY_OF_YEAR) - 1], newFlight)
+
+                (newData)
+            }
+        }
+    }
 }

@@ -26,7 +26,11 @@ interface FlyingStatisticsDao {
     @Query("SELECT * FROM 'flying-statistics' WHERE statisticTypeInt = :statisticTypeInt AND" +
             " timeFrameStartLong = :timeFrameStartLong AND" +
             " timeFrameEndLong = :timeFrameEndLong")
-    fun getFlyingStatisticEntity(statisticTypeInt: Int,
+    suspend fun getFlyingStatisticEntity(statisticTypeInt: Int,
                                  timeFrameStartLong: Long,
                                  timeFrameEndLong: Long) : FlyingStatisticEntity?
+
+    //TODO TEST
+    @Query("SELECT * FROM `flying-statistics` WHERE :time BETWEEN timeFrameStartLong AND timeFrameEndLong")
+    suspend fun getFlyingStatisticContainingTime(time: Long) : List<FlyingStatisticEntity>
 }

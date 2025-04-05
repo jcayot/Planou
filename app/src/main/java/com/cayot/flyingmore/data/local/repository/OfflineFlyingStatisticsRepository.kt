@@ -20,6 +20,11 @@ class OfflineFlyingStatisticsRepository(private val flyingStatisticsDao: FlyingS
         return (flyingStatisticsDao.getFlyingStatistic(id).map { it.toTemporalStatistic() })
     }
 
+    //TODO Tests
+    override suspend fun getFlyingStatisticContainingTime(time: Long): List<DailyTemporalStatistic<Any>> {
+        return (flyingStatisticsDao.getFlyingStatisticContainingTime(time).map { it.toTemporalStatistic() })
+    }
+
     override suspend fun getFlyingStatistic(
         statisticTypeInt: Int,
         timeFrameStart: LocalDate,
