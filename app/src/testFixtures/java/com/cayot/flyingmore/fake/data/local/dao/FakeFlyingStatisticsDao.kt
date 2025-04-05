@@ -29,6 +29,12 @@ class FakeFlyingStatisticsDao : FlyingStatisticsDao {
         }
     }
 
+    override suspend fun delete(flyingStatistic: FlyingStatisticEntity) {
+        _statistics.update { list ->
+            list.filter { it.id != flyingStatistic.id }
+        }
+    }
+
     override fun getAllFlyingStatistics(): Flow<List<FlyingStatisticEntity>> {
         return (statistics)
     }

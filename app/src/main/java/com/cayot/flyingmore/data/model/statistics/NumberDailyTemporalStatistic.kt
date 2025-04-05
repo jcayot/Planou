@@ -59,6 +59,14 @@ class NumberDailyTemporalStatistic(
         ))
     }
 
+    override fun isEmpty(): Boolean {
+        data.forEach {
+            if (it != 0)
+                return false
+        }
+        return true
+    }
+
     private fun getTrend(data : List<Int>) : Trend? {
         if (data.size < 2)
             return null

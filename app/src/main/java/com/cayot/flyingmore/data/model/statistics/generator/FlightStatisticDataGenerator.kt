@@ -66,4 +66,35 @@ object FlightStatisticDataGenerator {
             }
         }
     }
+
+    fun removeFlightFromStatisticData(
+        formerFlight: Flight,
+        currentData: List<Any>,
+        statisticToGenerate: FlyingStatistic
+    ) : List<Any> {
+        return when (statisticToGenerate.dataType) {
+            ListDataType.INT -> {
+                var dataToUpdate =
+                    currentData[formerFlight.departureTime.get(DAY_OF_YEAR) - 1] as Int
+
+                val perFlightRemover = FlyingStatistic.flightRemover<Int>(statisticToGenerate)
+                dataToUpdate = perFlightRemover(dataToUpdate, formerFlight)
+
+                val newData = currentData as MutableList<Int>
+                newData[formerFlight.departureTime.get(DAY_OF_YEAR) - 1] = dataToUpdate
+                (newData)
+            }
+            ListDataType.MAP_STRING_INT -> {
+                var dataToUpdate =
+                    (currentData[formerFlight.departureTime.get(DAY_OF_YEAR) - 1] as Map<String, Int>).toMutableMap()
+
+                val perFlightRemover = FlyingStatistic.flightRemover<MutableMap<String, Int>>(statisticToGenerate)
+                dataToUpdate = perFlightRemover(dataToUpdate, formerFlight)
+
+                val newData = currentData as MutableList<Map<String, Int>>
+                newData[formerFlight.departureTime.get(DAY_OF_YEAR) - 1] = dataToUpdate
+                (newData)
+            }
+        }
+    }
 }

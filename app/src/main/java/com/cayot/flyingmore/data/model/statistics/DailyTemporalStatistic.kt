@@ -69,6 +69,8 @@ abstract class DailyTemporalStatistic<T>(
     abstract fun toTemporalStatisticBrief() : TemporalStatisticBrief
 
     abstract fun copy(data: List<T> = this.data) : DailyTemporalStatistic<T>
+
+    abstract fun isEmpty() : Boolean //Both implementation might cause problem with different empty value
 }
 
 fun <T> DailyTemporalStatistic<T>.getData(resolution: TimeFrame = statisticType.dataResolution) : List<T> {

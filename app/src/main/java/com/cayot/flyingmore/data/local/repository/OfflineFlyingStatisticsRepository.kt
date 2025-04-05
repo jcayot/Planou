@@ -52,4 +52,8 @@ class OfflineFlyingStatisticsRepository(private val flyingStatisticsDao: FlyingS
     override suspend fun <T> updateFlyingStatistic(dailyTemporalStatistic: DailyTemporalStatistic<T>) {
         flyingStatisticsDao.update(dailyTemporalStatistic.toFlyingStatisticEntity())
     }
+
+    override suspend fun <T> deleteFlyingStatistic(dailyTemporalStatistic: DailyTemporalStatistic<T>) {
+        flyingStatisticsDao.delete(dailyTemporalStatistic.toFlyingStatisticEntity())
+    }
 }

@@ -59,4 +59,30 @@ class FlightStatisticDataGeneratorTest {
         assertEquals(365, statisticData.size)
         assert(statisticData.contains(mapOf("CDG" to 1, "JFK" to 1)))
     }
+
+    @Test
+    fun removeFlightFromStatisticData_listOfInt() {
+        val statisticData: List<Int> = List(365, { 1 })
+
+        FlightStatisticDataGenerator.removeFlightFromStatisticData(
+            formerFlight = Flight.getPlaceholder1(),
+            currentData = statisticData,
+            statisticToGenerate = FlyingStatistic.NUMBER_OF_FLIGHT
+        )
+        assertEquals(365, statisticData.size)
+        assert(statisticData.contains(0))
+    }
+
+    @Test
+    fun removeFlightFromStatisticData_listOfMap() {
+        val statisticData: List<Map<String, Int>> = List(365, { mapOf<String, Int>("CDG" to 1, "JFK" to 1) })
+
+        FlightStatisticDataGenerator.removeFlightFromStatisticData(
+            formerFlight = Flight.getPlaceholder1(),
+            currentData = statisticData,
+            statisticToGenerate = FlyingStatistic.AIRPORT_VISIT_NUMBER
+        )
+        assertEquals(365, statisticData.size)
+        assert(statisticData.contains(emptyMap()))
+    }
 }

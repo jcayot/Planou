@@ -1,6 +1,7 @@
 package com.cayot.flyingmore.data.local.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -16,6 +17,9 @@ interface FlyingStatisticsDao {
 
     @Update
     suspend fun update(flyingStatistic: FlyingStatisticEntity)
+
+    @Delete
+    suspend fun delete(flyingStatistic: FlyingStatisticEntity)
 
     @Query("SELECT * FROM `flying-statistics`")
     fun getAllFlyingStatistics() : Flow<List<FlyingStatisticEntity>>

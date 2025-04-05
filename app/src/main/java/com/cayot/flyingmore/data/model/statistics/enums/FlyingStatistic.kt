@@ -31,6 +31,7 @@ enum class FlyingStatistic(
         unitResource = R.string.visits
     );
 
+    //Merge into one ?
     companion object {
         fun <T> flightAggregator(flyingStatistic: FlyingStatistic) : (T, Flight) -> T {
             return when (flyingStatistic) {
@@ -46,6 +47,45 @@ enum class FlyingStatistic(
                     }
                     currentCodeVisitMap.merge(flight.destinationAirport.iataCode, 1) {
                         previous, new -> previous + new
+                    }
+                    currentCodeVisitMap
+                }
+            } as (T, Flight) -> T
+        }
+
+        fun <T> flightRemover(flyingStatistic: FlyingStatistic) : (T, Flight) -> T {
+            return when (flyingStatistic) {
+                NUMBER_OF_FLIGHT -> { currentNumber: Int, flight: Flight ->
+                    if (currentNumber == 0)
+                            throw IllegalStateException("Removing flight from empty statistic")
+                    (currentNumber - 1)
+                }
+                FLOWN_DISTANCE -> { currentDistance: Int, flight: Flight ->
+                    val newDistance = currentDistance - flight.distance.roundToInt() / 1000
+                    if (newDistance < 0)
+                        throw IllegalStateException("Removing more distance than flown")
+                    (newDistance)
+                }
+                AIRPORT_VISIT_NUMBER -> { currentCodeVisitMap: MutableMap<String, Int>, flight: Flight ->
+                    if (currentCodeVisitMap.containsKey(flight.originAirport.iataCode).not() ||
+                        currentCodeVisitMap.containsKey(flight.destinationAirport.iataCode).not())
+                        throw IllegalStateException("Removing visit from unvisited airport")
+
+                    currentCodeVisitMap.merge(flight.originAirport.iataCode, 1) { previous, new ->
+                        val newValue = previous - new
+
+                        if (newValue == 0)
+                            null
+                        else
+                            newValue
+                    }
+                    currentCodeVisitMap.merge(flight.destinationAirport.iataCode, 1) { previous, new ->
+                        val newValue = previous - new
+
+                        if (newValue == 0)
+                            null
+                        else
+                            newValue
                     }
                     currentCodeVisitMap
                 }

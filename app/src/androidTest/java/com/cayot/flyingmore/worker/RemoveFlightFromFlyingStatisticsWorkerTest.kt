@@ -11,19 +11,17 @@ import com.cayot.flyingmore.data.local.repository.OfflineFlightRepository
 import com.cayot.flyingmore.data.local.repository.OfflineFlyingStatisticsRepository
 import com.cayot.flyingmore.data.model.statistics.NumberDailyTemporalStatistic
 import com.cayot.flyingmore.data.model.statistics.enums.FlyingStatistic
-import com.cayot.flyingmore.data.model.statistics.enums.ListDataType
 import com.cayot.flyingmore.data.repository.FlightRepository
 import com.cayot.flyingmore.data.repository.FlyingStatisticsRepository
 import com.cayot.flyingmore.fake.data.local.dao.FakeFlightDao
 import com.cayot.flyingmore.fake.data.local.dao.FakeFlyingStatisticsDao
 import com.cayot.flyingmore.fake.data.model.generateFakeFlight
 import com.cayot.flyingmore.fake.worker.FakeAppWorkerProvider
-import com.cayot.flyingmore.workers.AddFlightToFlyingStatisticsWorker
-import com.cayot.flyingmore.workers.NEW_FLIGHT_KEY
+import com.cayot.flyingmore.workers.FORMER_FLIGHT_KEY
+import com.cayot.flyingmore.workers.RemoveFlightFromFlyingStatisticsWorker
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -32,7 +30,7 @@ import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 
 @RunWith(AndroidJUnit4::class)
-class AddFlightToFlyingStatisticsWorkerTest {
+class RemoveFlightFromFlyingStatisticsWorkerTest {
 
     private lateinit var context: Context
     private lateinit var flyingStatisticsRepository: FlyingStatisticsRepository
@@ -55,9 +53,8 @@ class AddFlightToFlyingStatisticsWorkerTest {
         fakeWorkerFactory = FakeAppWorkerProvider(flyingStatisticsRepository, flightRepository).fakeFactory
     }
 
-
     @Test
-    fun addFlightToFlyingStatisticsTest_numberOfFlights() {
+    fun removeFlightFromFlyingStatistics_numberOfFlights() {
         val statistic = NumberDailyTemporalStatistic(
             timeFrameStart = timeFrameStart,
             timeFrameEnd = timeFrameEnd,
@@ -68,9 +65,9 @@ class AddFlightToFlyingStatisticsWorkerTest {
             statisticType = FlyingStatistic.NUMBER_OF_FLIGHT
         )
 
-        val worker = TestListenableWorkerBuilder<AddFlightToFlyingStatisticsWorker>(
+        val worker = TestListenableWorkerBuilder<RemoveFlightFromFlyingStatisticsWorker>(
             context = context,
-            inputData = Data.Builder().putInt(NEW_FLIGHT_KEY, 1).build()
+            inputData = Data.Builder().putInt(FORMER_FLIGHT_KEY, 1).build()
         ).setWorkerFactory(fakeWorkerFactory).build()
 
         runBlocking {
@@ -78,54 +75,41 @@ class AddFlightToFlyingStatisticsWorkerTest {
             flightRepository.insertFlight(flight)
 
             val result = worker.doWork()
-            assertEquals(ListenableWorker.Result.success(), result)
+            assert(result == ListenableWorker.Result.success())
 
-            val allStatistics = flyingStatisticsRepository.getAllFlyingStatistics().first()
-            assertEquals(FlyingStatistic.entries.size, allStatistics.size)
-
-            val numberOfFlightsStatistic = allStatistics.find {
-                it.statisticType == FlyingStatistic.NUMBER_OF_FLIGHT
-            }
-
-            val dayOfFlight = flight.departureTime.toInstant().atZone(ZoneOffset.UTC).toLocalDate().dayOfYear
-            assertEquals(2, numberOfFlightsStatistic!!.data[dayOfFlight - 1])
+            val numberOfFlightsStatistic = flyingStatisticsRepository.getFlyingStatistic(1).first()
             assertEquals(numberOfFlightsStatistic.data.size, ChronoUnit.DAYS.between(timeFrameStart, timeFrameEnd).toInt())
             assertEquals(numberOfFlightsStatistic.timeFrameStart, timeFrameStart)
             assertEquals(numberOfFlightsStatistic.timeFrameEnd, timeFrameEnd)
+            assert(numberOfFlightsStatistic.data.contains(0))
         }
     }
 
     @Test
-    fun addFlightToFlyingStatisticsTest_createMissingStatistics() {
-        val worker = TestListenableWorkerBuilder<AddFlightToFlyingStatisticsWorker>(
+    fun removeFlightFromFlyingStatistics_removeEmptyStatistics() {
+
+        val data = MutableList(ChronoUnit.DAYS.between(timeFrameStart, timeFrameEnd).toInt()) { 0 }
+        data[flight.departureTime.toInstant().atZone(ZoneOffset.UTC).toLocalDate().dayOfYear - 1] = 1
+        val statistic = NumberDailyTemporalStatistic(
+            timeFrameStart = timeFrameStart,
+            timeFrameEnd = timeFrameEnd,
+            data = data,
+            statisticType = FlyingStatistic.NUMBER_OF_FLIGHT
+        )
+        val worker = TestListenableWorkerBuilder<RemoveFlightFromFlyingStatisticsWorker>(
             context = context,
-            inputData = Data.Builder().putInt(NEW_FLIGHT_KEY, 1).build()
+            inputData = Data.Builder().putInt(FORMER_FLIGHT_KEY, 1).build()
         ).setWorkerFactory(fakeWorkerFactory).build()
 
         runBlocking {
+            flyingStatisticsRepository.insertFlyingStatistic(statistic)
             flightRepository.insertFlight(flight)
 
             val result = worker.doWork()
-            assertEquals(ListenableWorker.Result.success(), result)
+            assert(result == ListenableWorker.Result.success())
 
             val allStatistics = flyingStatisticsRepository.getAllFlyingStatistics().first()
-            assertEquals(FlyingStatistic.entries.size, allStatistics.size)
-
-            val foundStatisticsType = allStatistics.map { it.statisticType }.toSet()
-            assertEquals(FlyingStatistic.entries.toSet(), foundStatisticsType)
-
-            val dayOfFlight = flight.departureTime.toInstant().atZone(ZoneOffset.UTC).toLocalDate().dayOfYear
-
-            for (statistic in allStatistics) {
-                if (statistic.statisticType.dataType == ListDataType.INT)
-                    assertNotEquals(0, statistic.data[dayOfFlight - 1])
-                else
-                    assertNotEquals(emptyMap<String, Int>(), statistic.data[dayOfFlight - 1])
-
-                assertEquals(statistic.data.size, ChronoUnit.DAYS.between(timeFrameStart, timeFrameEnd).toInt())
-                assertEquals(statistic.timeFrameStart, timeFrameStart)
-                assertEquals(statistic.timeFrameEnd, timeFrameEnd)
-            }
+            assert(allStatistics.isEmpty())
         }
     }
 }

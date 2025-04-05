@@ -63,4 +63,12 @@ class MapStringNumberDailyTemporalStatistic(
             statisticType = statisticType
         ))
     }
+
+    override fun isEmpty(): Boolean {
+        data.forEach {
+            if (it.isNotEmpty())
+                return false
+        }
+        return true
+    }
 }

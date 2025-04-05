@@ -13,21 +13,32 @@ object AppWorkerProvider {
             workerClassName: String,
             workerParameters: WorkerParameters
         ): ListenableWorker? {
+            val flyingStatisticsRepository = appContext.flyingMoreApplication().container.flyingStatisticsRepository
+            val flightRepository = appContext.flyingMoreApplication().container.flightRepository
+
             return when (workerClassName) {
                 GenerateFlyingStatisticsWorker::class.java.name -> {
                     GenerateFlyingStatisticsWorker(
                         ctx = appContext,
                         params = workerParameters,
-                        flyingStatisticsRepository = appContext.flyingMoreApplication().container.flyingStatisticsRepository,
-                        flightRepository = appContext.flyingMoreApplication().container.flightRepository,
+                        flyingStatisticsRepository = flyingStatisticsRepository,
+                        flightRepository = flightRepository,
                     )
                 }
                 AddFlightToFlyingStatisticsWorker::class.java.name -> {
                     AddFlightToFlyingStatisticsWorker(
                         ctx = appContext,
                         params = workerParameters,
-                        flyingStatisticsRepository = appContext.flyingMoreApplication().container.flyingStatisticsRepository,
-                        flightRepository = appContext.flyingMoreApplication().container.flightRepository,
+                        flyingStatisticsRepository = flyingStatisticsRepository,
+                        flightRepository = flightRepository,
+                    )
+                }
+                RemoveFlightFromFlyingStatisticsWorker::class.java.name -> {
+                    RemoveFlightFromFlyingStatisticsWorker(
+                        ctx = appContext,
+                        params = workerParameters,
+                        flyingStatisticsRepository = flyingStatisticsRepository,
+                        flightRepository = flightRepository
                     )
                 }
 

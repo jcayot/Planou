@@ -8,6 +8,7 @@ import com.cayot.flyingmore.data.repository.FlightRepository
 import com.cayot.flyingmore.data.repository.FlyingStatisticsRepository
 import com.cayot.flyingmore.workers.AddFlightToFlyingStatisticsWorker
 import com.cayot.flyingmore.workers.GenerateFlyingStatisticsWorker
+import com.cayot.flyingmore.workers.RemoveFlightFromFlyingStatisticsWorker
 
 class FakeAppWorkerProvider(
     flyingStatisticsRepository: FlyingStatisticsRepository,
@@ -30,6 +31,14 @@ class FakeAppWorkerProvider(
                 }
                 AddFlightToFlyingStatisticsWorker::class.java.name -> {
                     AddFlightToFlyingStatisticsWorker(
+                        ctx = appContext,
+                        params = workerParameters,
+                        flyingStatisticsRepository = flyingStatisticsRepository,
+                        flightRepository = flightRepository
+                    )
+                }
+                RemoveFlightFromFlyingStatisticsWorker::class.java.name -> {
+                    RemoveFlightFromFlyingStatisticsWorker(
                         ctx = appContext,
                         params = workerParameters,
                         flyingStatisticsRepository = flyingStatisticsRepository,

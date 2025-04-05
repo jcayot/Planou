@@ -22,4 +22,5 @@ interface FlyingStatisticsRepository {
 
     suspend fun <T> updateFlyingStatistic(dailyTemporalStatistic: DailyTemporalStatistic<T>)
 
+    suspend fun <T> deleteFlyingStatistic(dailyTemporalStatistic: DailyTemporalStatistic<T>)
 }
