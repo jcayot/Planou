@@ -39,7 +39,13 @@ class FakeFlyingStatisticsDao : FlyingStatisticsDao {
         })
     }
 
-    override fun getFlyingStatisticEntity(
+    override suspend fun getFlyingStatisticContainingTime(time: Long): List<FlyingStatisticEntity> {
+        return _statistics.value.filter {
+            time in it.timeFrameStartLong..it.timeFrameEndLong
+        }
+    }
+
+    override suspend fun getFlyingStatisticEntity(
         statisticTypeInt: Int,
         timeFrameStartLong: Long,
         timeFrameEndLong: Long

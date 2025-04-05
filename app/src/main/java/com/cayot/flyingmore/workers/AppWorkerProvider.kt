@@ -22,6 +22,14 @@ object AppWorkerProvider {
                         flightRepository = appContext.flyingMoreApplication().container.flightRepository,
                     )
                 }
+                AddFlightToFlyingStatisticsWorker::class.java.name -> {
+                    AddFlightToFlyingStatisticsWorker(
+                        ctx = appContext,
+                        params = workerParameters,
+                        flyingStatisticsRepository = appContext.flyingMoreApplication().container.flyingStatisticsRepository,
+                        flightRepository = appContext.flyingMoreApplication().container.flightRepository,
+                    )
+                }
 
                 else -> null
             }

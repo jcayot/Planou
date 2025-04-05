@@ -45,21 +45,23 @@ object FlightStatisticDataGenerator {
     ) : List<Any> {
         return when (statisticToGenerate.dataType) {
             ListDataType.INT -> {
-                val newData = (currentData as List<Int>).toMutableList()
+                var dataToUpdate = currentData[newFlight.departureTime.get(DAY_OF_YEAR) - 1] as Int
                 val perFlightAggregator = FlyingStatistic.flightAggregator<Int>(statisticToGenerate)
 
-                newData[newFlight.departureTime.get(DAY_OF_YEAR) - 1] =
-                    perFlightAggregator(newData[newFlight.departureTime.get(DAY_OF_YEAR) - 1], newFlight)
+                dataToUpdate = perFlightAggregator(dataToUpdate, newFlight)
 
+                val newData = currentData as MutableList<Int>
+                newData[newFlight.departureTime.get(DAY_OF_YEAR) - 1] = dataToUpdate
                 (newData)
             }
             ListDataType.MAP_STRING_INT -> {
-                val newData = (currentData as List<MutableMap<String, Int>>).toMutableList()
+                var dataToUpdate = (currentData[newFlight.departureTime.get(DAY_OF_YEAR) - 1] as Map<String, Int>).toMutableMap()
                 val perFlightAggregator = FlyingStatistic.flightAggregator<MutableMap<String, Int>>(statisticToGenerate)
 
-                newData[newFlight.departureTime.get(DAY_OF_YEAR) - 1] =
-                    perFlightAggregator(newData[newFlight.departureTime.get(DAY_OF_YEAR) - 1], newFlight)
+                dataToUpdate = perFlightAggregator(dataToUpdate, newFlight)
 
+                val newData = currentData as MutableList<Map<String, Int>>
+                newData[newFlight.departureTime.get(DAY_OF_YEAR) - 1] = dataToUpdate
                 (newData)
             }
         }

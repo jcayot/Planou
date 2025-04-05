@@ -1,6 +1,7 @@
 package com.cayot.flyingmore.workers
 
 import androidx.work.Data
+import com.cayot.flyingmore.data.model.statistics.enums.FlyingStatistic
 import com.cayot.flyingmore.data.model.statistics.enums.TimeFrame
 import java.time.LocalDate
 import java.time.Year
@@ -46,4 +47,21 @@ fun getDateRange(inputData: Data, dataTimeFrame: TimeFrame) : Pair<LocalDate, Lo
         maxDepartureTime = minDepartureTime.plusDays(1)
     }
     return minDepartureTime to maxDepartureTime
+}
+
+fun getStatisticDateRangeForTime(
+    departureTime: LocalDate,
+    statistic: FlyingStatistic
+): Pair<LocalDate, LocalDate> {
+
+    return when (statistic.dataTimeFrame) {
+        TimeFrame.YEAR -> {
+            val minDepartureTime = Year.of(departureTime.year).atMonth(1).atDay(1)
+            val maxDepartureTime = Year.of(departureTime.year).plusYears(1).atMonth(1).atDay(1)
+            minDepartureTime to maxDepartureTime
+        }
+        TimeFrame.MONTH -> throw NotImplementedError()
+        TimeFrame.WEEK -> throw NotImplementedError()
+        TimeFrame.DAY -> throw NotImplementedError()
+    }
 }

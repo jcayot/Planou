@@ -27,7 +27,7 @@ fun generateFakeFlight(
             airline = "Air France",
             originAirport = Airport.getCDG(),
             destinationAirport = Airport.getHEL(),
-            distance = 1000f,
+            distance = 1000000f,
             travelClass = TravelClass.ECONOMY,
             planeModel = "Airbus A300",
             departureTime = departureTime,
